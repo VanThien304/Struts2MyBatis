@@ -1,0 +1,48 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+	<h2>Welcome</h2>
+
+
+	<table>
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>name</th>
+				<th>branch</th>
+				<th>percentage</th>
+				<th>phone</th>
+				<th>email</th>
+			</tr>
+		</thead>
+		<tbody>
+			<s:iterator value="student">
+				<tr>
+					<td>
+						<s:property value="student.getName()"/>
+					</td>
+					<td>
+						<s:property value="student.getBranch()"/>
+					</td>
+					<td>
+						<s:property value="student.getPercentage()"/>
+					</td>
+					<td>
+						<s:property value="student.getName()"/>
+					</td>
+					<td>
+						<s:property value="student.getName()"/>
+					</td>
+					
+				<tr>
+			</s:iterator>
+		</tbody>
+		</table>
+</body>
+</html>

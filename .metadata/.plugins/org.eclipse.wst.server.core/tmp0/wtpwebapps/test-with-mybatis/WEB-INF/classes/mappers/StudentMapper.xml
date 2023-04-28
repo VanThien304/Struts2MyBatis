@@ -12,4 +12,34 @@
 		(name, branch, percentage, phone, email) values (#{name}, #{branch},
 		#{percentage}, #{phone}, #{email});
 	</insert>
+
+	<select id="getAll" resultMap="Student">
+		SELECT * FROM student;
+	</select>
+
+	<resultMap id="Student" type="Student">
+		<result property="id" column="ID" />
+	</resultMap>
+	
+	  <select id = "getById" parameterType = "int" resultMap = "Student">
+      SELECT * FROM STUDENT WHERE id = #{id};
+   </select>
+   
+     <resultMap id = "Student" type = "Student">
+      <result property = "id" column = "ID"/>
+      <result property = "name" column = "NAME"/>
+      <result property = "branch" column = "BRANCH"/>
+      <result property = "percentage" column = "PERCENTAGE"/>
+      <result property = "phone" column = "PHONE"/>
+      <result property = "email" column = "EMAIL"/>
+   </resultMap>
+
+   <update id = "update" parameterType = "Student">
+      UPDATE STUDENT SET NAME = #{name}, 
+         BRANCH = #{branch}, 
+         PERCENTAGE = #{percentage}, 
+         PHONE = #{phone}, 
+         EMAIL = #{email} 
+      WHERE ID = #{id};
+   </update>
 </mapper> 

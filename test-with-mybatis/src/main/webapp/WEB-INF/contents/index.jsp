@@ -1,13 +1,30 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
 </head>
 <body>
-<h1>Hello World</h1>
-<a href="hello">Hello</a>
+	<h1>Hello World</h1>
+
+	<h1>Struts2 - Hello World</h1>
+	<!--   <form action="hello">
+    <label for="name">Please enter your name:</label><br/> 
+    <input for="branch" name="name" /> 
+    <input for="percentage" name="Submit" />
+    <input for="text" name="name" /> 
+    <input for="phone" name="Submit" />
+    <input for="email" name="name" /> 
+    <input type="submit" value="Submit" />
+  </form> -->
+	<s:form action="hello">
+		<s:textfield name="name" label="name" />
+		<s:textfield name="branch" label="branch" />
+		<s:textfield name="percentage" label="percentage" />
+		<s:textfield name="phone" label="phone" />
+		<s:textfield name="email" label="email" />
+		<s:submit value="submit" />
+	</s:form>
 </body>
 </html>

@@ -1,0 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>New Student</h1>
+	<h3>name ${name}</h3>
+	<h3>branch ${branch}</h3>
+	<h3>percentage ${percentage}</h3>
+	<h3>phone ${phone}</h3>
+	<h3>>email ${email}</h3>
+</body>
+</html>
