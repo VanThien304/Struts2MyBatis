@@ -90,7 +90,7 @@ public class HelloAction extends ActionSupport {
 	      SqlSession session = sqlSessionFactory.openSession();
 	      
 	      //select a particular student using id		
-	      student = session.selectOne("Student.getById", id);
+	      student = session.selectOne("Student.getById", 1);
 	      System.out.println("Current details of the student are" );
 	      System.out.println(student.toString());  
 	      
@@ -108,7 +108,7 @@ public class HelloAction extends ActionSupport {
 	      session.close();	  
 		  
 	      //verifying the record 
-	      Student std = session.selectOne("Student.getById", id);
+	      Student std = session.selectOne("Student.getById", 1);
 	      System.out.println("Details of the student after update operation" );
 	      System.out.println(std.toString());   
 	      session.commit();   

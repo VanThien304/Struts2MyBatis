@@ -7,22 +7,24 @@
 
 </head>
 <body>
-<s:form action="update">
+<h2>${student.getId()}</h2>
+	<s:form action="update">
 		<h3>${student.getName()}</h3>
-		<s:textfield name="name" label="name" />
+		<s:textfield name="name" label="name"/>
 		
 		<h3>${student.getBranch()}</h3>
-		<s:textfield name="branch" label="branch" />
+		<s:textfield name="branch" label="branch"/>
 		
 		<h3>${student.getPercentage()}</h3>
-		<s:textfield name="percentage" label="percentage" />
+		<s:textfield name="percentage" label="percentage"/>
 		
 		<h3>${student.getPhone()}</h3>
-		<s:textfield name="phone" label="phone" />
+		<s:textfield name="phone" label="phone"/>
 		
 		<h3>${student.getEmail()}</h3>
-		<s:textfield name="email" label="email" />
-		<s:submit value="submit" />
+		<s:textfield name="email" label="email"/>
+		
+		<s:submit value="submit"/>
 	</s:form>
 </body>
 </html>

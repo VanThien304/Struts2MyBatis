@@ -18,9 +18,10 @@
 			method="getStudentById">
 			<result name="success">WEB-INF/contents/update.jsp</result>
 		</action>
-			<action name="update" class="action.HelloAction"
+		
+		<action name="update" class="action.HelloAction"
 			method="updateStudentById">
-			<result name="success">WEB-INF/contents/view.jsp</result>
+			<result name="success">WEB-INF/contents/listStudent.jsp</result>
 		</action>
 	</package>
 </struts>
