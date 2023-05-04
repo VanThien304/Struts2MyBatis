@@ -9,20 +9,20 @@
 	<h1>Hello World</h1>
 
 	<h1>Struts2 - Hello World</h1>
-	<!--   <form action="hello">
-    <label for="name">Please enter your name:</label><br/> 
-    <input for="branch" name="name" /> 
-    <input for="percentage" name="Submit" />
-    <input for="text" name="name" /> 
-    <input for="phone" name="Submit" />
-    <input for="email" name="name" /> 
-    <input type="submit" value="Submit" />
-  </form> -->
-	<s:form action="hello">
+
+
+<%-- 	<s:form action="hello">
 		<s:textfield name="name" label="name" />
 		<s:textfield name="branch" label="branch" />
 		<s:textfield name="percentage" label="percentage" />
 		<s:textfield name="phone" label="phone" />
+		<s:textfield name="email" label="email" />
+		<s:submit value="submit" />
+	</s:form> --%>
+	
+	<h1>Struts2 - Form Login</h1>
+	<s:form action="login">
+		<s:textfield name="name" label="name" />
 		<s:textfield name="email" label="email" />
 		<s:submit value="submit" />
 	</s:form>

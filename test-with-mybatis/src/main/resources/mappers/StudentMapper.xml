@@ -16,6 +16,11 @@
 	<select id="getAll" resultMap="Student">
 		SELECT * FROM student;
 	</select>
+	
+		<select id="getLogin" resultMap="Student" >
+		SELECT name, email FROM student where name =? AND email=?;
+	</select>
+	
 
 	  <select id = "getById" parameterType = "int" resultMap = "Student">
       SELECT * FROM STUDENT WHERE id = #{id};

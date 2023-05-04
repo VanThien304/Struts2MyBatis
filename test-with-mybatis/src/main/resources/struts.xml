@@ -23,5 +23,13 @@
 			method="updateStudentById">
 			<result name="success">WEB-INF/contents/listStudent.jsp</result>
 		</action>
+		
+		<action name="login" class="action.HelloAction"
+			method="loginNameAndEmail">
+			<result name="success">WEB-INF/contents/resultLogin.jsp</result>
+			<result name="error">WEB-INF/contents/error.jsp</result>
+		</action>
+	
+		
 	</package>
 </struts>

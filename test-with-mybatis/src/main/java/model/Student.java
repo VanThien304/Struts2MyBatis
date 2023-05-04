@@ -19,6 +19,13 @@ public class Student {
 		this.email = email;
 	}
 	
+	public Student(String name, String email) {
+		super();
+		
+		this.name = name;
+		this.email = email;
+	}
+	
 	public Student(String name, String branch, int percentage, int phone, String email) {
 		super();
 		this.name = name;

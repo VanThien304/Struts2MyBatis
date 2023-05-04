@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="User">
+	<resultMap id="result" type="User">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="email" column="email" />
+		<result property="password" column="password" />
+		<result property="isActive" column="is_active" />
+		<result property="groupRoleId" column="group_role" />
+	</resultMap>
+	
+	<select id="selectUser" resultType="User">
+		SELECT * FROM mst_users;
+	</select>
+	<select id="getAll" resultMap="result">
+		SELECT * FROM mst_users;
+	</select>
+
+</mapper> 
