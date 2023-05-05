@@ -21,7 +21,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-6">User</div>
-			<div class="col-6">
+			<div class="col-6 d-flex justify-content-end">
 				<button id="show-modal" class="bg-primary">Add User</button>
 			</div>
 		</div>
@@ -32,32 +32,49 @@
 			<thead>
 				<tr>
 					<th scope="col">#</th>
-					<th scope="col">Fullname</th>
+					<th scope="col">FullName</th>
 					<th scope="col">Email</th>
 					<th scope="col">Group</th>
-					<t hscope="col">Active</th>
-					<th scope="col">Action</th>
+					<th scope="col">Active</th>
+					<th scope="col">Action</th>	
 				</tr>
 			</thead>
 			<tbody>
 				<s:iterator var="user" value="users">
 					<tr>
-						<th scope="row">${id}</th>
+						<td scope="row">${id}</td>
 						<td>${name}</td>
 						<td>${email}</td>
-						<td>${groupRoleId}</td>
+						<td>${groupRole}</td>
 						<td>${isActive}</td>
-						<td><i class="fa-solid fa-pen"></i> <i
-							class="fa-solid fa-trash"></i> <i class="fa-solid fa-user-xmark"></i></td>
+						<td class="d-flex justify-content-between">
+							<div>
+								<i id="${id}" class="fa-solid fa-pen edit"></i>
+							</div>
+							<div>
+								<i class="fa-solid fa-trash"></i>
+							</div>
+							<div>
+								<i class="fa-solid fa-user-xmark"></i>
+							</div>
+						</td>
+	
 					</tr>
 				</s:iterator>
 			</tbody>
 
 		</table>
 	</div>
+	
+	<s:form action="getUserById">
+		<s:textfield name="id" label="id"/>
+		<s:submit value="submit"/>
+	</s:form>
 
 
-	<%@ include file="/WEB-INF/pages/modalCreateUser.jsp" %>
+
+	<%@ include file="modalCreateUser.jsp" %>
+	<%@ include file="modalUpdateUser.jsp" %>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -71,6 +88,14 @@
 $(document).ready(function() {
     $("#show-modal").click(function() {
                 $("#modal-create-user").modal("show"); 
+            });
+ 
+});
+
+$(document).ready(function() {
+    $(".edit").click(function() {
+    	
+                $("#modal-update-user").modal("show"); 
             });
  
 });

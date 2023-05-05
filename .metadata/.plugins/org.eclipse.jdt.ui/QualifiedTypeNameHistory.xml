@@ -25,4 +25,10 @@
     <fullyQualifiedTypeName name="java.io.Reader"/>
     <fullyQualifiedTypeName name="java.lang.Integer"/>
     <fullyQualifiedTypeName name="com.tpv.model.GroupRole"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.Validations"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.RequiredStringValidator"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.ValidatorType"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.EmailValidator"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.RegexFieldValidator"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.ValidationException"/>
 </qualifiedTypeNameHistroy>

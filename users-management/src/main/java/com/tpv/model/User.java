@@ -1,32 +1,44 @@
 package com.tpv.model;
 
 public class User {
-	private Long id;
+	private Integer id;
 	private String name;
 	private String email;
 	private String password;
 	private Boolean isActive;
-	private String groupRoleId;
+	private Boolean isDelete;
+	private String groupRole;
 
 	public User() {
 		super();
 	}
 
-	public User(Long id, String name, String email, String password, Boolean isActive, String groupRoleId) {
+	public User(Integer id, String name, String email, String password, Boolean isActive, Boolean isDelete, String groupRole) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.isActive = isActive;
-		this.groupRoleId = groupRoleId;
+		this.isDelete = isDelete;
+		this.groupRole = groupRole;
+	}
+	
+	public User(String name, String email, String password, Boolean isActive, Boolean isDelete, String groupRole) {
+		super();
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.isActive = isActive;
+		this.isDelete = isDelete;
+		this.groupRole = groupRole;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -62,16 +74,23 @@ public class User {
 		this.isActive = isActive;
 	}
 
-	public String getGroupRoleId() {
-		return groupRoleId;
+	public String getGroupRole() {
+		return groupRole;
 	}
 
-	public void setGroupRoleId(String groupRoleId) {
-		this.groupRoleId = groupRoleId;
+	public Boolean getIsDelete() {
+		return isDelete;
 	}
 
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
 
+	public void setGroupRole(String groupRole) {
+		this.groupRole = groupRole;
+	}
 	
 	
+		
 
 }

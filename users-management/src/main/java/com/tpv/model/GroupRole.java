@@ -4,9 +4,8 @@ public class GroupRole {
 	private Long id;
 	private String groupName;
 
-	@Override
-	public String toString() {
-		return "GroupRole [id=" + id + ", groupRole=" + groupName + "]";
+	public GroupRole(Long id) {
+		this.id = id;
 	}
 
 	public Long getId() {

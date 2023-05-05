@@ -8,7 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<div id="modal-create-user" class="modal" tabindex="-1">
+	<div id="modal-update-user" class="modal" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -17,7 +17,7 @@
 						aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<s:form action="createUser" class="" id="frmCreateUser">
+					<s:form action="updateUser" class="" id="frmUpdateUser">
 
 						<div class="form-row">
 

@@ -5,12 +5,32 @@
 
 
 <struts>
-	<package name="default" namespace="/" extends="struts-default">
-		<action name="list" class="com.tpv.controller.UserAction"
+	<package name="default" extends="struts-default">
+		<action name="/*" class="com.tpv.controller.UserAction"
 			method="getAllUser">
 			<result name="success">WEB-INF/pages/index.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
+			
 		</action>
-
+		
+ 		<action name="getUserById" class="com.tpv.controller.UserAction"
+			method="getUserById">
+			<result name="success">WEB-INF/pages/result.jsp</result>
+			<result name="error">WEB-INF/pages/index.jsp</result>
+		</action> 
+		
+		<action name="createUser" class="com.tpv.controller.UserAction"
+			method="createUser">
+			<result name="success" type="redirectAction">/</result>
+			<result name="error">WEB-INF/pages/index.jsp</result>
+			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
+		</action>
+		
+		<action name="updateUser" class="com.tpv.controller.UserAction"
+			method="updateUser">
+			<result name="success" type="redirectAction">/</result>
+			<result name="error">WEB-INF/pages/index.jsp</result>
+			<result name="input">WEB-INF/pages/modalUpdateUser.jsp</result>
+		</action>
 	</package>
 </struts>

@@ -6,18 +6,32 @@
 <mapper namespace="User">
 	<resultMap id="result" type="User">
 		<result property="id" column="id" />
-		<result property="name" column="name" />
+		<result property="name" column="user_name" />
 		<result property="email" column="email" />
 		<result property="password" column="password" />
 		<result property="isActive" column="is_active" />
-		<result property="groupRoleId" column="group_role" />
+		<result property="groupRole" column="group_role" />
 	</resultMap>
 	
 	<select id="selectUser" resultType="User">
 		SELECT * FROM mst_users;
 	</select>
 	<select id="getAll" resultMap="result">
-		SELECT * FROM mst_users;
+		SELECT * FROM mst_users ORDER BY id DESC;
 	</select>
-
+	
+	<insert id="insert" parameterType="User">
+	 	INSERT INTO mst_users (user_name, email, password, is_active, is_delete, group_role) 
+ 		VALUES (#{name}, #{email}, #{password}, #{isActive}, #{isDelete}, #{groupRole});
+	</insert>
+  	
+  	<select id="getById" parameterType="int" resultMap = "result">
+  		SELECT * FROM mst_users WHERE id = #{id};
+  	</select>
+  	
+  	<update id="update" parameterType="User">
+  		UPDATE mst_users SET user_name = #{name}, email = #{email}, password = #{password}, is_active = #{isActive}, group_role = #{groupRole}
+  		WHERE id = #{id};
+  	</update>
+	
 </mapper> 
