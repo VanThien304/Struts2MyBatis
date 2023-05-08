@@ -8,6 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+	
 	<div id="modal-update-user" class="modal" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -23,19 +24,20 @@
 
 							<div class="col-sm-12">
 								<div class="form-group ">
-									<s:textfield class="form-control" name="name"
-										label="Fullname" id="" />
+								
+									<s:textfield class="form-control" name="name" id="nameUp"
+										label="Fullname"/>
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" name="email" label="Email"
-										id="" />
+									<s:textfield class="form-control" name="email" id="emailUp" 
+									 label="Email"/>
 								</div>
 								<div class="form-group ">
-									<s:password class="form-control" name="password" label="Password" />
+									<s:password class="form-control" name="password" id="passwordUp" label="Password" />
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" name="groupRole"
-										label="Group" id="" />
+									<s:textfield class="form-control" name="groupRole" id="groupRoleUp"
+										label="Group" />
 								</div>
 								<div class="form-group ">
 									<s:textfield class="form-control" value="true"  name="isActive"

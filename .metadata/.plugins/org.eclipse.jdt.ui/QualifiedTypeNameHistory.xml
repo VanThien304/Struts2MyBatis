@@ -8,12 +8,10 @@
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionSupport"/>
     <fullyQualifiedTypeName name="model.User"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
-    <fullyQualifiedTypeName name="java.util.Map"/>
     <fullyQualifiedTypeName name="com.mysql.cj.xdevapi.SessionFactory"/>
     <fullyQualifiedTypeName name="org.apache.struts2.dispatcher.SessionMap"/>
     <fullyQualifiedTypeName name="org.apache.struts2.ServletActionContext"/>
     <fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
-    <fullyQualifiedTypeName name="java.util.Date"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSessionFactoryBuilder"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSessionFactory"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSession"/>
@@ -31,4 +29,9 @@
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.EmailValidator"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.RegexFieldValidator"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.ValidationException"/>
+    <fullyQualifiedTypeName name="com.tpv.model.mapper.UserMapper"/>
+    <fullyQualifiedTypeName name="java.math.BigDecimal"/>
+    <fullyQualifiedTypeName name="java.util.Date"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="org.apache.struts2.interceptor.SessionAware"/>
 </qualifiedTypeNameHistroy>

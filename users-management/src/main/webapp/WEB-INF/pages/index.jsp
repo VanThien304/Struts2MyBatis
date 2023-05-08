@@ -1,6 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,29 +36,35 @@
 					<th scope="col">Email</th>
 					<th scope="col">Group</th>
 					<th scope="col">Active</th>
-					<th scope="col">Action</th>	
+					<th scope="col">Action</th>
 				</tr>
 			</thead>
 			<tbody>
 				<s:iterator var="user" value="users">
 					<tr>
-						<td scope="row">${id}</td>
+						<td id="userId" scope="row">${id}</td>
 						<td>${name}</td>
 						<td>${email}</td>
 						<td>${groupRole}</td>
 						<td>${isActive}</td>
 						<td class="d-flex justify-content-between">
 							<div>
-								<i id="${id}" class="fa-solid fa-pen edit"></i>
+								<button class="edit">
+									<i id="${id}" class="fa-solid fa-pen"></i>
+								</button>
 							</div>
 							<div>
-								<i class="fa-solid fa-trash"></i>
+								<a onclick="return confirmBox();"
+									href="deleteUserById.action?id=${id}" class="delete"> <i
+									class="fa-solid fa-trash"></i>
+								</a>
+
 							</div>
 							<div>
 								<i class="fa-solid fa-user-xmark"></i>
 							</div>
 						</td>
-	
+
 					</tr>
 				</s:iterator>
 			</tbody>
@@ -66,15 +72,13 @@
 		</table>
 	</div>
 	
-	<s:form action="getUserById">
-		<s:textfield name="id" label="id"/>
-		<s:submit value="submit"/>
-	</s:form>
+<s:form action="getUserById">
+	<s:textfield name="id"/>
+	<s:submit/>
+</s:form>
 
-
-
-	<%@ include file="modalCreateUser.jsp" %>
-	<%@ include file="modalUpdateUser.jsp" %>
+	<%@ include file="modalCreateUser.jsp"%>
+	<%@ include file="modalUpdateUser.jsp"%>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -85,21 +89,71 @@
 
 </body>
 <script>
-$(document).ready(function() {
-    $("#show-modal").click(function() {
-                $("#modal-create-user").modal("show"); 
-            });
- 
-});
+	$("#show-modal").click(function() {
+		$("#modal-create-user").modal("show");
+	});
 
-$(document).ready(function() {
-    $(".edit").click(function() {
-    	
-                $("#modal-update-user").modal("show"); 
-            });
- 
-});
+	$(".edit").click(function() {
+		$("#modal-update-user").modal("show");
+		
+		$('#nameUp').val() = ${name};
+		$('#emailUp').val() = ${email};
+		$('#passwordUp').val() = ${password};
+		$('#groupRoleUp').val() = ${groupRole};
+		
+	});
 
+	 $function getUserById(id) {
+	 $.ajax({
+	 url: "<s:url action="getUserById"/>",
+	 type: "GET",
+	 dataType: "json",
+	 success: function(data) {
+	
+	 console.log("UserId: " + data);
+	 }
+	 });
+	 }; 
 
+	$(".delete").click(function() {
+
+	});
+
+	function confirmBox() {
+		var answer;
+		answer = window.confirm("Are you sure to delete this user id?");
+		if (answer == true) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/* $(document).ready(function(){
+	 $(".delete").click(function(){
+		 var id = getUserById();
+		 alert(id);
+	alert("id")
+		 $.ajax({
+			 type:"POST",
+				url:"deleteUserById.action?id=${id}",
+				dataType: "JSON",
+				data:{id: id},
+				
+				success: function(res){
+					alert(res);
+					if(res.success){
+						 alert("Record deleted successfully.");
+						$(that).closest('tr').remove();
+						
+					}else{
+						alert(res.msg)
+					}
+				} 
+			 
+		 })
+
+	});
+	});  */
 </script>
 </html>

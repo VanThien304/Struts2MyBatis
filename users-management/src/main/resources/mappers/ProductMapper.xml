@@ -3,17 +3,19 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="User">
-	<resultMap id="result" type="User">
-		<result property="id" column="id" />
-		<result property="name" column="user_name" />
-		<result property="email" column="email" />
-		<result property="password" column="password" />
-		<result property="isActive" column="is_active" />
-		<result property="groupRole" column="group_role" />
+<mapper namespace="Product">
+	<resultMap id="result" type="Product">
+		<result property="productId" column="product_id" />
+		<result property="productName" column="product_name" />
+		<result property="productImage" column="product_image" />
+		<result property="productPrice" column="product_price" />
+		<result property="isSales" column="is_sales" />
+		<result property="description" column="description" />
+		<result property="createdAt" column="created_at" />
+		<result property="updatedAt" column="updated_at" />
 	</resultMap>
-	
-	<select id="selectUser" resultType="User">
+
+	<select id="selectUser" resultType="Product">
 		SELECT * FROM mst_users;
 	</select>
 	<select id="getAll" resultMap="result">
