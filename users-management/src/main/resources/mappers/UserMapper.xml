@@ -41,5 +41,9 @@
   	 <delete id = "deleteById" parameterType = "int">
       DELETE from mst_users WHERE id = #{id};
    </delete>
+   
+   <select id="search" resultType="User">
+   		SELECT * FROM mst_users WHERE mst_users LIKE CONCAT('%', #{keyword}, '%');
+   </select>
 	
 </mapper> 

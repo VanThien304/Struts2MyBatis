@@ -42,21 +42,26 @@
 			<tbody>
 				<s:iterator var="user" value="users">
 					<tr>
-						<td id="userId" scope="row">${id}</td>
-						<td>${name}</td>
-						<td>${email}</td>
-						<td>${groupRole}</td>
-						<td>${isActive}</td>
+					<!-- <td>${user}</td> -->
+						<td id="userId" scope="row"><s:property value="#user.getId()" />
+						</td>
+						<td><s:property value="#user.getName()" /></td>
+						<td><s:property value="#user.getEmail()" /></td>
+						<td><s:property value="#user.getGroupRole()" /></td>
+						<td><s:property value="#user.getIsActive()" /></td>
 						<td class="d-flex justify-content-between">
 							<div>
-								<button class="edit">
-									<i id="${id}" class="fa-solid fa-pen"></i>
-								</button>
+
+
+								<s:include value="modalUpdateUser.jsp">
+									<s:param name="user"></s:param>
+								</s:include>
+
 							</div>
 							<div>
 								<a onclick="return confirmBox();"
 									href="deleteUserById.action?id=${id}" class="delete"> <i
-									class="fa-solid fa-trash"></i>
+									class="fa-solid fa-trash btn btn-danger"></i>
 								</a>
 
 							</div>
@@ -71,11 +76,7 @@
 
 		</table>
 	</div>
-	
-<s:form action="getUserById">
-	<s:textfield name="id"/>
-	<s:submit/>
-</s:form>
+
 
 	<%@ include file="modalCreateUser.jsp"%>
 	<%@ include file="modalUpdateUser.jsp"%>
@@ -93,32 +94,27 @@
 		$("#modal-create-user").modal("show");
 	});
 
-	$(".edit").click(function() {
-		$("#modal-update-user").modal("show");
+	function getAllUser(){
 		
-		$('#nameUp').val() = ${name};
-		$('#emailUp').val() = ${email};
-		$('#passwordUp').val() = ${password};
-		$('#groupRoleUp').val() = ${groupRole};
-		
-	});
+		var formData = $(this).serialize();
+		$.ajax({
+			url : "getAllUser.action",
+			type : "GET",
+			data : formData,
+			success : function(user) {
+				console.log(user);
+			
+				location.reload();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
 
-	 $function getUserById(id) {
-	 $.ajax({
-	 url: "<s:url action="getUserById"/>",
-	 type: "GET",
-	 dataType: "json",
-	 success: function(data) {
+			}
+		});
+	}
 	
-	 console.log("UserId: " + data);
-	 }
-	 });
-	 }; 
-
-	$(".delete").click(function() {
-
-	});
-
+	
+	
 	function confirmBox() {
 		var answer;
 		answer = window.confirm("Are you sure to delete this user id?");
@@ -129,31 +125,32 @@
 		}
 	}
 
-	/* $(document).ready(function(){
-	 $(".delete").click(function(){
-		 var id = getUserById();
-		 alert(id);
-	alert("id")
-		 $.ajax({
-			 type:"POST",
-				url:"deleteUserById.action?id=${id}",
-				dataType: "JSON",
-				data:{id: id},
-				
-				success: function(res){
-					alert(res);
-					if(res.success){
-						 alert("Record deleted successfully.");
-						$(that).closest('tr').remove();
-						
-					}else{
-						alert(res.msg)
-					}
-				} 
-			 
-		 })
+	$(".delete").click(function() {
+		var id = getUserById();
+		alert(id);
+		alert("id")
+		$.ajax({
+			type : "POST",
+			url : "deleteUserById.action?id=${id}",
+			dataType : "JSON",
+			data : {
+				id : id
+			},
+
+			success : function(res) {
+				alert(res);
+				if (res.success) {
+					alert("Record deleted successfully.");
+					$(that).closest('tr').remove();
+					getAllUser();
+
+				} else {
+					alert(res.msg)
+				}
+			}
+
+		})
 
 	});
-	});  */
 </script>
 </html>

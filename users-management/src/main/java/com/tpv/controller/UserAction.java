@@ -1,7 +1,8 @@
 package com.tpv.controller;
 
+import java.io.IOException;
 import java.io.Reader;
-
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import com.tpv.model.User;
 
+import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -17,7 +19,7 @@ import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-public class UserAction extends ActionSupport implements SessionAware{
+public class UserAction extends ActionSupport implements SessionAware {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,6 +27,7 @@ public class UserAction extends ActionSupport implements SessionAware{
 	private String name;
 	private String email;
 	private String password;
+	private String confirmPassword;
 	private Boolean isActive;
 	private Boolean isDelete;
 	private String groupRole;
@@ -33,36 +36,30 @@ public class UserAction extends ActionSupport implements SessionAware{
 
 	private List<User> users;
 
-	private Map<String, Object> userSession ;
+	private Map<String, Object> userSession;
 
 	public void setSession(Map<String, Object> session) {
-	   userSession = session ;
+		userSession = session;
 	}
-	
-	
-	
+
 	public String getUserById() throws SQLException, Exception {
 		try {
 			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 			SqlSession session = sqlSessionFactory.openSession();
 
-	/*		if (user.getId() == null) {
-				addActionError("User not found.");
-				return "error";
-			} else {*/
-				user = session.selectOne("User.getById", id);
-				// Print the student details
-				System.out.println(user.getId());
-				System.out.println(user.getName());
-				System.out.println(user.getEmail());
-				System.out.println(user.getPassword());
-				System.out.println(user.getGroupRole());
-				System.out.println(user.getIsActive());
+			user = session.selectOne("User.getById", id);
+			// Print the student details
+			System.out.println(user.getId());
+			System.out.println(user.getName());
+			System.out.println(user.getEmail());
+			System.out.println(user.getPassword());
+			System.out.println(user.getGroupRole());
+			System.out.println(user.getIsActive());
 
-				session.commit();
-				session.close();
-				return "success";
+			session.commit();
+			session.close();
+			return "success";
 //			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -76,24 +73,23 @@ public class UserAction extends ActionSupport implements SessionAware{
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			Connection conn = session.getConnection();
+			if (conn.isClosed()) {
+				session = sqlSessionFactory.openSession();
+				conn = session.getConnection();
+			}
+			users = session.selectList("User.getAll");
 
-		// select contact all contacts
-		users = (ArrayList) session.selectList("User.getAll");
+			System.out.println("Records Read Successfully ");
 
-		for (User u : users) {
-			System.out.println(u.getId());
-			System.out.println(u.getName());
-			System.out.println(u.getEmail());
-			System.out.println(u.getPassword());
-			System.out.println(u.getIsActive());
-			System.out.println(u.getIsDelete());
-			System.out.println(u.getGroupRole());
-
+			return "success";
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			session.close();
 		}
-
-		System.out.println("Records Read Successfully ");
-		session.commit();
-		session.close();
 		return "success";
 	}
 
@@ -110,20 +106,43 @@ public class UserAction extends ActionSupport implements SessionAware{
 		System.out.println("name = " + user.getName());
 		System.out.println("password = " + user.getPassword());
 		System.out.println("record inserted successfully");
-		
-		
-		
+
 		session.commit();
 		session.close();
 		return "success";
 	}
 
-	public String createUser() throws SQLException, Exception {
-		try {
-			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-			SqlSession session = sqlSessionFactory.openSession();
+	public String search(String keywork) throws SQLException, Exception {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		;
 
+		try {
+			Connection conn = session.getConnection();
+			if (conn.isClosed()) {
+				session = sqlSessionFactory.openSession();
+				conn = session.getConnection();
+			}
+			// select a particular user using id
+			user = (User) session.selectOne("User.search", keywork);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			addActionError("Error retrieving user: " + e.getMessage());
+
+		} finally {
+			session.close();
+		}
+		return "success";
+	}
+
+	public String createUser() throws SQLException, Exception {
+
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
 			// Create a new student object
 //		     user = new User(name, email, password, isActive, isDelete, groupRole); 
 			user = new User();
@@ -138,25 +157,41 @@ public class UserAction extends ActionSupport implements SessionAware{
 			session.insert("User.insert", user);
 			System.out.println("record inserted successfully");
 			session.commit();
-			session.close();
-			return "success";
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			addActionError("Error retrieving user: " + e.getMessage());
-			
+
+		} finally {
+			session.close();
 		}
-		return "error";
+		return "success";
 
 	}
 
-	public String updateUser() throws SQLException, Exception {
+	public String updateUser() throws SQLException, Exception, ExecutorException {
+		if (id == null) {
+			return "error";
+		}
+
+		if (!password.equals(confirmPassword)) {
+			System.out.println("mật khẩu không trùng khớp!");
+			return "passwordMismatch";
+		}
+
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
+		;
 
+		Connection conn = session.getConnection();
+		if (conn.isClosed()) {
+			session = sqlSessionFactory.openSession();
+			conn = session.getConnection();
+		}
 		// select a particular user using id
 		user = (User) session.selectOne("User.getById", id);
+		System.out.println("User ID = " + id);
 		System.out.println("Current details of the student are");
 		System.out.println(user.toString());
 
@@ -169,7 +204,6 @@ public class UserAction extends ActionSupport implements SessionAware{
 		session.update("User.update", user);
 		System.out.println("Record updated successfully");
 		session.commit();
-		session.close();
 
 		// verifying the record
 		User u = session.selectOne("User.getById", id);
@@ -177,7 +211,9 @@ public class UserAction extends ActionSupport implements SessionAware{
 		System.out.println(u.toString());
 		session.commit();
 		session.close();
+
 		return "success";
+
 	}
 
 	public String deleteUserById() throws SQLException, Exception {
@@ -285,17 +321,20 @@ public class UserAction extends ActionSupport implements SessionAware{
 		this.users = users;
 	}
 
-
-
 	public Map<String, Object> getUserSession() {
 		return userSession;
 	}
-
-
 
 	public void setUserSession(Map<String, Object> userSession) {
 		this.userSession = userSession;
 	}
 
-	
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+
 }
