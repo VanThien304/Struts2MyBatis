@@ -17,7 +17,7 @@
 		SELECT * FROM mst_users;
 	</select>
 	<select id="getAll" resultMap="result">
-		SELECT * FROM mst_users ORDER BY id DESC;
+		SELECT * FROM mst_users WHERE is_delete = 0 ORDER BY id DESC;
 	</select>
 	
 	<select id="login" resultMap="result">
@@ -39,11 +39,11 @@
   	</update>
   	
   	 <delete id = "deleteById" parameterType = "int">
-      DELETE from mst_users WHERE id = #{id};
+      UPDATE mst_users SET is_delete = 1 WHERE id = #{id};
    </delete>
    
-   <select id="search" resultType="User">
-   		SELECT * FROM mst_users WHERE mst_users LIKE CONCAT('%', #{keyword}, '%');
+   <select id="search" resultMap="result">
+   		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE user_name LIKE CONCAT('%', #{name} ,'%') ;
    </select>
 	
 </mapper> 

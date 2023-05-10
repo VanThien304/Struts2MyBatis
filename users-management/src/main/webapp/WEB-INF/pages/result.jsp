@@ -1,20 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<meta charset="utf-8">
+<title>Login Page</title>
 </head>
 <body>
 	
 	
-	<h1>New Student id = ${id}</h1>
-	<h3> ${name}</h3>
-	<h3> ${email}</h3>
-	<h3>${password}</h3>
-	<h3> ${groupRole}</h3>
-	<h3> ${email}</h3>
-
+	
+	<h2>${name }</h2>
 </body>
 </html>

@@ -1,19 +1,21 @@
 package com.tpv.model;
 
+
+
 public class User {
 	private Integer id;
 	private String name;
 	private String email;
 	private String password;
-	private Boolean isActive;
-	private Boolean isDelete;
+	private Integer isActive;
+	private Integer isDelete;
 	private String groupRole;
 
 	public User() {
 		super();
 	}
 
-	public User(Integer id, String name, String email, String password, Boolean isActive, Boolean isDelete, String groupRole) {
+	public User(Integer id, String name, String email, String password, Integer isActive, Integer isDelete, String groupRole) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -24,7 +26,7 @@ public class User {
 		this.groupRole = groupRole;
 	}
 	
-	public User(String name, String email, String password, Boolean isActive, Boolean isDelete, String groupRole) {
+	public User(String name, String email, String password, Integer isActive, Integer isDelete, String groupRole) {
 		super();
 		this.name = name;
 		this.email = email;
@@ -66,11 +68,11 @@ public class User {
 		this.password = password;
 	}
 
-	public Boolean getIsActive() {
+	public Integer getIsActive() {
 		return isActive;
 	}
 
-	public void setIsActive(Boolean isActive) {
+	public void setIsActive(Integer isActive) {
 		this.isActive = isActive;
 	}
 
@@ -78,17 +80,18 @@ public class User {
 		return groupRole;
 	}
 
-	public Boolean getIsDelete() {
+	public Integer getIsDelete() {
 		return isDelete;
 	}
 
-	public void setIsDelete(Boolean isDelete) {
+	public void setIsDelete(Integer isDelete) {
 		this.isDelete = isDelete;
 	}
 
 	public void setGroupRole(String groupRole) {
 		this.groupRole = groupRole;
 	}
+
 	
 	
 		

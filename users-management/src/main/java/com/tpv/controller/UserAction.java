@@ -1,6 +1,5 @@
 package com.tpv.controller;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,6 +14,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -28,13 +28,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 	private String email;
 	private String password;
 	private String confirmPassword;
-	private Boolean isActive;
-	private Boolean isDelete;
+	private Integer isActive;
+	private Integer isDelete;
 	private String groupRole;
 
+	private String keywork;
 	private User user;
 
-	private List<User> users;
+	private static List<User> users;
 
 	private Map<String, Object> userSession;
 
@@ -43,6 +44,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 	}
 
 	public String getUserById() throws SQLException, Exception {
+
 		try {
 			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
@@ -112,29 +114,40 @@ public class UserAction extends ActionSupport implements SessionAware {
 		return "success";
 	}
 
-	public String search(String keywork) throws SQLException, Exception {
+	public String searchUser() throws SQLException, Exception {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
-		;
-
 		try {
+			if (keywork.length() == 0) {
+				System.out.println("vui long nhap du lieu de tim kiem!");
+				return "error";
+			}
+			PropertyConfigurator.configure(keywork);
+
 			Connection conn = session.getConnection();
 			if (conn.isClosed()) {
 				session = sqlSessionFactory.openSession();
 				conn = session.getConnection();
 			}
-			// select a particular user using id
-			user = (User) session.selectOne("User.search", keywork);
+			users = session.selectList("User.search", keywork);
+			for (User user : users) {
+				
+				System.out.println("user id = " + user.getId());
+				System.out.println("name = " + user.getName());
+				System.out.println("email" + user.getEmail());
+				System.out.println("GroupRole = " + user.getGroupRole());
+				System.out.println("Active" + user.getIsActive());
+			}
+			session.commit();
+			return "success";
 		} catch (Exception e) {
 			// TODO: handle exception
-			e.printStackTrace();
-			addActionError("Error retrieving user: " + e.getMessage());
-
+			return "error";
 		} finally {
 			session.close();
 		}
-		return "success";
+
 	}
 
 	public String createUser() throws SQLException, Exception {
@@ -149,11 +162,11 @@ public class UserAction extends ActionSupport implements SessionAware {
 			user.setName(name);
 			user.setEmail(email);
 			user.setPassword(password);
-			user.setIsActive(true);
-			user.setIsDelete(false);
+			user.setIsActive(1);
+			user.setIsDelete(0);
 			user.setGroupRole(groupRole);
 			validate(user);
-			// Insert student data
+
 			session.insert("User.insert", user);
 			System.out.println("record inserted successfully");
 			session.commit();
@@ -182,47 +195,54 @@ public class UserAction extends ActionSupport implements SessionAware {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
-		;
 
-		Connection conn = session.getConnection();
-		if (conn.isClosed()) {
-			session = sqlSessionFactory.openSession();
-			conn = session.getConnection();
+		try {
+			Connection conn = session.getConnection();
+			if (conn.isClosed()) {
+				session = sqlSessionFactory.openSession();
+				conn = session.getConnection();
+			}
+			// select a particular user using id
+			user = (User) session.selectOne("User.getById", id);
+			System.out.println("User ID = " + id);
+			System.out.println("Current details of the student are");
+			System.out.println(user.toString());
+
+			user.setName(name);
+			user.setEmail(email);
+			user.setPassword(password);
+			user.setIsActive(isActive);
+			user.setGroupRole(groupRole);
+			// Update the user record
+			session.update("User.update", user);
+			System.out.println("Record updated successfully");
+			session.commit();
+
+			// verifying the record
+			User u = session.selectOne("User.getById", id);
+			System.out.println("Details of the student after update operation");
+			System.out.println(u.toString());
+			session.commit();
+			return "success";
+		} catch (Exception e) {
+			// TODO: handle exception
+			return "error";
+		} finally {
+			session.close();
 		}
-		// select a particular user using id
-		user = (User) session.selectOne("User.getById", id);
-		System.out.println("User ID = " + id);
-		System.out.println("Current details of the student are");
-		System.out.println(user.toString());
-
-		user.setName(name);
-		user.setEmail(email);
-		user.setPassword(password);
-		user.setIsActive(isActive);
-		user.setGroupRole(groupRole);
-		// Update the user record
-		session.update("User.update", user);
-		System.out.println("Record updated successfully");
-		session.commit();
-
-		// verifying the record
-		User u = session.selectOne("User.getById", id);
-		System.out.println("Details of the student after update operation");
-		System.out.println(u.toString());
-		session.commit();
-		session.close();
-
-		return "success";
-
 	}
 
 	public String deleteUserById() throws SQLException, Exception {
+		if (id == null) {
+			return "error";
+		}
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
 
 		// Delete operation
 		int res = session.delete("User.deleteById", id);
+		
 		System.out.println(id);
 		System.out.println(res);
 		session.commit();
@@ -285,11 +305,11 @@ public class UserAction extends ActionSupport implements SessionAware {
 		this.password = password;
 	}
 
-	public Boolean getIsActive() {
+	public Integer getIsActive() {
 		return isActive;
 	}
 
-	public void setIsActive(Boolean isActive) {
+	public void setIsActive(Integer isActive) {
 		this.isActive = isActive;
 	}
 
@@ -309,11 +329,11 @@ public class UserAction extends ActionSupport implements SessionAware {
 		this.user = user;
 	}
 
-	public Boolean getIsDelete() {
+	public Integer getIsDelete() {
 		return isDelete;
 	}
 
-	public void setIsDelete(Boolean isDelete) {
+	public void setIsDelete(Integer isDelete) {
 		this.isDelete = isDelete;
 	}
 
@@ -335,6 +355,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
+	}
+
+	public String getKeywork() {
+		return keywork;
+	}
+
+	public void setKeywork(String keywork) {
+		this.keywork = keywork;
 	}
 
 }

@@ -1,10 +1,10 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="utf-8">
 <title>Insert title here</title>
 </head>
 <body>
@@ -12,7 +12,7 @@
 		${param.user}
 	</s:set>
 
-	 <i onclick="showModalUpdateUser()" class="fa-solid fa-pen" style="cursor: pointer"></i> 
+	 
 	<div id="modal-update-user" class="modal" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -27,7 +27,7 @@
 						<div class="form-row">
 							<div class="col-sm-12">
 								<div class="form-group ">
-									<s:textfield name="id" label="ID" value="%{id}" />
+									<s:textfield name="id" label="ID" value="%{id}" readonly="true"/>
 								</div>
 								<div class="form-group ">
 									<s:textfield class="form-control" name="name" value="%{name}"
