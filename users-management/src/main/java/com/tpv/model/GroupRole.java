@@ -1,27 +1,17 @@
 package com.tpv.model;
 
-public class GroupRole {
-	private Long id;
-	private String groupName;
+public enum GroupRole {
 
-	public GroupRole(Long id) {
-		this.id = id;
+	ADMIN("Admin"), EDITOR("Editor"), REVIEWER("Reviewer");
+
+	private final String displayName;
+
+	private GroupRole(String displayName) {
+		this.displayName = displayName;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupRole) {
-		this.groupName = groupRole;
+	public String getDisplayName() {
+		return displayName;
 	}
 
 }

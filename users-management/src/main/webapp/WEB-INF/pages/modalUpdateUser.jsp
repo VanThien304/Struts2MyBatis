@@ -46,12 +46,14 @@
 										value="%{confirmPassword}" label="Confirm Password" />
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" name="groupRole"
-										value="%{groupRole}" label="Group" />
+							 
+									<s:select name="groupRole" label="Group"
+										list="#{'1': 'Admin', '2':'Editor', '3':'Reviewer' }" value="%{groupRole}"/>
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" value="true" name="isActive"
-										label="Active" readonly="true" />
+									<s:textfield class="form-control" name="((isActive == 1) ? 'True' : 'False')"
+										label="Active" readonly="true" value="%{isActive}"/>
+								
 								</div>
 							</div>
 						</div>
@@ -72,10 +74,10 @@
 
 		function showModalUpdateUser() {
 			$("#modal-update-user").modal("show");
-			doUpdateUser();
+		 	doUpdateUser(); 
 		}
 
-		function doUpdateUser() {
+		 function doUpdateUser() {
 			$("#update-form").submit(function(e) {
 				 e.preventDefault(); 
 				var formData = $(this).serialize();
@@ -85,9 +87,8 @@
 					data : formData,
 					success : function(data) {
 						console.log(data);
-
 						location.reload();
-						getAllUser();
+					
 					},
 					error : function(jqXHR, textStatus, errorThrown) {
 						console.log(textStatus, errorThrown);
@@ -95,7 +96,7 @@
 					}
 				});
 			});
-		}
+		} 
 	</script>
 </body>
 </html>

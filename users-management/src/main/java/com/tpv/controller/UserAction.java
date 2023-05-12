@@ -4,6 +4,7 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,11 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.log4j.PropertyConfigurator;
+
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
+
 
 public class UserAction extends ActionSupport implements SessionAware {
 
@@ -33,16 +36,18 @@ public class UserAction extends ActionSupport implements SessionAware {
 	private String groupRole;
 
 	private String keywork;
+	
 	private User user;
 
-	private static List<User> users;
+	private List<User> users = new ArrayList<User>();
 
 	private Map<String, Object> userSession;
 
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
 	}
-
+	
+	
 	public String getUserById() throws SQLException, Exception {
 
 		try {
@@ -62,7 +67,29 @@ public class UserAction extends ActionSupport implements SessionAware {
 			session.commit();
 			session.close();
 			return "success";
-//			}
+			
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			addActionError("Error retrieving user: " + e.getMessage());
+			return "error";
+		}
+	}
+
+	public String getUserByActive()throws SQLException, Exception {
+		try {
+			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+			SqlSession session = sqlSessionFactory.openSession();
+
+			users = session.selectList("User.getUserByActive", isActive);
+			
+			System.out.println("users" + users);
+
+			session.commit();
+			session.close();
+			return "success";
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -70,8 +97,10 @@ public class UserAction extends ActionSupport implements SessionAware {
 			return "error";
 		}
 	}
-
-	public String getAllUser() throws SQLException, Exception {
+	
+	
+	public String getAllUsers() throws SQLException, Exception {
+		
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
@@ -81,10 +110,10 @@ public class UserAction extends ActionSupport implements SessionAware {
 				session = sqlSessionFactory.openSession();
 				conn = session.getConnection();
 			}
+			
 			users = session.selectList("User.getAll");
-
 			System.out.println("Records Read Successfully ");
-
+			
 			return "success";
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -93,6 +122,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			session.close();
 		}
 		return "success";
+		
 	}
 
 	public String loginUser() throws SQLException, Exception {
@@ -100,10 +130,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
 
-		user.setName(name);
-		user.setPassword(password);
-
-		session.selectOne("User.login", user);
+		userSession.put("name", name);
+		userSession.put("password", password);
+		session.selectOne("User.login", userSession);
+		/*
+		 * user.setName(name); user.setPassword(password);
+		 * 
+		 * session.selectOne("User.login", user);
+		 */
 		System.out.println("id = " + user.getId());
 		System.out.println("name = " + user.getName());
 		System.out.println("password = " + user.getPassword());
@@ -132,7 +166,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			}
 			users = session.selectList("User.search", keywork);
 			for (User user : users) {
-				
+
 				System.out.println("user id = " + user.getId());
 				System.out.println("name = " + user.getName());
 				System.out.println("email" + user.getEmail());
@@ -142,7 +176,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 			session.commit();
 			return "success";
 		} catch (Exception e) {
-			// TODO: handle exception
 			return "error";
 		} finally {
 			session.close();
@@ -182,6 +215,48 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 	}
 
+	public String setActiveUserById() throws SQLException, Exception, ExecutorException {
+		if (id == null) {
+			return "error";
+		}
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+
+		try {
+			Connection conn = session.getConnection();
+			if (conn.isClosed()) {
+				session = sqlSessionFactory.openSession();
+				conn = session.getConnection();
+			}
+			// select a particular user using id
+			user = (User) session.selectOne("User.getById", id);
+
+			if (user.getIsActive() == 0) {
+				user.setIsActive(1);
+			} else {
+				user.setIsActive(0);
+			}
+
+			// Update the user record
+			session.update("User.setActiveUser", user);
+			System.out.println("Record set Active user successfully");
+			session.commit();
+
+			// verifying the record
+			User u = session.selectOne("User.getById", id);
+			System.out.println("Details of the student after update operation");
+			System.out.println(u.toString());
+			session.commit();
+			return "success";
+		} catch (Exception e) {
+			// TODO: handle exception
+			return "error";
+		} finally {
+			session.close();
+		}
+	}
+
 	public String updateUser() throws SQLException, Exception, ExecutorException {
 		if (id == null) {
 			return "error";
@@ -211,7 +286,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			user.setName(name);
 			user.setEmail(email);
 			user.setPassword(password);
-			user.setIsActive(isActive);
+			user.setIsActive(1);
 			user.setGroupRole(groupRole);
 			// Update the user record
 			session.update("User.update", user);
@@ -242,7 +317,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 		// Delete operation
 		int res = session.delete("User.deleteById", id);
-		
+
 		System.out.println(id);
 		System.out.println(res);
 		session.commit();
@@ -364,5 +439,4 @@ public class UserAction extends ActionSupport implements SessionAware {
 	public void setKeywork(String keywork) {
 		this.keywork = keywork;
 	}
-
 }

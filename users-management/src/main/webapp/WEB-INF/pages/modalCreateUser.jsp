@@ -8,6 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+	
 	<div id="modal-create-user" class="modal" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -23,28 +24,31 @@
 
 							<div class="col-sm-12">
 								<div class="form-group ">
-									<s:textfield class="form-control" name="name"
-										label="Fullname" id="" />
+									<s:textfield class="form-control" name="name" label="Fullname"
+										id="" />
 								</div>
 								<div class="form-group ">
 									<s:textfield class="form-control" name="email" label="Email"
 										id="" />
 								</div>
 								<div class="form-group ">
-									<s:password class="form-control" name="password" label="Password" />
+									<s:password class="form-control" name="password"
+										label="Password" />
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" name="groupRole"
-										label="Group" id="" />
+									<%-- <s:textfield class="form-control" name="groupRole"
+										label="Group" /> --%>
+									<s:select name="groupRole" label="Group"
+										list="#{'1': 'Admin', '2':'Editor', '3':'Reviewer' }" value="%{user.getGroupRole()}"/>
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" value="true"  name="isActive"
-										label="Active" readonly="true"/>
+									<s:textfield class="form-control" name="isActive" readonly="true"
+										label="Active" placeholder="True"/>
 								</div>
 							</div>
-						</div> 
+						</div>
 						<s:submit value="Save User" class="btn btn-primary" />
-						
+
 					</s:form>
 				</div>
 				<div class="modal-footer">
