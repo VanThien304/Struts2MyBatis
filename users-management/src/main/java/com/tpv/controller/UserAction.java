@@ -97,9 +97,33 @@ public class UserAction extends ActionSupport implements SessionAware {
 			return "error";
 		}
 	}
+public List<User> getAllUsers() throws SQLException, Exception {
+		
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			Connection conn = session.getConnection();
+			if (conn.isClosed()) {
+				session = sqlSessionFactory.openSession();
+				conn = session.getConnection();
+			}
+			
+			users = session.selectList("User.getAll");
+			System.out.println("Records Read Successfully ");
+			
+			return users;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return null;
+		
+	}
 	
-	
-	public String getAllUsers() throws SQLException, Exception {
+	public String getAllUsersJSON() throws SQLException, Exception {
 		
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);

@@ -6,19 +6,25 @@
 
 <struts>
 	<constant name="struts.devMode" value="false" />
-	
-	<package name="default" extends="json-default" namespace="/">
-		<action name="/*" class="com.tpv.controller.UserAction" method="getAllUsers">
-			<result type="json" name="success">
-				WEB-INF/pages/index.jsp
-			</result>
+
+	<package name="default" extends="struts-default, json-default"
+		namespace="/">
+		<action name="getAllUsersJSON" class="com.tpv.controller.UserAction"
+			method="getAllUsersJSON">
+			<result type="json">users</result>
 		</action>
 
+		<action name="/*" class="com.tpv.controller.UserAction"
+			method="getAllUsers">
+			<result name="success">
+				/WEB-INF/pages/index.jsp
+			</result>
+		</action>
 
 		<action name="searchUser" class="com.tpv.controller.UserAction"
 			method="searchUser">
 			<result type="json" name="success">
-				
+
 			</result>
 			<!-- <result name="error">WEB-INF/pages/index.jsp</result> -->
 		</action>
@@ -35,13 +41,13 @@
 			<result name="success">WEB-INF/pages/result.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 		</action>
-		
+
 		<action name="getUserByActive"
 			class="com.tpv.controller.UserAction" method="getUserByActive">
 			<result name="success">WEB-INF/pages/result.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 		</action>
-		
+
 
 		<action name="createUser" class="com.tpv.controller.UserAction"
 			method="createUser">
@@ -50,15 +56,15 @@
 			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
 		</action>
 
-	 	<action name="updateUser" class="com.tpv.controller.UserAction"
+		<action name="updateUser" class="com.tpv.controller.UserAction"
 			method="updateUser">
 			<result name="success" type="redirectAction">/</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 			<result name="input">WEB-INF/pages/modalUpdateUser.jsp</result>
-		</action> 
-		
-		<action name="setActiveUserById" class="com.tpv.controller.UserAction"
-			method="setActiveUserById">
+		</action>
+
+		<action name="setActiveUserById"
+			class="com.tpv.controller.UserAction" method="setActiveUserById">
 			<result name="success" type="redirectAction">/</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 		</action>
