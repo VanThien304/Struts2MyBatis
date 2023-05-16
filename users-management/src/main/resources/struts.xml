@@ -9,8 +9,16 @@
 
 	<package name="default" extends="struts-default, json-default"
 		namespace="/">
-		<action name="getAllUsersJSON" class="com.tpv.controller.UserAction"
-			method="getAllUsersJSON">
+		<interceptors>
+			<interceptor name="authenticationInterceptor" class="com.tpv.interceptor.AuthenticationInterceptor"></interceptor>
+			<interceptor-stack name="secureStack">
+				<interceptor-ref name="authenticationInterceptor"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>		
+			
+		<action name="getAllUsersJSON"
+			class="com.tpv.controller.UserAction" method="getAllUsers">
 			<result type="json">users</result>
 		</action>
 
@@ -29,11 +37,21 @@
 			<!-- <result name="error">WEB-INF/pages/index.jsp</result> -->
 		</action>
 
-		<action name="login" class="com.tpv.controller.UserAction"
+	 	<action name="login">
+			<result>WEB-INF/pages/login.jsp</result>
+		</action> 
+
+ 		<action name="loginUser" class="com.tpv.controller.UserAction"
 			method="loginUser">
-			<result type="json">
-				<param name="success">userSession</param>
-			</result>
+			<result name="success">WEB-INF/pages/index.jsp</result>
+			<result name="error">WEB-INF/pages/login.jsp</result>
+			<result name="input">WEB-INF/pages/login.jsp</result>
+			<result name="login" type="redirect">WEB-INF/pages/login.jsp</result>
+		</action> 
+		
+		<action name="logout" class="com.tpv.controller.UserAction"
+			method="logoutUser">
+			<result name="success">WEB-INF/pages/login.jsp</result>
 		</action>
 
 		<action name="getUserById"
@@ -48,6 +66,15 @@
 			<result name="error">WEB-INF/pages/index.jsp</result>
 		</action>
 
+		<action name="pagination" class="com.tpv.controller.UserAction"
+			method="pagination">
+			<result name="success">WEB-INF/pages/index.jsp</result>
+			<result name="error">WEB-INF/pages/index.jsp</result>
+		</action>
+		<action name="paginationJSON"
+			class="com.tpv.controller.UserAction" method="pagination">
+			<result type="json">users</result>
+		</action>
 
 		<action name="createUser" class="com.tpv.controller.UserAction"
 			method="createUser">

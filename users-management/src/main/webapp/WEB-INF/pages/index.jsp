@@ -34,28 +34,30 @@
 
 	<div class="container">
 		<div class="row">
-			<div class="col-6">
+			<div class="col-3">
 				<!-- 	<h3>Search By Name</h3> -->
 
-				<%-- 	<form id="searchForm" onsubmit="return submitSearch()"
-					class="d-flex">
-					<s:textfield id="keyword" name="keywork" label="Name" />
-					<s:submit value="Search" />
-				</form> --%>
+				<form id="searchForm">
+					<input type="text" name="keyword" id="keyword" />
+					<button type="button" onclick="submitSearch()">Search</button>
+				</form>
 
-				<s:form id="selectUserByActive">
-					<%-- <s:select name="isActive" label="Select Active"
-						list="#{'0': 'Tạm khóa', '1':'Đang hoạt động' }"
-						value="{#user.getIsActive()}" /> --%>
-					<s:textfield name="isActive" />
-					<s:submit value="submit active" onclick="getUserByActive()" />
-				</s:form>
 
 
 			</div>
 			<div class="col-6 d-flex justify-content-end">
 				<button id="show-modal" class="bg-primary" style="height: 35px">Add
 					User</button>
+			</div>
+			<div class="col-3">
+				<!-- 	<h3>Search By Name</h3> -->
+
+				<button id="logout">
+					<a href="logout.action" onclick='return confirmLogout()'>Logout</a>
+				</button>
+
+
+
 			</div>
 		</div>
 	</div>
@@ -73,55 +75,57 @@
 				</tr>
 			</thead>
 			<tbody>
-				<%--  <s:iterator var="user" value="users">
-					<tr>
-						<!-- <td>${user}</td> -->
-						<td id="userId" scope="row"><s:property value="#user.getId()" />
-						</td>
-						<td><s:property value="#user.getName()" /></td>
-						<td><s:property value="#user.getEmail()" /></td>
-						<s:if test="%{#user.getGroupRole() == 1}">
-							<td>Admin</td>
-						</s:if>
-						<s:elseif test="%{#user.getGroupRole() == 2}">
-							<td>Editor</td>
-						</s:elseif>
-						<s:else>
-							<td>Reviewer</td>
-						</s:else>
-						<td><s:property
-								value="%{#user.getIsActive() == 1 ? 'Đang hoạt động' : 'Tạm khóa'}" /></td>
-						<td class="d-flex justify-content-between">
-							<div>
 
-								<i onclick="showModalUpdateUser(${id})"
-									class="fa-solid fa-pen btn btn-primary" style="cursor: pointer"></i>
-								<s:include value="modalUpdateUser.jsp">
-									<s:param name="user"></s:param>
-								</s:include>
-
-							</div>
-							<div>
-								<a onclick="return confirmBox();"
-									href="deleteUserById.action?id=${id}" class="delete"> <i
-									class="fa-solid fa-trash btn btn-danger"></i>
-								</a>
-
-							</div>
-							<div>
-								<a onclick="return confirmBoxActive();"
-									href="setActiveUserById.action?id=${id}" class="activeUser">
-									<i class="fa-solid fa-user-xmark btn btn-dark"></i>
-								</a>
-							</div>
-						</td>
-
-					</tr>
-				</s:iterator> --%>
 			</tbody>
 
 		</table>
+		<div>
+			<s:url var="first" action="pagination">
+				<s:param name="currentPage">1</s:param>
+			</s:url>
+			<s:url var="prev" action="pagination">
+				<s:param name="currentPage">
+					<s:property value="currentPage - 1" />
+				</s:param>
+			</s:url>
+			<s:url var="next" action="pagination">
+				<s:param name="currentPage">
+					<s:property value="currentPage + 1" />
+				</s:param>
+			</s:url>
+			<s:url var="last" action="pagination">
+				<s:param name="currentPage">
+					<s:property value="totalPages" />
+				</s:param>
+			</s:url>
+			<s:if test="currentPage > 1">
+				<a href="<s:url value="%{first}"/>">First</a>
+				<a href="<s:url value="%{prev}"/>">Prev</a>
+			</s:if>
+			<s:if test="currentPage < totalPages">
+				<a href="<s:url value="%{next}"/>">Next</a>
+				<a href="<s:url value="%{last}"/>">Last</a>
+			</s:if>
+		</div>
 
+		<div id="pagination">
+			<s:url var="paginationUrl" action="pagination">
+				<s:param name="currentPage" value="%{currentPage}" />
+			</s:url>
+			<ul class="pagination">
+				<s:if test="currentPage > 1">
+					<li><a href="#" class="pagination-link" data-page="1">&laquo;</a></li>
+				</s:if>
+				<s:iterator begin="1" end="totalPages" step="1">
+					<li><a href="#" class="pagination-link"
+						data-page="<s:property value='iterator'/>"><s:property /></a></li>
+				</s:iterator>
+				<s:if test="currentPage < totalPages">
+					<li><a href="#" class="pagination-link"
+						data-page="%{totalPages}">&raquo;</a></li>
+				</s:if>
+			</ul>
+		</div>
 	</div>
 
 
@@ -140,11 +144,19 @@
 </body>
 <script type="text/javascript">
 	
-	$(document).ready(function () {
+/* 	$(document).ready(function () {
 	    $('#allUser').DataTable();
-	});
+	}); */
 
-	
+	function confirmLogout(){
+		var answer;
+		answer = window.confirm("Are you sure to logout page ?");
+		if (answer == true) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	$("#show-modal").click(function() {
 		$("#modal-create-user").modal("show");
@@ -154,14 +166,15 @@
 
 	  function loadAllUsers(){
 		 $.ajax({            
-			 url: "getAllUsers.action",
+			 url: "getAllUsersJSON.action",
 			  type: "GET",
 	            dataType: "json",
 	            success: function(data) {
 	                // Thêm các user vào bảng
 	                console.log("getAllUsers");
 	                console.log("data" +data);
-	                $.each(data, function(index, user) {
+	                $.each(data.user, function(index, user) {
+	                	console.log("data",data.user)
 	                    var groupRole;
 	                    switch(user.groupRole) {
 	                        case 1:
@@ -208,6 +221,54 @@
 	    
 	} 
 	loadAllUsers(); 
+	
+	  $(document).on("click", "#first", function () {
+          currentPage = 1;
+          fetchUsers();
+      });
+
+      $(document).on("click", "#prev", function () {
+          if (currentPage > 1) {
+              currentPage--;
+              fetchUsers();
+          }
+      });
+
+      $(document).on("click", "#next", function () {
+          currentPage++;
+          fetchUsers();
+      });
+
+      $(document).on("click", "#last", function () {
+          currentPage = ${totalPages};
+          fetchUsers();
+      });
+	
+	function getUsersPagination(){
+		$.ajax({
+			url: 'paginationJSON.action',
+			type:'POST',
+			dataType:'json',
+			data:{
+				currentPage: page
+			},
+			success: function(data){
+				console.log(data);
+				$("#allUser").html(data);
+			},
+			error: function(xhr, status, error){
+				console.log(error);
+			}
+		});
+	}
+	
+	 getUsersPagination();
+	
+	 $(document).on('click', '.pagination-link', function(e) {
+	        e.preventDefault();
+	        var page = $(this).data('page');
+	        getUsersPagination(page);
+	    });
 	
  	function confirmBox() {
  		var answer;
@@ -273,6 +334,8 @@
 		})
 
 	});
+	
+	
 
 	
 	   function getUserByActive() {
@@ -293,18 +356,21 @@
 	        )
 	    }
 		
-	function submitSearch() {
+	/* function submitSearch() {
+		var keyword = $("#keyword").val();
 		$.ajax({
 			url: "searchUser.action",
-			data: $("#searchForm").serialize(),
+			data: { keyword: keyword },
 			type: "GET",
 			success: function(result) {
-				$("#searchResults").html(result);
-				$("#keyword")[0].reset();
+				console.log(result)
+				 $("#searchResults").html(result);
 			}
+			 error: function() {
+			        alert("Error occurred while searching for users.");
 		});
-		return false;
-	}
+		
+	} */
 	
 	
 	

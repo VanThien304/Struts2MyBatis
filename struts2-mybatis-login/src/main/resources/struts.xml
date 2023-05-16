@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+   "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+   "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+
+<struts>
+	<constant name="struts.action.extension" value="" />
+
+	<constant name="struts.devMode" value="true" />
+
+	<package name="default" extends="struts-default, json-default"
+		namespace="/">
+		<interceptors>
+			<interceptor name="authenticationInterceptor"
+				class="com.tpv.interceptor.AuthenticationInterceptor"></interceptor>
+			<interceptor-stack name="secureStack">
+				<interceptor-ref name="authenticationInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+
+		<action name="login">
+			<result>/WEB-INF/pages/login.jsp</result>
+		</action>
+
+		<action name="loginAction" class="com.tpv.controller.LoginAction">
+			<result name="success" type="redirectAction">
+				<param name="actionName">index</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/WEB-INF/pages/login.jsp</result>
+		</action>
+
+		<action name="logout" class="com.tpv.controller.LogoutAction">
+			<result name="success" type="redirectAction">
+				<param name="actionName">login</param>
+				<param name="namespace">/</param>
+			</result>
+			
+		</action>
+		
+		<action name="index" method="getAllUsers" class="com.tpv.controller.UserAction">
+			<interceptor-ref name="secureStack"/>
+			<result type="json"/>
+			<result>/WEB-INF/pages/index.jsp</result>
+			<result name="create">/WEB-INF/pages/modalCreateUser.jsp</result>
+			<result name="update">/WEB-INF/pages/login.jsp</result>
+			<result name="login">/WEB-INF/pages/login.jsp</result>
+		</action>
+		
+		<action name="customer">
+			<interceptor-ref name="secureStack"/>
+			<result>/WEB-INF/pages/customer.jsp</result>
+			<result name="login">/WEB-INF/pages/login.jsp</result>
+		</action>
+		
+		<action name="getAllUsersJSON"
+			class="com.tpv.controller.UserAction" method="getAllUsers">
+			<result type="json">users</result>
+		</action>
+		
+		<action name="getAllUsers" class="com.tpv.controller.UserAction"
+			method="getAllUsers">
+			<result name="success">
+				/WEB-INF/pages/index.jsp
+			</result>
+		</action>
+		
+	</package>
+</struts>

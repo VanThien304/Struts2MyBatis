@@ -10,6 +10,10 @@ public class User {
 	private Integer isActive;
 	private Integer isDelete;
 	private String groupRole;
+	
+	private int currentPage;
+	private int pageSize;
+	private int totalRecords;
 
 	public User() {
 		super();
@@ -91,6 +95,32 @@ public class User {
 	public void setGroupRole(String groupRole) {
 		this.groupRole = groupRole;
 	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public int getTotalRecords() {
+		return totalRecords;
+	}
+
+	public void setTotalRecords(int totalRecords) {
+		this.totalRecords = totalRecords;
+	}
+
+
 
 	
 	

@@ -1,5 +1,6 @@
 package com.tpv.controller;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -7,11 +8,13 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import com.tpv.model.User;
 
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -20,7 +23,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
-
 
 public class UserAction extends ActionSupport implements SessionAware {
 
@@ -36,7 +38,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 	private String groupRole;
 
 	private String keywork;
-	
+
+	private int currentPage;
+	private int totalPages;
+	private int totalRecord;
+
+	private int offset;
+	private int pageSize;
+
 	private User user;
 
 	private List<User> users = new ArrayList<User>();
@@ -46,8 +55,41 @@ public class UserAction extends ActionSupport implements SessionAware {
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
 	}
-	
-	
+
+	public String pagination() throws Exception {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			int pageSize = 10;
+			Integer totalRecords = session.selectOne("User.getCountUsers");
+			System.out.println("totalrecords= " + totalRecords);
+			totalPages = (int) Math.ceil((double) totalRecords.intValue() / pageSize);
+
+			if (currentPage < 1) {
+				currentPage = 1;
+			} else if (currentPage > totalPages) {
+				currentPage = totalPages;
+			}
+
+			int offset = (currentPage - 1) * pageSize;
+
+			users = session.selectList("User.getUsersByPage", getUsersByPage(session, offset, pageSize));
+			System.out.println("success pagination");
+			return SUCCESS;
+		} finally {
+			session.close();
+		}
+	}
+
+	private List<User> getUsersByPage(SqlSession session, int offset, int pageSize) throws IOException {
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("offset", offset);
+		parameters.put("pageSize", pageSize);
+		return session.selectList("User.getUsersByPage", parameters, new RowBounds(offset, pageSize));
+
+	}
+
 	public String getUserById() throws SQLException, Exception {
 
 		try {
@@ -67,7 +109,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			session.commit();
 			session.close();
 			return "success";
-			
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -76,14 +118,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 		}
 	}
 
-	public String getUserByActive()throws SQLException, Exception {
+	public String getUserByActive() throws SQLException, Exception {
 		try {
 			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 			SqlSession session = sqlSessionFactory.openSession();
 
 			users = session.selectList("User.getUserByActive", isActive);
-			
+
 			System.out.println("users" + users);
 
 			session.commit();
@@ -97,8 +139,9 @@ public class UserAction extends ActionSupport implements SessionAware {
 			return "error";
 		}
 	}
-public List<User> getAllUsers() throws SQLException, Exception {
-		
+
+	public String getAllUsers() throws SQLException, Exception {
+
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
@@ -108,36 +151,10 @@ public List<User> getAllUsers() throws SQLException, Exception {
 				session = sqlSessionFactory.openSession();
 				conn = session.getConnection();
 			}
-			
+
 			users = session.selectList("User.getAll");
 			System.out.println("Records Read Successfully ");
-			
-			return users;
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
-		return null;
-		
-	}
-	
-	public String getAllUsersJSON() throws SQLException, Exception {
-		
-		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-		SqlSession session = sqlSessionFactory.openSession();
-		try {
-			Connection conn = session.getConnection();
-			if (conn.isClosed()) {
-				session = sqlSessionFactory.openSession();
-				conn = session.getConnection();
-			}
-			
-			users = session.selectList("User.getAll");
-			System.out.println("Records Read Successfully ");
-			
+
 			return "success";
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -146,30 +163,44 @@ public List<User> getAllUsers() throws SQLException, Exception {
 			session.close();
 		}
 		return "success";
-		
-	}
 
-	public String loginUser() throws SQLException, Exception {
+	}
+	
+	
+	public String loginUser() throws Exception {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
 
-		userSession.put("name", name);
-		userSession.put("password", password);
-		session.selectOne("User.login", userSession);
-		/*
-		 * user.setName(name); user.setPassword(password);
-		 * 
-		 * session.selectOne("User.login", user);
-		 */
-		System.out.println("id = " + user.getId());
-		System.out.println("name = " + user.getName());
-		System.out.println("password = " + user.getPassword());
-		System.out.println("record inserted successfully");
+		try {
+			User user = new User();
 
-		session.commit();
-		session.close();
+			user.setEmail(email);
+			user.setPassword(password);
+			
+			User result = session.selectOne("User.login", user);
+			System.out.println("User id = " + user.getId());
+			if (result != null) {
+				System.out.println("Login Success!");
+				return SUCCESS;
+			} else {
+				addFieldError("invalid", "Invalid username and password!");
+			}
+		} catch (Exception e) { 
+			e.printStackTrace();
+			
+		}
+		return INPUT;
+	}
+	
+	public String logoutUser() throws Exception {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		
+		session.clearCache();
 		return "success";
+
 	}
 
 	public String searchUser() throws SQLException, Exception {
@@ -183,11 +214,6 @@ public List<User> getAllUsers() throws SQLException, Exception {
 			}
 			PropertyConfigurator.configure(keywork);
 
-			Connection conn = session.getConnection();
-			if (conn.isClosed()) {
-				session = sqlSessionFactory.openSession();
-				conn = session.getConnection();
-			}
 			users = session.selectList("User.search", keywork);
 			for (User user : users) {
 
@@ -222,7 +248,7 @@ public List<User> getAllUsers() throws SQLException, Exception {
 			user.setIsActive(1);
 			user.setIsDelete(0);
 			user.setGroupRole(groupRole);
-			validate(user);
+			
 
 			session.insert("User.insert", user);
 			System.out.println("record inserted successfully");
@@ -349,16 +375,19 @@ public List<User> getAllUsers() throws SQLException, Exception {
 		System.out.println("Record deleted successfully");
 		return "success";
 	}
-
-	public void validate(User user) {
-		if (user.getName().length() == 0) {
-			addFieldError("name", "username required!");
-		}
-	}
-
+	
+	
 	public List<User> getUser() {
 		return users;
 	}
+
+	/*
+	 * @Override public void validate() { // TODO Auto-generated method stub
+	 * super.validate(); if (user.getEmail().length() == 0) {
+	 * addFieldError("user.email", "email required!"); } if
+	 * (user.getPassword().length() == 0) { addFieldError("user.password",
+	 * "password required!"); } }
+	 */
 
 	public void setUser(ArrayList<User> users) {
 		this.users = users;
@@ -463,4 +492,45 @@ public List<User> getAllUsers() throws SQLException, Exception {
 	public void setKeywork(String keywork) {
 		this.keywork = keywork;
 	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public int getTotalPages() {
+		return totalPages;
+	}
+
+	public void setTotalPages(int totalPages) {
+		this.totalPages = totalPages;
+	}
+
+	public int getTotalRecord() {
+		return totalRecord;
+	}
+
+	public void setTotalRecord(int totalRecord) {
+		this.totalRecord = totalRecord;
+	}
+
+	public int getOffset() {
+		return offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
 }

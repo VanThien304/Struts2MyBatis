@@ -8,13 +8,34 @@
 <title>Login Page</title>
 </head>
 <body>
-	<s:form action="login">
-		<s:textfield name="name" label="Name" />
-		<s:textfield name="password" label="Password" />
-		<s:submit value="submit" />
+	<s:fielderror name="invalid"/>
+	<s:form action="login" method="post" validate="true">
+		<s:textfield name="email" label="Email" id="email" />
+		<s:textfield name="password" label="Password" id="password" />
+		<s:submit value="Login"/>
 	</s:form>
-	
-	
-	<h2>${name }</h2>
+
 </body>
+<script type="text/javascript">
+	function validationFormLogin() {
+		var email = document.getElementById("email").value;
+		var password = document.getElementById("password").value;
+		var errorMessage = "";
+
+		if (email == "") {
+			errorMessage += "Email is required.\n";
+
+		}
+		if (password == "") {
+			errorMessage += "Password is required.\n";
+		}
+
+		if (errorMessage != "") {
+			alert(errorMessage);
+			return false;
+		} else {
+			return true;
+		}
+	}
+</script>
 </html>

@@ -4,7 +4,6 @@
     <fullyQualifiedTypeName name="java.io.InputStream"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.io.ResolverUtil"/>
     <fullyQualifiedTypeName name="model.Student"/>
-    <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionSupport"/>
     <fullyQualifiedTypeName name="model.User"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="com.mysql.cj.xdevapi.SessionFactory"/>
@@ -12,9 +11,7 @@
     <fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSessionFactoryBuilder"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSessionFactory"/>
-    <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSession"/>
     <fullyQualifiedTypeName name="java.util.List"/>
-    <fullyQualifiedTypeName name="com.tpv.model.User"/>
     <fullyQualifiedTypeName name="javax.annotation.Resources"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.io.Resources"/>
     <fullyQualifiedTypeName name="java.io.Reader"/>
@@ -28,16 +25,24 @@
     <fullyQualifiedTypeName name="com.tpv.model.mapper.UserMapper"/>
     <fullyQualifiedTypeName name="java.math.BigDecimal"/>
     <fullyQualifiedTypeName name="java.util.Date"/>
-    <fullyQualifiedTypeName name="java.util.Map"/>
-    <fullyQualifiedTypeName name="org.apache.struts2.interceptor.SessionAware"/>
     <fullyQualifiedTypeName name="java.sql.Connection"/>
     <fullyQualifiedTypeName name="org.apache.log4j.PropertyConfigurator"/>
     <fullyQualifiedTypeName name="com.tpv.controller.UserAction"/>
     <fullyQualifiedTypeName name="com.tpv.model.GroupRole"/>
     <fullyQualifiedTypeName name="java.sql.SQLException"/>
-    <fullyQualifiedTypeName name="java.lang.Exception"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.executor.ExecutorException"/>
     <fullyQualifiedTypeName name="org.apache.struts2.ServletActionContext"/>
     <fullyQualifiedTypeName name="java.util.Arrays"/>
     <fullyQualifiedTypeName name="org.apache.struts2.json.JSONResult"/>
+    <fullyQualifiedTypeName name="com.tpv.model.PageInfo"/>
+    <fullyQualifiedTypeName name="java.lang.Exception"/>
+    <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSession"/>
+    <fullyQualifiedTypeName name="org.apache.ibatis.session.RowBounds"/>
+    <fullyQualifiedTypeName name="com.tpv.model.User"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="java.lang.Object"/>
+    <fullyQualifiedTypeName name="org.apache.struts2.interceptor.SessionAware"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.interceptor.Interceptor"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionSupport"/>
+    <fullyQualifiedTypeName name="com.model.User"/>
 </qualifiedTypeNameHistroy>
