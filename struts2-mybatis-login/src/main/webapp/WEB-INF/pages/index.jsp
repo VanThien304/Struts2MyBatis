@@ -79,34 +79,6 @@
 			</tbody>
 
 		</table>
-		<div>
-			<s:url var="first" action="pagination">
-				<s:param name="currentPage">1</s:param>
-			</s:url>
-			<s:url var="prev" action="pagination">
-				<s:param name="currentPage">
-					<s:property value="currentPage - 1" />
-				</s:param>
-			</s:url>
-			<s:url var="next" action="pagination">
-				<s:param name="currentPage">
-					<s:property value="currentPage + 1" />
-				</s:param>
-			</s:url>
-			<s:url var="last" action="pagination">
-				<s:param name="currentPage">
-					<s:property value="totalPages" />
-				</s:param>
-			</s:url>
-			<s:if test="currentPage > 1">
-				<a href="<s:url value="%{first}"/>">First</a>
-				<a href="<s:url value="%{prev}"/>">Prev</a>
-			</s:if>
-			<s:if test="currentPage < totalPages">
-				<a href="<s:url value="%{next}"/>">Next</a>
-				<a href="<s:url value="%{last}"/>">Last</a>
-			</s:if>
-		</div>
 
 	</div>
 
@@ -121,16 +93,15 @@
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
 		type="text/javascript"></script>
-	
+
 
 </body>
 <script type="text/javascript">
-	
-/* 	$(document).ready(function () {
-	    $('#allUser').DataTable();
-	}); */
+	/* 	$(document).ready(function () {
+	 $('#allUser').DataTable();
+	 }); */
 
-	function confirmLogout(){
+	function confirmLogout() {
 		var answer;
 		answer = window.confirm("Are you sure to logout page ?");
 		if (answer == true) {
@@ -144,123 +115,140 @@
 		$("#modal-create-user").modal("show");
 	});
 
-	
+	function loadAllUsers() {
+		$
+				.ajax({
+					url : "http://localhost:8080/struts2-mybatis-login/getAllUsersJSON",
+					type : "GET",
+					dataType : "json",
+					success : function(data) {
+						// Thêm các user vào bảng
+						console.log("getAllUsers");
+						console.log("data" + data);
+						$
+								.each(
+										data.user,
+										function(index, user) {
+											console.log("data", data.user)
+											var selectedRole = $("#selectRole").val();
+											var groupRole = user.groupRole;
+											switch (selectedRole) {
+											  case "Admin":
+											    groupRole = "Admin";
+											    break;
+											  case "Editor":
+											    groupRole = "Editor";
+											    break;
+											  default:
+											    groupRole = "Reviewer";
+											    break;
+											}
+											var isActive = user.isActive == 1 ? "Đang hoạt động"
+													: "Tạm khóa";
+											var row = "<tr>" + "<td>"
+													+ user.id
+													+ "</td>"
+													+ "<td>"
+													+ user.name
+													+ "</td>"
+													+ "<td>"
+													+ user.email
+													+ "</td>"
+													+ "<td>"
+													+ groupRole
+													+ "</td>"
+													+ "<td>"
+													+ isActive
+													+ "</td>"
+													+ "<td class='d-flex justify-content-between'>"
+													+ "<div>"
+													+ "<i onclick='showModalUpdateUser("
+													+ user.id
+													+ ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>"
+													+ "</div>"
+													+ "<div>"
+													+ "<a onclick='return confirmBox();' href='deleteUserById.action?id="
+													+ user.id
+													+ "' class='delete'>"
+													+ "<i class='fa-solid fa-trash btn btn-danger'></i>"
+													+ "</a>"
+													+ "</div>"
+													+ "<div>"
+													+ "<a onclick='return confirmBoxActive();' href='setActiveUserById.action?id="
+													+ user.id
+													+ "' class='activeUser'>"
+													+ "<i class='fa-solid fa-user-xmark btn btn-dark'></i>"
+													+ "</a>" + "</div>"
+													+ "</td>" + "</tr>";
+											$("#allUser tbody").append(row);
+										});
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+						console.log("Lỗi: " + textStatus, errorThrown);
 
-	  function loadAllUsers(){
-		 $.ajax({            
-			 url: "getAllUsers.action",
-			  type: "GET",
-	            dataType: "json",
-	            success: function(data) {
-	                // Thêm các user vào bảng
-	                console.log("getAllUsers");
-	                console.log("data" +data);
-	                $.each(data.user, function(index, user) {
-	                	console.log("data",data.user)
-	                    var groupRole;
-	                    switch(user.groupRole) {
-	                        case 1:
-	                            groupRole = "Admin";
-	                            break;
-	                        case 2:
-	                            groupRole = "Editor";
-	                            break;
-	                        default:
-	                            groupRole = "Reviewer";
-	                            break;
-	                    }
-	                    var isActive = user.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
-	                    var row = "<tr>"
-	                                + "<td>" + user.id + "</td>"
-	                                + "<td>" + user.name + "</td>"
-	                                + "<td>" + user.email + "</td>"
-	                                + "<td>" + groupRole + "</td>"
-	                                + "<td>" + isActive + "</td>"
-	                                + "<td class='d-flex justify-content-between'>"
-	                                    + "<div>"
-	                                        + "<i onclick='showModalUpdateUser(" + user.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>"
-	                                    + "</div>"
-	                                    + "<div>"
-	                                        + "<a onclick='return confirmBox();' href='deleteUserById.action?id=" + user.id + "' class='delete'>"
-	                                            + "<i class='fa-solid fa-trash btn btn-danger'></i>"
-	                                        + "</a>"
-	                                    + "</div>"
-	                                    + "<div>"
-	                                        + "<a onclick='return confirmBoxActive();' href='setActiveUserById.action?id=" + user.id + "' class='activeUser'>"
-	                                            + "<i class='fa-solid fa-user-xmark btn btn-dark'></i>"
-	                                        + "</a>"
-	                                    + "</div>"
-	                                + "</td>"
-	                            + "</tr>";
-	                    $("#allUser tbody").append(row);
-	                });
-	            },
-	            error: function(jqXHR, textStatus, errorThrown) {
-	                console.log("Lỗi: " + textStatus, errorThrown);
-	                
-	            }
-	        });
-	    
-	} 
-	loadAllUsers(); 
-	
+					}
+				});
+
+	}
+	loadAllUsers();
+
 	/*   $(document).on("click", "#first", function () {
-          currentPage = 1;
-          fetchUsers();
-      });
+	      currentPage = 1;
+	      fetchUsers();
+	  });
 
-      $(document).on("click", "#prev", function () {
-          if (currentPage > 1) {
-              currentPage--;
-              fetchUsers();
-          }
-      });
+	  $(document).on("click", "#prev", function () {
+	      if (currentPage > 1) {
+	          currentPage--;
+	          fetchUsers();
+	      }
+	  });
 
-      $(document).on("click", "#next", function () {
-          currentPage++;
-          fetchUsers();
-      });
+	  $(document).on("click", "#next", function () {
+	      currentPage++;
+	      fetchUsers();
+	  });
 
-      $(document).on("click", "#last", function () {
-          currentPage = ${totalPages};
-          fetchUsers();
-      });
+	  $(document).on("click", "#last", function () {
+	      currentPage = ${totalPages};
+	      fetchUsers();
+	  });
 	 */
-/* 	function getUsersPagination(){
-		$.ajax({
-			url: 'paginationJSON.action',
-			type:'POST',
-			dataType:'json',
-			data:{
-				currentPage: page
-			},
-			success: function(data){
-				console.log(data);
-				$("#allUser").html(data);
-			},
-			error: function(xhr, status, error){
-				console.log(error);
-			}
-		});
-	} */
-	
-	 /* getUsersPagination(); */
-	
-	 $(document).on('click', '.pagination-link', function(e) {
-	        e.preventDefault();
-	        var page = $(this).data('page');
-	        getUsersPagination(page);
-	    });
-	
- 	function confirmBox() {
- 		var answer;
+	/* 	function getUsersPagination(){
+	 $.ajax({
+	 url: 'paginationJSON.action',
+	 type:'POST',
+	 dataType:'json',
+	 data:{
+	 currentPage: page
+	 },
+	 success: function(data){
+	 console.log(data);
+	 $("#allUser").html(data);
+	 },
+	 error: function(xhr, status, error){
+	 console.log(error);
+	 }
+	 });
+	 } */
+
+	/* getUsersPagination(); */
+
+	$(document).on('click', '.pagination-link', function(e) {
+		e.preventDefault();
+		var page = $(this).data('page');
+		getUsersPagination(page);
+	});
+
+	function confirmBox() {
+		var answer;
 		answer = window.confirm("Are you sure to delete this user id ?");
 		if (answer == true) {
 			return true;
 		} else {
 			return false;
 		}
-	}  
+	}
 
 	$(".delete").click(function() {
 		$.ajax({
@@ -284,17 +272,17 @@
 		})
 
 	});
-	
- 	function confirmBoxActive() {
- 		var answer;
+
+	function confirmBoxActive() {
+		var answer;
 		answer = window.confirm("Are you sure to change active this user id?");
 		if (answer == true) {
 			return true;
 		} else {
 			return false;
 		}
-	} 
-	
+	}
+
 	/* $(".activeUser").click(function() {
 		$.ajax({
 			type : "POST",
@@ -317,9 +305,7 @@
 
 	});
 	 */
-	
 
-	
 	/*    function getUserByActive() {
 	        return (
 	            $.ajax({
@@ -337,7 +323,7 @@
 	            })
 	        )
 	    }
-		 */
+	 */
 	/* function submitSearch() {
 		var keyword = $("#keyword").val();
 		$.ajax({
@@ -353,8 +339,5 @@
 		});
 		
 	} */
-	
-	
-	
 </script>
 </html>

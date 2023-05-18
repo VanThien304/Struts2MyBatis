@@ -21,12 +21,6 @@ public class LogoutAction extends ActionSupport implements SessionAware {
 	@Override
 	public String execute() throws Exception {
 		 session.remove("user"); 
-			/*
-			 * Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-			 * SqlSessionFactory sqlSessionFactory = new
-			 * SqlSessionFactoryBuilder().build(reader); SqlSession session =
-			 * sqlSessionFactory.openSession(); session.clearCache();
-			 */
 		return SUCCESS;
 	}
 

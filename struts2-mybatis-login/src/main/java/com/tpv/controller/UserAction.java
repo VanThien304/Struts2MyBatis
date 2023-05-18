@@ -166,42 +166,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 	}
 	
-	
-	public String loginUser() throws Exception {
-		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-		SqlSession session = sqlSessionFactory.openSession();
-
-		try {
-			User user = new User();
-
-			user.setEmail(email);
-			user.setPassword(password);
-			
-			User result = session.selectOne("User.login", user);
-			System.out.println("User id = " + user.getId());
-			if (result != null) {
-				System.out.println("Login Success!");
-				return SUCCESS;
-			} else {
-				 addFieldError("invalid", "Invalid username and password!");
-			}
-		} catch (Exception e) { 
-			e.printStackTrace();
-			
-		}
-		return INPUT;
-	}
-	
-	public String logoutUser() throws Exception {
-		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-		SqlSession session = sqlSessionFactory.openSession();
-		
-		session.clearCache();
-		return "success";
-
-	}
 
 	public String searchUser() throws SQLException, Exception {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
@@ -253,6 +217,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			session.insert("User.insert", user);
 			System.out.println("record inserted successfully");
 			session.commit();
+			return SUCCESS;
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -261,7 +226,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 		} finally {
 			session.close();
 		}
-		return "success";
+		return INPUT;
 
 	}
 

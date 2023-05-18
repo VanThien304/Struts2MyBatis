@@ -1,5 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<typeInfoHistroy>
-    <typeInfo handle="=users-management/D:\/workspace\/users-management\/src\/main\/webapp\/WEB-INF\/lib\/struts2-core-2.5.30.jar&lt;com.opensymphony.xwork2(ActionSupport.class[ActionSupport" modifiers="33" timestamp="1647326992000"/>
-    <typeInfo handle="=users-management/D:\/workspace\/users-management\/src\/main\/webapp\/WEB-INF\/lib\/mybatis-3.5.13.jar&lt;org.apache.ibatis.type(BaseTypeHandler.class[BaseTypeHandler" modifiers="1057" timestamp="1682649337366"/>
-</typeInfoHistroy>
+<typeInfoHistroy/>
