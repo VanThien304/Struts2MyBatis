@@ -42,9 +42,11 @@
 										list="#{'1': 'Admin', '2':'Editor', '3':'Reviewer' }" value="%{user.getGroupRole()}"/>
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" name="isActive" readonly="true"
-										label="Active" placeholder="True"/>
+								 	<%-- <s:textfield class="form-control" name="isActive"
+										label="Active">0</s:textfield> --%>
+									<input type="checkbox" name="isActive" required="required"/>
 								</div>
+				
 							</div>
 						</div>
 						<s:submit value="Save User" class="btn btn-primary" />

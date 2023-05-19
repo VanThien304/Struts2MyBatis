@@ -21,7 +21,7 @@
 		SELECT * FROM mst_users WHERE is_delete = 0 ORDER BY id DESC LIMIT 10;
 	</select>	
 	
-	<select id="getByEmail" resultMap="result">
+	<select id="getEmailUser" parameterType="string" resultMap="result">
 		SELECT email FROM mst_users where email = #{email};
 	</select>	
 	

@@ -1,12 +1,5 @@
 package com.tpv.interceptor;
-
-import java.io.Reader;
 import java.util.Map;
-
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionSupport;
@@ -35,6 +28,8 @@ public class AuthenticationInterceptor implements Interceptor{
 	public String intercept(ActionInvocation actionInvocation) throws Exception {
 		Map<String, Object> session =  actionInvocation.getInvocationContext().getSession();
 		User user = (User) session.get("user");
+	
+		
 		if(user == null) {
 			return ActionSupport.LOGIN;
 		}else {

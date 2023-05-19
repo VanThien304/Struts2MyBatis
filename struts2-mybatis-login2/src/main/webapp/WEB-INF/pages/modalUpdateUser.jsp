@@ -11,7 +11,6 @@
 	<s:set var="user">
 		${param.user}
 	</s:set>
-
 	 
 	<div id="modal-update-user" class="modal" tabindex="-1">
 		<div class="modal-dialog">
@@ -58,7 +57,7 @@
 							</div>
 						</div>
 						
-						<s:submit value="Save User" class="btn btn-primary" />
+						<s:submit value="Save User" validate="true" class="btn btn-primary" />
 
 					</s:form>
 				</div>

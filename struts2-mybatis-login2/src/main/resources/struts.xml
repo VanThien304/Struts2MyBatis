@@ -30,7 +30,7 @@
 		</action>
 
 		<action name="loginAction"
-			class="com.tpv.controller.LoginAction" method="execute">
+			class="com.tpv.controller.login.LoginAction" method="execute">
 			<result name="success" type="redirectAction">
 				<param name="actionName">listUser</param>
 				<param name="namespace">/</param>
@@ -38,7 +38,8 @@
 			<result name="input">WEB-INF/pages/login.jsp</result>
 		</action>
 
-		<action name="logout" class="com.tpv.controller.LogoutAction">
+		<action name="logout"
+			class="com.tpv.controller.login.LogoutAction">
 			<result name="success" type="redirectAction">
 				<param name="actionName">login</param>
 				<param name="namespace">/</param>
@@ -46,7 +47,7 @@
 		</action>
 
 		<action name="deleteUserById"
-			class="com.tpv.controller.UserAction" method="deleteUserById">
+			class="com.tpv.controller.user.UserAction" method="deleteUserById">
 			<interceptor-ref name="secureStack" />
 			<result name="success" type="redirectAction">
 				<param name="actionName">listUser</param>
@@ -57,10 +58,14 @@
 		<action name="index">
 			<interceptor-ref name="secureStack" />
 			<result name="success">
+			
+				<param name="actionName">formCreateUser</param>
+				<param name="actionName">createUser</param>
 				<param name="actionName">deleteUserById</param>
 				<param name="actionName">getUserByActive</param>
 				<param name="actionName">updateUser</param>
-				
+				<param name="actionName">getAllUsersJSON</param>
+				<param name="actionName">getAllUsers</param>
 			</result>
 			<result name="login">WEB-INF/pages/login.jsp</result>
 		</action>
@@ -72,17 +77,19 @@
 		</action>
 
 		<action name="getAllUsersJSON"
-			class="com.tpv.controller.UserAction" method="getAllUsers">
+			class="com.tpv.controller.user.UserAction" method="getAllUsers">
+			<interceptor-ref name="secureStack" />
 			<result type="json" />
 		</action>
 
 		<action name="getAllUsers"
-			class="com.tpv.controller.UserAction" method="getAllUsers">
+			class="com.tpv.controller.user.UserAction" method="getAllUsers">
+			<interceptor-ref name="secureStack" />
 			<result name="success">WEB-INF/pages/index.jsp</result>
 		</action>
 
-		<action name="listUser" class="com.tpv.controller.UserAction"
-			method="getAllUsers">
+		<action name="listUser"
+			class="com.tpv.controller.user.UserAction" method="getAllUsers">
 			<interceptor-ref name="secureStack" />
 			<result name="success">WEB-INF/pages/index.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
@@ -90,31 +97,36 @@
 			<result name="login">WEB-INF/pages/login.jsp</result>
 		</action>
 		<action name="getUserById"
-			class="com.tpv.controller.UserAction" method="getUserById">
+			class="com.tpv.controller.user.UserAction" method="getUserById">
 			<result name="success">WEB-INF/pages/result.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 		</action>
 
 		<action name="getUserByActive"
-			class="com.tpv.controller.UserAction" method="getUserByActive">
+			class="com.tpv.controller.user.UserAction" method="getUserByActive">
 			<interceptor-ref name="secureStack" />
 			<result name="success" type="redirectAction">
 				<param name="actionName">listUser</param>
 			</result>
 		</action>
 
-		<action name="createUser" class="com.tpv.controller.UserAction"
-			method="createUser">
-			<interceptor-ref name="secureStack" />
-			<result name="success" type="redirectAction">
-				<param name="actionName">listUser</param>
-			</result>
-			<result name="error">WEB-INF/pages/index.jsp</result>
+		<action name="formCreateUser">
+		<interceptor-ref name="secureStack" />
+			<result>WEB-INF/pages/modalCreateUser.jsp</result>
 			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
 		</action>
 
-		<action name="updateUser" class="com.tpv.controller.UserAction"
-			method="updateUser">
+		<action name="createUser"
+			class="com.tpv.controller.user.UserAction" method="createUser">
+			<interceptor-ref name="secureStack" />
+			<result name="success" type="redirectAction">
+				<param name="actionName">listUser</param>
+			</result>
+			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
+		</action>
+
+		<action name="updateUser"
+			class="com.tpv.controller.user.UserAction" method="updateUser">
 			<interceptor-ref name="secureStack" />
 			<result name="success" type="redirectAction">
 				<param name="actionName">listUser</param>
@@ -124,7 +136,7 @@
 		</action>
 
 		<action name="setActiveUserById"
-			class="com.tpv.controller.UserAction" method="setActiveUserById">
+			class="com.tpv.controller.user.UserAction" method="setActiveUserById">
 			<interceptor-ref name="secureStack" />
 			<result name="success" type="redirectAction">
 				<param name="actionName">listUser</param>

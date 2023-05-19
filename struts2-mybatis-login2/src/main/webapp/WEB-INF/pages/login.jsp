@@ -15,12 +15,12 @@
 	<h1>Login App</h1>
 
 	
-	<s:form action="loginAction" validate="true" method="post"
+	<s:form action="loginAction" method="post"
 		namespace="/">
 		<input type="hidden" value="login"/>
 		<s:textfield name="email" label="Email"></s:textfield>
 		<s:password name="password" label="Password" />
-		<s:submit value="Login" />
+		<s:submit validate="true" value="Login" />
 	</s:form>
 
 
