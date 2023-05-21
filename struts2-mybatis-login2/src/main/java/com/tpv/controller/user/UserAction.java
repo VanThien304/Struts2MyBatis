@@ -38,7 +38,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 	private Integer isActive;
 	private Integer isDelete;
 	private String groupRole;
-
+	private Boolean booleanActive;
 	private String keywork;
 
 	private int currentPage;
@@ -56,40 +56,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
-	}
-
-	public String pagination() throws Exception {
-		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-		SqlSession session = sqlSessionFactory.openSession();
-		try {
-			int pageSize = 10;
-			Integer totalRecords = session.selectOne("User.getCountUsers");
-			System.out.println("totalrecords= " + totalRecords);
-			totalPages = (int) Math.ceil((double) totalRecords.intValue() / pageSize);
-
-			if (currentPage < 1) {
-				currentPage = 1;
-			} else if (currentPage > totalPages) {
-				currentPage = totalPages;
-			}
-
-			int offset = (currentPage - 1) * pageSize;
-
-			users = session.selectList("User.getUsersByPage", getUsersByPage(session, offset, pageSize));
-			System.out.println("success pagination");
-			return SUCCESS;
-		} finally {
-			session.close();
-		}
-	}
-
-	private List<User> getUsersByPage(SqlSession session, int offset, int pageSize) throws IOException {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("offset", offset);
-		parameters.put("pageSize", pageSize);
-		return session.selectList("User.getUsersByPage", parameters, new RowBounds(offset, pageSize));
-
 	}
 
 	public String getUserById() throws SQLException, Exception {
@@ -208,26 +174,45 @@ public class UserAction extends ActionSupport implements SessionAware {
 			// Create a new student object
 //		     user = new User(name, email, password, isActive, isDelete, groupRole);
 			user = new User();
-			/*
-			 * if (user != null) { if (name.length() < 3) { addFieldError("name",
-			 * "tên không được trống và tên nhập vào phải lớn hơn 2 ký tự!"); }
-			 * 
-			 * if (email.length() < 9) { addFieldError("email",
-			 * "email không được trống, email phải đúng định dạng @gmail.com!"); }
-			 * 
-			 * if (password.length() < 5) { addFieldError("password",
-			 * "password không được trống, password phải lớn hơn 5 ký tự!"); } return INPUT;
-			 * }
-			 */
+
+			boolean hasError = false;
+
+			if (user != null) {
+				if (name.length() < 3) {
+					addFieldError("name", "tên không được trống và tên nhập vào phải lớn hơn 2 ký tự!");
+					hasError = true;
+				}
+
+				if (email.length() < 9) {
+					addFieldError("email", "email không được trống, email phải đúng định dạng @gmail.com!");
+					hasError = true;
+				}
+
+				if (password.length() < 5) {
+					addFieldError("password", "password không được trống, password phải lớn hơn 5 ký tự!");
+					hasError = true;
+				}
+
+				if (!password.equals(confirmPassword)) {
+					addFieldError("confirmPassword", "mật khẩu không trùng khớp!!");
+					hasError = true;
+				}
+
+			}
+			if (hasError) {
+				return INPUT;
+			}
+
 			user.setName(name);
 			user.setEmail(email);
 			user.setPassword(password);
+			user.setIsActive(booleanActive ? 1 : 0);
 			System.out.println("user Active = " + isActive);
-			if (isActive == 1) {
-				user.setIsActive(1);
-			} else {
-				user.setIsActive(0);
-			}
+
+			/*
+			 * if (booleanActive == true) { user.setIsActive(1); } else {
+			 * user.setIsActive(0); }
+			 */
 			user.setIsDelete(0);
 			user.setGroupRole(groupRole);
 
@@ -244,11 +229,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 			session.close();
 		}
 		return INPUT;
-
-	}
-
-	private void RegexFieldValidator(String string, String string2) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -526,6 +506,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	public Boolean getBooleanActive() {
+		return booleanActive;
+	}
+
+	public void setBooleanActive(Boolean booleanActive) {
+		this.booleanActive = booleanActive;
 	}
 
 }

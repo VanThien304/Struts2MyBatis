@@ -35,6 +35,12 @@
 									<s:password class="form-control" name="password"
 										label="Password" />
 								</div>
+								
+								<div class="form-group ">
+									<s:password class="form-control" name="confirmPassword"
+										label="ConfirmPassword" />
+								</div>
+								
 								<div class="form-group ">
 									<%-- <s:textfield class="form-control" name="groupRole"
 										label="Group" /> --%>
@@ -42,9 +48,9 @@
 										list="#{'1': 'Admin', '2':'Editor', '3':'Reviewer' }" value="%{user.getGroupRole()}"/>
 								</div>
 								<div class="form-group ">
-								 	<%-- <s:textfield class="form-control" name="isActive"
-										label="Active">0</s:textfield> --%>
-									<input type="checkbox" name="isActive" required="required"/>
+
+								 <s:checkbox name="booleanActive" fieldValue="true" label="Active" value="true"/>
+
 								</div>
 				
 							</div>

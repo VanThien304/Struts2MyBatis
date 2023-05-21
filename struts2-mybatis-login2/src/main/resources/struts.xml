@@ -58,8 +58,6 @@
 		<action name="index">
 			<interceptor-ref name="secureStack" />
 			<result name="success">
-			
-				<param name="actionName">formCreateUser</param>
 				<param name="actionName">createUser</param>
 				<param name="actionName">deleteUserById</param>
 				<param name="actionName">getUserByActive</param>
@@ -108,12 +106,6 @@
 			<result name="success" type="redirectAction">
 				<param name="actionName">listUser</param>
 			</result>
-		</action>
-
-		<action name="formCreateUser">
-		<interceptor-ref name="secureStack" />
-			<result>WEB-INF/pages/modalCreateUser.jsp</result>
-			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
 		</action>
 
 		<action name="createUser"
