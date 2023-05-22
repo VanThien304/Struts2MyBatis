@@ -311,23 +311,18 @@ input.error {
 	});	 
 	
 	 
- 		function showModalUpdateUser(id) {
+		function showModalUpdateUser(id) {
 			$("#modal-update-user").modal("show");	
+			 $("#btnUpdateUser").on('click', function() {
+				doUpdateUser(id);
+				});
 		}
-		
-		 $("#btnUpdateUser").on('click', () => {
-			 $("#frmUpdate").submit();
-		});
 
-		 $("#frmUpdate").submit(function(event) {
-			    event.preventDefault();
-			    if ($("#frmUpdate").valid()) {		        
-			    	doUpdateUser(id);
-			    }
-		}); 
 		
 		
 		function doUpdateUser(id) {
+			var userId = getUserById(id);
+			var idUser = userId;
 		    var name = $('#upName').val();
 		    var email = $('#upEmail').val();
 		    var password = $('#upPassword').val();

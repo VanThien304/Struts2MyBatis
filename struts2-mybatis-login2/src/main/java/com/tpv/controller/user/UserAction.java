@@ -284,16 +284,34 @@ public class UserAction extends ActionSupport implements SessionAware {
 		if (id == null) {
 			return "error";
 		}
-
-		if (!password.equals(confirmPassword)) {
-			System.out.println("mật khẩu không trùng khớp!");
-			return "passwordMismatch";
-		}
+		
 		try {
-			Connection conn = session.getConnection();
-			if (conn.isClosed()) {
-				session = sqlSessionFactory.openSession();
-				conn = session.getConnection();
+			boolean hasError = false;
+
+			if (user != null) {
+				if (name.length() < 3) {
+					addFieldError("name", "tên không được trống và tên nhập vào phải lớn hơn 2 ký tự!");
+					hasError = true;
+				}
+
+				if (email.length() < 9) {
+					addFieldError("email", "email không được trống, email phải đúng định dạng @gmail.com!");
+					hasError = true;
+				}
+
+				if (password.length() < 5) {
+					addFieldError("password", "password không được trống, password phải lớn hơn 5 ký tự!");
+					hasError = true;
+				}
+
+				if (!password.equals(confirmPassword)) {
+					addFieldError("confirmPassword", "mật khẩu không trùng khớp!!");
+					hasError = true;
+				}
+
+			}
+			if (hasError) {
+				return INPUT;
 			}
 			// select a particular user using id
 			user = (User) session.selectOne("User.getById", id);
@@ -318,15 +336,15 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 			// verifying the record
 			User u = session.selectOne("User.getById", id);
-
 			session.commit();
-			return "success";
+			return SUCCESS;
 		} catch (Exception e) {
 			// TODO: handle exception
-			return "error";
+			
 		} finally {
 			session.close();
 		}
+		return INPUT;
 	}
 
 	public String deleteUserById() throws SQLException, Exception {
