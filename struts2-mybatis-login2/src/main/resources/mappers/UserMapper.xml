@@ -46,10 +46,6 @@
   		SELECT * FROM mst_users WHERE id = #{id};
   	</select>
   	
-  	 <select id="getCountUsers"  resultType="int">
-  		SELECT COUNT(*) FROM mst_users;
-  	</select>
-  	
   	<update id="update" parameterType="User">
   		UPDATE mst_users SET user_name = #{name}, email = #{email}, password = #{password}, is_active = #{isActive}, group_role = #{groupRole}
   		WHERE id = #{id};

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 
 import com.tpv.model.User;
@@ -19,7 +22,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.log4j.PropertyConfigurator;
-
+import org.apache.logging.log4j.core.jackson.Log4jJsonObjectMapper;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -206,13 +210,11 @@ public class UserAction extends ActionSupport implements SessionAware {
 			user.setName(name);
 			user.setEmail(email);
 			user.setPassword(password);
-			user.setIsActive(booleanActive ? 1 : 0);
-			System.out.println("user Active = " + isActive);
-
-			/*
-			 * if (booleanActive == true) { user.setIsActive(1); } else {
-			 * user.setIsActive(0); }
-			 */
+			if (booleanActive == true) {
+				user.setIsActive(1);
+			} else {
+				user.setIsActive(0);
+			}
 			user.setIsDelete(0);
 			user.setGroupRole(groupRole);
 
@@ -229,23 +231,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 			session.close();
 		}
 		return INPUT;
-
-	}
-
-	public String validateForm(User user) {
-		if (user.getName().length() < 3) {
-			addFieldError("name", "Tên không được trống, tên phải lớn hơn 3 ký tự!");
-			return INPUT;
-		}
-		if (user.getEmail().length() < 10) {
-			addFieldError("email", "Email không hợp lệ, email phải đúng định dạng @gmail.com!");
-			return INPUT;
-		}
-		if (user.getPassword().length() > 7) {
-			addFieldError("password", "Password không hợp lệ, password phải có 8 ký tự!");
-			return INPUT;
-		}
-		return SUCCESS;
 
 	}
 
@@ -292,6 +277,10 @@ public class UserAction extends ActionSupport implements SessionAware {
 	}
 
 	public String updateUser() throws SQLException, Exception, ExecutorException {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+
 		if (id == null) {
 			return "error";
 		}
@@ -300,11 +289,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 			System.out.println("mật khẩu không trùng khớp!");
 			return "passwordMismatch";
 		}
-
-		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-		SqlSession session = sqlSessionFactory.openSession();
-
 		try {
 			Connection conn = session.getConnection();
 			if (conn.isClosed()) {
@@ -320,17 +304,21 @@ public class UserAction extends ActionSupport implements SessionAware {
 			user.setName(name);
 			user.setEmail(email);
 			user.setPassword(password);
-			user.setIsActive(1);
+			if (booleanActive == true) {
+				user.setIsActive(1);
+			} else {
+				user.setIsActive(0);
+			}
 			user.setGroupRole(groupRole);
 			// Update the user record
 			session.update("User.update", user);
 			System.out.println("Record updated successfully");
+
 			session.commit();
 
 			// verifying the record
 			User u = session.selectOne("User.getById", id);
-			System.out.println("Details of the student after update operation");
-			System.out.println(u.toString());
+
 			session.commit();
 			return "success";
 		} catch (Exception e) {

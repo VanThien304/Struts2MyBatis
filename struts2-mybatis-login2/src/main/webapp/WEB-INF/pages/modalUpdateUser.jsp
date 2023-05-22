@@ -11,7 +11,7 @@
 	<s:set var="user">
 		${param.user}
 	</s:set>
-	 
+
 	<div id="modal-update-user" class="modal" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -21,47 +21,52 @@
 						aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<s:form action="updateUser">
+					<div class="modal-alert-danger hide"></div>
+					<form id="frmUpdate">
 
 						<div class="form-row">
 							<div class="col-sm-12">
 								<div class="form-group ">
-									<s:textfield name="id" label="ID" value="%{id}" readonly="true"/>
+									<label for="name">Name:</label> 
+									<input class="form-control" type="text" name="name" id="upName" />
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" name="name" value="%{name}"
-										label="FullName" />
+								<label for="email">Email:</label> 
+									<input class="form-control" type="email" name="email"
+										id="upEmail" />
 								</div>
 								<div class="form-group ">
-									<s:textfield class="form-control" name="email" value="%{email}"
-										label="Email" />
+									<label for="password">Password:</label>
+									<input class="form-control" type="password" name="password"
+										id="upPassword" />
 								</div>
 								<div class="form-group ">
-									<s:password class="form-control" name="password"
-										value="%{password}" label="Password" />
+									<label for="comfilmPassword">ConfirmPassword:</label>
+									<input class="form-control" type="password"
+										name="confirmPassword" id="upComPassword" />
+								</div>
+							
+								<div class="form-group d-flex">
+									<label for="groupRole">GroupRole:</label>
+									<select name="groupRole" id="upGroupRole"
+										style="margin-left: 9px;">
+										<option value="1" ${groupRole == 1 ? 'selected' : ''}>Admin</option>
+										<option value="2" ${groupRole == 2 ? 'selected' : ''}>Editor</option>
+										<option value="3" ${groupRole == 3 ? 'selected' : ''}>Reviewer</option>
+									</select>
 								</div>
 								<div class="form-group ">
-									<s:password class="form-control" name="confirmPassword"
-										value="%{confirmPassword}" label="Confirm Password" />
-								</div>
-								<div class="form-group ">
-							 
-									<s:select name="groupRole" label="Group"
-										list="#{'1': 'Admin', '2':'Editor', '3':'Reviewer' }" value="%{groupRole}"/>
-								</div>
-								<div class="form-group ">
-									<s:textfield class="form-control" name="((isActive == 1) ? 'True' : 'False')"
-										label="Active" readonly="true" value="%{isActive}"/>
-								
+									<label for="booleanActive">Active:</label> 
+									<input type="checkbox" id="booleanActive" name="booleanActive"
+										value="true" />
 								</div>
 							</div>
 						</div>
-						
-						<s:submit value="Save User" validate="true" class="btn btn-primary" />
-
-					</s:form>
+					</form>
 				</div>
 				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						data-bs-dismiss="modal" id="btnUpdateUser">Update</button>
 					<button type="button" class="btn btn-secondary"
 						data-bs-dismiss="modal">Close</button>
 
@@ -70,32 +75,7 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-
-		function showModalUpdateUser() {
-			$("#modal-update-user").modal("show");
-		 	doUpdateUser(); 
-		}
-
-		 function doUpdateUser() {
-			$("#update-form").submit(function(e) {
-				 e.preventDefault(); 
-				var formData = $(this).serialize();
-				$.ajax({
-					url : "updateUser.action",
-					type : "POST",
-					data : formData,
-					success : function(data) {
-						console.log(data);
-						location.reload();
-					
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						console.log(textStatus, errorThrown);
-
-					}
-				});
-			});
-		} 
+		
 	</script>
 </body>
 </html>

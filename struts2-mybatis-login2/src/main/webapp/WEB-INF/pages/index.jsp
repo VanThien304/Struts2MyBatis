@@ -206,7 +206,8 @@ input.error {
 	</div>
 
 
-	<div id="modal-create-user" class="modal" tabindex="-1">
+	<div id="modal-create-user" class="modal" tabindex="-1"
+		style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -217,14 +218,11 @@ input.error {
 				<div class="modal-body">
 					<div class="modal-alert-danger hide"></div>
 					<form id="frmCreate">
-
 						<div class="form-row">
-
 							<div class="col-sm-12">
 								<div class="form-group p-2">
-									<div>Name:</div>
-									<input class="form-control" type="text" name="name"
-										id="creName" />
+									<label for="name">Name:</label> <input class="form-control"
+										type="text" name="name" id="creName" />
 								</div>
 								<div class="form-group p-2">
 									<div>Email:</div>
@@ -251,23 +249,18 @@ input.error {
 										<option value="2" ${groupRole == 2 ? 'selected' : ''}>Editor</option>
 										<option value="3" ${groupRole == 3 ? 'selected' : ''}>Reviewer</option>
 									</select>
-
-
-
 								</div>
 								<div class="form-group p-2 d-flex">
-									<label for="booleanActive">Active:</label>
-									<s:checkbox id="creIsActive" name="booleanActive"
-										fieldValue="true" value="true" />
-
+									<label for="booleanActive">Active:</label> <input
+										type="checkbox" id="booleanActive" name="booleanActive"
+										value="true" checked="checked" />
 								</div>
-
 							</div>
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" id="formCreateUser"
+					<button type="submit" id="btnCreateUser"
 						class="btn btn-primary p-2">Create</button>
 					<button type="button" class="btn btn-secondary p-2"
 						data-bs-dismiss="modal">Close</button>
@@ -288,11 +281,6 @@ input.error {
 
 </body>
 <script type="text/javascript">
-
-
-	
-
-	
 	
 	loadAllUsers();
 	 
@@ -310,31 +298,79 @@ input.error {
 		 $("#modal-create-user").modal("show");
 	}); 
 	 
-	 $("#formCreateUser").on('click', function() {
+	 $("#btnCreateUser").on('click', () => {
 		  $("#frmCreate").submit();
-		});
-
-	 
+	});
+		
+		
 	 $("#frmCreate").submit(function(event) {
-		    event.preventDefault(); // Ngăn chặn hành động mặc định của submit
-
-		    if ($("#frmCreate").valid()) {
-		        // Nếu form hợp lệ, thực hiện hành động tạo người dùng
+		    event.preventDefault();
+		    if ($("#frmCreate").valid()) {		        
 		        doCreateUser();
 		    }
-		});
+	});	 
 	
- 
+	 
+ 		function showModalUpdateUser(id) {
+			$("#modal-update-user").modal("show");	
+		}
+		
+		 $("#btnUpdateUser").on('click', () => {
+			 $("#frmUpdate").submit();
+		});
+
+		 $("#frmUpdate").submit(function(event) {
+			    event.preventDefault();
+			    if ($("#frmUpdate").valid()) {		        
+			    	doUpdateUser(id);
+			    }
+		}); 
+		
+		
+		function doUpdateUser(id) {
+		    var name = $('#upName').val();
+		    var email = $('#upEmail').val();
+		    var password = $('#upPassword').val();
+		    var confirmPassword = $('#upComPassword').val();
+		    var groupRole = $('#upGroupRole').val();
+		    var booleanActive = $('#booleanActive').is(':checked');
+
+		    $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/updateUserById",
+		        type: "POST",
+		        dataType: "JSON",
+		        data: {
+		            id: id,
+		            name: name,
+		            email: email,
+		            password: password,
+		            confirmPassword: confirmPassword,
+		            booleanActive: booleanActive ? 1: 0,
+		            groupRole: groupRole
+		        },
+		        success: function(data) {
+		            // Handle the success response
+		            console.log("User updated successfully:", data);
+		            $("#allUser tbody").empty();
+	                loadAllUsers();
+	                $("#modal-update-user").modal("hide");	
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            // Handle the error response
+		            console.log("Error updating user:", textStatus, errorThrown);
+		        }
+		    });
+		}
+	 
+	 
 	 
 	 function doCreateUser(){
-		
 		        var name = $("#creName").val();
 		        var email = $("#creEmail").val();
 		        var password = $("#crePassword").val();
 		        var confirmPassword = $("#creConPassword").val();
 		        var groupRole = $("#groupRole").val();
-		        var booleanActive = $("#booleanActive").is(":checked") ? "true" : "false";
-
+		        var booleanActive = $("#booleanActive").is(":checked") ? true : false;
 
 		        // Tạo đối tượng dữ liệu để gửi đi
 		        var userData = {
@@ -343,7 +379,7 @@ input.error {
 		            password: password,
 		            confirmPassword: confirmPassword,
 		            groupRole: groupRole,
-		            booleanActive: booleanActive
+		            booleanActive: booleanActive,
 		        };
 
 		        // Gửi yêu cầu AJAX để tạo người dùng
@@ -352,12 +388,11 @@ input.error {
 		            url: "http://localhost:8080/struts2-mybatis-login/createUser",
 		            data: userData,
 		            success: function(data) {
-		                console.log("User created successfully:", data);
+		                console.log("User created successfully: ", data);
 		                // Thực hiện các hành động bổ sung sau khi tạo người dùng thành 
 		                $("#allUser tbody").empty();
 		                loadAllUsers();
-		                $("#modal-create-user").modal("hide");
-		                
+		                $("#modal-create-user").modal("hide");		                
 		               
 		                $("#frmCreate")[0].reset();
 		            },
@@ -365,11 +400,11 @@ input.error {
 		                console.log("Error creating user:", error);
 		                // Xử lý lỗi nếu có
 		            }
-		        });
-		  
+		      });
 	 }
 	 
-	
+
+	 
 	 function renderUser(user) {
 			 var isActive = user.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
 			    var groupRole = "";
@@ -409,6 +444,23 @@ input.error {
 		}
 
 	 
+	 function getUserById(id) {
+		    $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/getUserById",
+		        type: "GET",
+		        dataType: "json",
+		        data: {id:id},
+		        success: function(data) {
+		        	 var user = data.user;
+		        	 console.log("user= "+ user)
+		          
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		    });
+		}
+	 
 	 function loadAllUsers() {
 		    $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/getAllUsersJSON",
@@ -430,63 +482,7 @@ input.error {
 	 
     
     
-	/* function loadAllUsers() {
-		$.ajax({
-					url : "http://localhost:8080/struts2-mybatis-login/getAllUsersJSON",
-					type : "GET",
-					dataType : "json",
-					success : function(data) {
-						$.each(data.user,
-										function(index, user) {
-
-											var isActive = user.isActive == 1 ? "Đang hoạt động"
-													: "Tạm khóa";
-											var row = "<tr>" + "<td>" + user.id
-													+ "</td>" + "<td>"
-													+ user.name + "</td>"
-													+ "<td>" + user.email
-													+ "</td>"
-											if (user.groupRole == 1) {
-												row += "<td>Admin</td>"
-											} else if (user.groupRole == 2) {
-												row += "<td>Editor</td>"
-											} else {
-												row += "<td>Reviewer</td>"
-											}
-											row += "<td>"
-													+ isActive
-													+ "</td>"
-													+ "<td class='d-flex justify-content-between'>"
-													+ "<div>"
-													+ "<i onclick='showModalUpdateUser("
-													+ user.id
-													+ ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>"
-													+ "</div>"
-													+ "<div>"
-													+ "<a onclick='return confirmBox();' href='deleteUserById?id="
-													+ user.id
-													+ "' class='delete'>"
-													+ "<i class='fa-solid fa-trash btn btn-danger'></i>"
-													+ "</a>"
-													+ "</div>"
-													+ "<div>"
-													+ "<a onclick='return confirmBoxActive();' href='setActiveUserById?id="
-													+ user.id
-													+ "' class='activeUser'>"
-													+ "<i class='fa-solid fa-user-xmark btn btn-dark'></i>"
-													+ "</a>" + "</div>"
-													+ "</td>" + "</tr>";
-											$("#allUser tbody").append(row);
-										});
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						console.log("Lỗi: " + textStatus, errorThrown);
-
-					}
-				});
-
-	}
-	 */
+	
 
 	function confirmBox() {
 		var answer;
@@ -600,5 +596,72 @@ input.error {
 			 	
 			})
 	
+			
+			$("#frmUpdate").validate(
+			{
+				rules : {
+					name : {
+						required : true,
+						minlength : 3,
+						maxlength : 35
+					},
+					email : {
+						required : true,
+						minlength : 9,
+						maxlength : 35,
+					},
+					password : {	
+						required : true,
+						minlength : 6,
+						maxlength : 35,
+					},
+					confirmPassword : {
+						required : true,
+						minlength : 6,
+						maxlength : 35,
+						equalTo: "#upPassword"
+					}
+				},
+				messages : {
+					name : {
+						required : "Vui lòng nhập tên đầy đủ",
+						minlength : "Độ dài tối thiểu là 3 ký tự",
+						maxlength : "Độ dài tối đa là 35 ký tự"
+					},
+					email : {
+						required : "Vui lòng nhập địa chỉ email!",
+						minlength : "Độ dài tối thiểu là 9 ký tự",
+						maxlength : "Độ dài tối đa là 35 ký tự",
+						email: "Vui lòng nhập đúng định dạng email"
+					},
+					password : {
+						required : "Vui lòng nhập mật khẩu!",
+						minlength : "Độ dài tối thiểu là 6 ký tự",
+						maxlength : "Độ dài tối đa là 35 ký tự",
+					},
+					confirmPassword : {
+						required : "Vui lòng xác nhận mật khẩu!",
+						minlength : "Độ dài tối thiểu là 6 ký tự",
+						maxlength : "Độ dài tối đa là 35 ký tự",
+						equalTo: "Mật khẩu xác nhận không khớp",
+					}
+				},
+				errorLabelContainer : "#modal-update-user .modal-alert-danger",
+				errorPlacement : function(error, element) {
+					error.appendTo("#modal-update-user .modal-alert-danger");
+				},
+				showErrors : function(errorMap, errorList) {
+					if (this.numberOfInvalids() > 0) {
+						$("#modal-update-user .modal-alert-danger")
+								.removeClass("hide").addClass("show");
+					} else {
+						$("#modal-update-user .modal-alert-danger")
+								.removeClass("show").addClass("hide").empty();
+						$("#frmUpdate input.error").removeClass("error");
+					}
+					this.defaultShowErrors();
+				},
+			 	
+			})
 </script>
 </html>

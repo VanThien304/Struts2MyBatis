@@ -1,6 +1,6 @@
-<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+	pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,8 +8,24 @@
 <title>Page Customer</title>
 </head>
 <body>
-	<h1>Welcome to Customer Page!</h1>
-	<h3>Hello <s:property value="#session['user'].userName"/></h3><br>
+	<s:iterator var="user" value="id">
+		<h1>Welcome to Customer Page!</h1>
+		<h3>
+			Hello
+			<s:property value="id" />
+		</h3>
+		<br>
+		<h3>
+			Hello
+			<s:property value="name" />
+		</h3>
+		<br>
+		<h3>
+			Hello
+			<s:property value="email" />
+		</h3>
+		<br>
+	</s:iterator>
 	<a href="action/logout">Logout</a>
 </body>
 </html>

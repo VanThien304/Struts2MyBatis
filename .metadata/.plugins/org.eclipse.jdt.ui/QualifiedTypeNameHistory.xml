@@ -18,8 +18,6 @@
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.Validations"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.RequiredStringValidator"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.ValidatorType"/>
-    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.EmailValidator"/>
-    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.RegexFieldValidator"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.ValidationException"/>
     <fullyQualifiedTypeName name="com.tpv.model.mapper.UserMapper"/>
     <fullyQualifiedTypeName name="java.math.BigDecimal"/>
@@ -50,4 +48,11 @@
     <fullyQualifiedTypeName name="javax.servlet.http.HttpServletRequest"/>
     <fullyQualifiedTypeName name="org.apache.struts2.ServletActionContext"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionContext"/>
+    <fullyQualifiedTypeName name="com.tpv.controller.user.ParentPackage"/>
+    <fullyQualifiedTypeName name="javax.xml.validation.Validator"/>
+    <fullyQualifiedTypeName name="org.apache.tomcat.jdbc.pool.Validator"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.Validator"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.validators.RegexFieldValidator"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.RegexFieldValidator"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.EmailValidator"/>
 </qualifiedTypeNameHistroy>

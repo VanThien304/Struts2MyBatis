@@ -58,10 +58,10 @@
 		<action name="index">
 			<interceptor-ref name="secureStack" />
 			<result name="success">
+				<param name="actionName">updateUserById</param>
 				<param name="actionName">createUser</param>
 				<param name="actionName">deleteUserById</param>
-				<param name="actionName">getUserByActive</param>
-				<param name="actionName">updateUser</param>
+				<param name="actionName">getUserByActive</param>		
 				<param name="actionName">getAllUsersJSON</param>
 				<param name="actionName">getAllUsers</param>
 			</result>
@@ -80,11 +80,6 @@
 			<result type="json" />
 		</action>
 
-		<action name="getAllUsers"
-			class="com.tpv.controller.user.UserAction" method="getAllUsers">
-			<interceptor-ref name="secureStack" />
-			<result name="success">WEB-INF/pages/index.jsp</result>
-		</action>
 
 		<action name="listUser"
 			class="com.tpv.controller.user.UserAction" method="getAllUsers">
@@ -96,7 +91,7 @@
 		</action>
 		<action name="getUserById"
 			class="com.tpv.controller.user.UserAction" method="getUserById">
-			<result name="success">WEB-INF/pages/result.jsp</result>
+			<result name="success">WEB-INF/pages/customer.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 		</action>
 
@@ -117,14 +112,21 @@
 			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
 		</action>
 
-		<action name="updateUser"
+		<action name="updateUserById"
 			class="com.tpv.controller.user.UserAction" method="updateUser">
 			<interceptor-ref name="secureStack" />
+			
 			<result name="success" type="redirectAction">
 				<param name="actionName">listUser</param>
 			</result>
-			<result name="login">WEB-INF/pages/login.jsp</result>
+			<result name="error">WEB-INF/pages/modalUpdateUser.jsp</result>
 			<result name="input">WEB-INF/pages/modalUpdateUser.jsp</result>
+		</action>
+
+		<action name="modalCreateUser">
+			<interceptor-ref name="secureStack" />
+			<result>WEB-INF/pages/modalCreateUser.jsp</result>
+			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
 		</action>
 
 		<action name="setActiveUserById"
@@ -134,7 +136,6 @@
 				<param name="actionName">listUser</param>
 			</result>
 		</action>
-
 
 	</package>
 </struts>
