@@ -46,7 +46,6 @@
     <fullyQualifiedTypeName name="org.apache.struts2.StrutsStatics"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionSupport"/>
     <fullyQualifiedTypeName name="javax.servlet.http.HttpServletRequest"/>
-    <fullyQualifiedTypeName name="org.apache.struts2.ServletActionContext"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionContext"/>
     <fullyQualifiedTypeName name="com.tpv.controller.user.ParentPackage"/>
     <fullyQualifiedTypeName name="javax.xml.validation.Validator"/>
@@ -55,4 +54,7 @@
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.validators.RegexFieldValidator"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.RegexFieldValidator"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.validator.annotations.EmailValidator"/>
+    <fullyQualifiedTypeName name="org.apache.struts2.ServletActionContext"/>
+    <fullyQualifiedTypeName name="javax.servlet.http.HttpServletResponse"/>
+    <fullyQualifiedTypeName name="org.apache.logging.log4j.core.jackson.Log4jJsonObjectMapper"/>
 </qualifiedTypeNameHistroy>

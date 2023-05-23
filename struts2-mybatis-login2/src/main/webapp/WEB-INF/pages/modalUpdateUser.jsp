@@ -8,24 +8,26 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<s:set var="user">
-		${param.user}
-	</s:set>
 
 	<div id="modal-update-user" class="modal" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Modal Update User</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
+					<button type="button" class="btn-close close" data-bs-dismiss="modal"
 						aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
 					<div class="modal-alert-danger hide"></div>
 					<form id="frmUpdate">
-
-						<div class="form-row">
+						<div class="form-row">	
 							<div class="col-sm-12">
+							
+								<div class="form-group ">
+									<label for="name">ID:</label> 
+									<input class="form-control" type="text" name="id" id="upId" />
+								</div>
+								
 								<div class="form-group ">
 									<label for="name">Name:</label> 
 									<input class="form-control" type="text" name="name" id="upName" />
@@ -57,17 +59,15 @@
 								</div>
 								<div class="form-group ">
 									<label for="booleanActive">Active:</label> 
-									<input type="checkbox" id="booleanActive" name="booleanActive"
-										value="true" />
+									<input type="checkbox" id="booleanActive" name="booleanActive" value="true" />
 								</div>
 							</div>
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary"
-						data-bs-dismiss="modal" id="btnUpdateUser">Update</button>
-					<button type="button" class="btn btn-secondary"
+					<button type="button" class="btn btn-primary" id="btnUpdateUser">Update</button>
+					<button type="button" class="btn btn-secondary close" id="btnCloseUpdateUser"
 						data-bs-dismiss="modal">Close</button>
 
 				</div>

@@ -43,7 +43,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 	private Integer isDelete;
 	private String groupRole;
 	private Boolean booleanActive;
-	private String keywork;
+	private String keyword;
 
 	private int currentPage;
 	private int totalPages;
@@ -74,7 +74,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			System.out.println(user.getId());
 			System.out.println(user.getName());
 			System.out.println(user.getEmail());
-			System.out.println(user.getPassword());
+			System.out.println("delete = " + user.getIsDelete());
 			System.out.println(user.getGroupRole());
 			System.out.println(user.getIsActive());
 
@@ -142,30 +142,28 @@ public class UserAction extends ActionSupport implements SessionAware {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
+		
 		try {
-			if (keywork.length() == 0) {
+			if (keyword == null || keyword.isEmpty()) {
 				System.out.println("vui long nhap du lieu de tim kiem!");
-				return "error";
+				return null;
 			}
-			PropertyConfigurator.configure(keywork);
-
-			users = session.selectList("User.search", keywork);
+			
+			users = session.selectList("User.search", keyword);
 			for (User user : users) {
-
 				System.out.println("user id = " + user.getId());
 				System.out.println("name = " + user.getName());
 				System.out.println("email" + user.getEmail());
 				System.out.println("GroupRole = " + user.getGroupRole());
 				System.out.println("Active" + user.getIsActive());
-			}
-			session.commit();
-			return "success";
+			}		
+			return SUCCESS;
 		} catch (Exception e) {
-			return "error";
+			e.printStackTrace();
 		} finally {
 			session.close();
 		}
-
+			return null;
 	}
 
 	public String createUser() throws SQLException, Exception {
@@ -284,32 +282,30 @@ public class UserAction extends ActionSupport implements SessionAware {
 		if (id == null) {
 			return "error";
 		}
-		
+
 		try {
 			boolean hasError = false;
 
-			if (user != null) {
-				if (name.length() < 3) {
-					addFieldError("name", "tên không được trống và tên nhập vào phải lớn hơn 2 ký tự!");
-					hasError = true;
-				}
-
-				if (email.length() < 9) {
-					addFieldError("email", "email không được trống, email phải đúng định dạng @gmail.com!");
-					hasError = true;
-				}
-
-				if (password.length() < 5) {
-					addFieldError("password", "password không được trống, password phải lớn hơn 5 ký tự!");
-					hasError = true;
-				}
-
-				if (!password.equals(confirmPassword)) {
-					addFieldError("confirmPassword", "mật khẩu không trùng khớp!!");
-					hasError = true;
-				}
-
+			if (name.length() < 3) {
+				addFieldError("name", "tên không được trống và tên nhập vào phải lớn hơn 2 ký tự!");
+				hasError = true;
 			}
+
+			if (email.length() < 9) {
+				addFieldError("email", "email không được trống, email phải đúng định dạng @gmail.com!");
+				hasError = true;
+			}
+
+			if (password.length() < 5) {
+				addFieldError("password", "password không được trống, password phải lớn hơn 5 ký tự!");
+				hasError = true;
+			}
+
+			if (!password.equals(confirmPassword)) {
+				addFieldError("confirmPassword", "mật khẩu không trùng khớp!!");
+				hasError = true;
+			}
+
 			if (hasError) {
 				return INPUT;
 			}
@@ -340,13 +336,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 			return SUCCESS;
 		} catch (Exception e) {
 			// TODO: handle exception
-			
+
 		} finally {
 			session.close();
 		}
 		return INPUT;
 	}
 
+	
 	public String deleteUserById() throws SQLException, Exception {
 		if (id == null) {
 			return "error";
@@ -466,12 +463,12 @@ public class UserAction extends ActionSupport implements SessionAware {
 		this.confirmPassword = confirmPassword;
 	}
 
-	public String getKeywork() {
-		return keywork;
+	public String getKeyword() {
+		return keyword;
 	}
 
-	public void setKeywork(String keywork) {
-		this.keywork = keywork;
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 	public int getCurrentPage() {

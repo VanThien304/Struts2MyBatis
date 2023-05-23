@@ -117,11 +117,16 @@ input.error {
 			<div class="col-3">
 				<!-- 	<h3>Search By Name</h3> -->
 
-				<form id="searchForm">
-					<input type="text" name="keyword" id="keyword" />
-					<button type="button" onclick="submitSearch()">Search</button>
-				</form>
+				 <div id="searchForm">
+					<input type="search" name="keyword" id="keywordInput" placeholder="Search..."/>
+					<input type="submit" onclick="searchUser(document.getElementById('keywordInput').value)" value="Search"/>
+					<div id="resultContainer"></div>
+				</div> 
 
+		<!-- 		<form action="searchUser">
+					<input type="text" name="keyword" /> <input type="submit"
+						value="Search" />
+				</form> -->
 
 
 			</div>
@@ -212,8 +217,8 @@ input.error {
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Modal Create User</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
+					<button type="button" class="btn-close close"
+						data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
 					<div class="modal-alert-danger hide"></div>
@@ -251,9 +256,9 @@ input.error {
 									</select>
 								</div>
 								<div class="form-group p-2 d-flex">
-									<label for="booleanActive">Active:</label> <input
-										type="checkbox" id="booleanActive" name="booleanActive"
-										value="true" checked="checked" />
+									<label for="booleanActive">Active:</label> 
+									<input type="checkbox" id="booleanActive" name="booleanActive"
+										value="true" />
 								</div>
 							</div>
 						</div>
@@ -262,8 +267,8 @@ input.error {
 				<div class="modal-footer">
 					<button type="submit" id="btnCreateUser"
 						class="btn btn-primary p-2">Create</button>
-					<button type="button" class="btn btn-secondary p-2"
-						data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary p-2 close"
+						id="btnCloseCreateUser" data-bs-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
@@ -284,15 +289,7 @@ input.error {
 	
 	loadAllUsers();
 	 
-	function confirmLogout() {
-		var answer;
-		answer = window.confirm("Are you sure to logout page ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	
 
 	 $("#show-modal").on('click',() => {
 		 $("#modal-create-user").modal("show");
@@ -311,18 +308,80 @@ input.error {
 	});	 
 	
 	 
-		function showModalUpdateUser(id) {
-			$("#modal-update-user").modal("show");	
-			 $("#btnUpdateUser").on('click', function() {
+	function showModalUpdateUser(id) {
+		$('#upId').val(id);
+		$("#modal-update-user").modal("show");	
+			$("#btnUpdateUser").on('click', function() {
 				doUpdateUser(id);
-				});
-		}
+		});
+	}
+
+	
+	function searchUser(keyword) {
+			 $.ajax({
+			        url: "http://localhost:8080/struts2-mybatis-login/searchUser",
+			        type: "GET",
+			        dataType: "json",			        
+			        data: {
+			        	keyword: keyword
+			        	},
+			        success: function(data) {
+			        	console.log("data = " + data);
+			        	if (data !== null) {	
+			        	var user = data.users;
+			         	for(var i = 0; i < users.length; i++){
+			        		var user = users[i]; 
+			        	
+			        		var isActive = user.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
+			 			    var groupRole = "";
+
+			 			    if (user.groupRole == 1) {
+			 			        groupRole = "Admin";
+			 			    } else if (user.groupRole == 2) {
+			 			        groupRole = "Editor";
+			 			    } else {
+			 			        groupRole = "Reviewer";
+			 			    }
+
+			 			    var row = "<tr>" +
+			 			        "<td>" + user.id + "</td>" +
+			 			        "<td>" + user.name + "</td>" +
+			 			        "<td>" + user.email + "</td>" +
+			 			        "<td>" + groupRole + "</td>" +
+			 			        "<td>" + isActive + "</td>" +
+			 			        "<td class='d-flex justify-content-between'>" +
+			 			        "<div>" +
+			 			        "<i onclick='showModalUpdateUser(" + user.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
+			 			        "</div>" +
+			 			        "<div>" +
+			 			        "<a onclick='return confirmBox();' href='deleteUserById?id=" + user.id + "' class='delete'>" +
+			 			        "<i class='fa-solid fa-trash btn btn-danger'></i>" +
+			 			        "</a>" +
+			 			        "</div>" +
+			 			        "<div>" +
+			 			        "<a onclick='return confirmBoxActive();' href='setActiveUserById?id=" + user.id + "' class='activeUser'>" +
+			 			        "<i class='fa-solid fa-user-xmark btn btn-dark'></i>" +
+			 			        "</a>" +
+			 			        "</div>" +
+			 			        "</td>" +
+			 			        "</tr>"; 
+			                $("#allUser tbody").append(row);
+			         	}
+			              } else {
+			                displayError();
+			              }
+			        },
+			        error: function(jqXHR, textStatus, errorThrown) {
+			            console.log("Lỗi: " + textStatus, errorThrown);
+			        }
+			    });
+		  }
 
 		
 		
-		function doUpdateUser(id) {
-			var userId = getUserById(id);
-			var idUser = userId;
+	
+	function doUpdateUser(id) {
+		if ($("#frmUpdate").valid()) {	
 		    var name = $('#upName').val();
 		    var email = $('#upEmail').val();
 		    var password = $('#upPassword').val();
@@ -346,7 +405,7 @@ input.error {
 		        success: function(data) {
 		            // Handle the success response
 		            console.log("User updated successfully:", data);
-		            $("#allUser tbody").empty();
+		          
 	                loadAllUsers();
 	                $("#modal-update-user").modal("hide");	
 		        },
@@ -356,8 +415,8 @@ input.error {
 		        }
 		    });
 		}
-	 
-	 
+	 }
+	
 	 
 	 function doCreateUser(){
 		        var name = $("#creName").val();
@@ -397,46 +456,6 @@ input.error {
 		            }
 		      });
 	 }
-	 
-
-	 
-	 function renderUser(user) {
-			 var isActive = user.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
-			    var groupRole = "";
-
-			    if (user.groupRole == 1) {
-			        groupRole = "Admin";
-			    } else if (user.groupRole == 2) {
-			        groupRole = "Editor";
-			    } else {
-			        groupRole = "Reviewer";
-			    }
-
-			    var row = "<tr>" +
-			        "<td>" + user.id + "</td>" +
-			        "<td>" + user.name + "</td>" +
-			        "<td>" + user.email + "</td>" +
-			        "<td>" + groupRole + "</td>" +
-			        "<td>" + isActive + "</td>" +
-			        "<td class='d-flex justify-content-between'>" +
-			        "<div>" +
-			        "<i onclick='showModalUpdateUser(" + user.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
-			        "</div>" +
-			        "<div>" +
-			        "<a onclick='return confirmBox();' href='deleteUserById?id=" + user.id + "' class='delete'>" +
-			        "<i class='fa-solid fa-trash btn btn-danger'></i>" +
-			        "</a>" +
-			        "</div>" +
-			        "<div>" +
-			        "<a onclick='return confirmBoxActive();' href='setActiveUserById?id=" + user.id + "' class='activeUser'>" +
-			        "<i class='fa-solid fa-user-xmark btn btn-dark'></i>" +
-			        "</a>" +
-			        "</div>" +
-			        "</td>" +
-			        "</tr>";
-
-			    return  $("#allUser tbody").append(row);;
-		}
 
 	 
 	 function getUserById(id) {
@@ -456,6 +475,46 @@ input.error {
 		    });
 		}
 	 
+	 
+	 
+	 function renderUser(user) {
+		 var isActive = user.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
+		    var groupRole = "";
+
+		    if (user.groupRole == 1) {
+		        groupRole = "Admin";
+		    } else if (user.groupRole == 2) {
+		        groupRole = "Editor";
+		    } else {
+		        groupRole = "Reviewer";
+		    }
+
+		    var row = "<tr>" +
+		        "<td>" + user.id + "</td>" +
+		        "<td>" + user.name + "</td>" +
+		        "<td>" + user.email + "</td>" +
+		        "<td>" + groupRole + "</td>" +
+		        "<td>" + isActive + "</td>" +
+		        "<td class='d-flex justify-content-between'>" +
+		        "<div>" +
+		        "<i onclick='showModalUpdateUser(" + user.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
+		        "</div>" +
+		        "<div>" +
+		        "<a onclick='return confirmBox();' href='deleteUserById?id=" + user.id + "' class='delete'>" +
+		        "<i class='fa-solid fa-trash btn btn-danger'></i>" +
+		        "</a>" +
+		        "</div>" +
+		        "<div>" +
+		        "<a onclick='return confirmBoxActive();' href='setActiveUserById?id=" + user.id + "' class='activeUser'>" +
+		        "<i class='fa-solid fa-user-xmark btn btn-dark'></i>" +
+		        "</a>" +
+		        "</div>" +
+		        "</td>" +
+		        "</tr>";
+
+		    return  $("#allUser tbody").append(row);;
+	}
+	 
 	 function loadAllUsers() {
 		    $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/getAllUsersJSON",
@@ -463,8 +522,8 @@ input.error {
 		        dataType: "json",
 		        success: function(data) {
 		            $.each(data.user, function(index, user) {
-		                var row = renderUser(user);
-		                $("#allUser tbody").append(row);
+		            	   var row = renderUser(user);
+			               $("#allUser tbody").append(row);
 		            });
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
@@ -473,31 +532,15 @@ input.error {
 		    });
 		}
 
-		loadAllUsers();
-	 
-    
-    
-	
-
-	function confirmBox() {
-		var answer;
-		answer = window.confirm("Are you sure to delete this user id ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
+		
 	$(".delete").click(function() {
 		$.ajax({
 			type : "POST",
-			url : "deleteUserById.action?id=${id}",
+			url : "http://localhost:8080/struts2-mybatis-login/deleteUserById",
 			dataType : "JSON",
 			data : {
 				id : id
 			},
-
 			success : function(res) {
 				alert(res);
 				if (res.success) {
@@ -522,6 +565,26 @@ input.error {
 		}
 	}
 	
+
+	function confirmLogout() {
+		var answer;
+		answer = window.confirm("Are you sure to logout page ?");
+		if (answer == true) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+    
+	function confirmBox() {
+		var answer;
+		answer = window.confirm("Are you sure to delete this user id ?");
+		if (answer == true) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 
 	$("#frmCreate").validate(
@@ -529,7 +592,7 @@ input.error {
 				rules : {
 					name : {
 						required : true,
-						minlength : 3,
+						minlength : 6,
 						maxlength : 35
 					},
 					email : {
@@ -541,6 +604,7 @@ input.error {
 						required : true,
 						minlength : 6,
 						maxlength : 35,
+						pwcheck : true
 					},
 					confirmPassword : {
 						required : true,
@@ -552,7 +616,7 @@ input.error {
 				messages : {
 					name : {
 						required : "Vui lòng nhập tên đầy đủ",
-						minlength : "Độ dài tối thiểu là 3 ký tự",
+						minlength : "Độ dài tối thiểu là 6 ký tự",
 						maxlength : "Độ dài tối đa là 35 ký tự"
 					},
 					email : {
@@ -565,6 +629,7 @@ input.error {
 						required : "Vui lòng nhập mật khẩu!",
 						minlength : "Độ dài tối thiểu là 6 ký tự",
 						maxlength : "Độ dài tối đa là 35 ký tự",
+						pwcheck : "Mật khẩu phải có tối thiểu 1 chữ hoa, 1 chữ thường và một số!",
 					},
 					confirmPassword : {
 						required : "Vui lòng xác nhận mật khẩu!",
@@ -591,13 +656,17 @@ input.error {
 			 	
 			})
 	
-			
+			$.validator.addMethod("pwcheck", function(value) {
+  			 	return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/.test(value)   			 
+			});
+
+	
 			$("#frmUpdate").validate(
 			{
 				rules : {
 					name : {
 						required : true,
-						minlength : 3,
+						minlength : 6,
 						maxlength : 35
 					},
 					email : {
@@ -608,6 +677,7 @@ input.error {
 					password : {	
 						required : true,
 						minlength : 6,
+						pwcheck : true,
 						maxlength : 35,
 					},
 					confirmPassword : {
@@ -620,7 +690,7 @@ input.error {
 				messages : {
 					name : {
 						required : "Vui lòng nhập tên đầy đủ",
-						minlength : "Độ dài tối thiểu là 3 ký tự",
+						minlength : "Độ dài tối thiểu là 6 ký tự",
 						maxlength : "Độ dài tối đa là 35 ký tự"
 					},
 					email : {
@@ -633,6 +703,7 @@ input.error {
 						required : "Vui lòng nhập mật khẩu!",
 						minlength : "Độ dài tối thiểu là 6 ký tự",
 						maxlength : "Độ dài tối đa là 35 ký tự",
+						pwcheck : "Mật khẩu phải có tối thiểu 1 chữ hoa, 1 chữ thường và một số!",
 					},
 					confirmPassword : {
 						required : "Vui lòng xác nhận mật khẩu!",
@@ -658,5 +729,24 @@ input.error {
 				},
 			 	
 			})
+			
+			
+	$(".close").on('click', function() {
+		    // Reset lại form
+		    $("#frmCreate").validate().resetForm();
+		    // Xóa thông báo lỗi
+		    $("#modal-create-user .modal-alert-danger").removeClass("show").addClass("hide").empty();
+		    // Xóa lớp error trên các trường input
+		    $("#frmCreate input.error").removeClass("error");  
+	}); 
+		
+ 	$(".close").on('click', function() {
+	    // Reset lại form
+	    $("#frmUpdate").validate().resetForm();
+	    // Xóa thông báo lỗi
+	    $("#modal-update-user .modal-alert-danger").removeClass("show").addClass("hide").empty();
+	    // Xóa lớp error trên các trường input
+	    $("#frmUpdate input.error").removeClass("error");
+	 }); 
 </script>
 </html>

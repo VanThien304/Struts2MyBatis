@@ -8,7 +8,7 @@
 <title>Page Customer</title>
 </head>
 <body>
-	<s:iterator var="user" value="id">
+	
 		<h1>Welcome to Customer Page!</h1>
 		<h3>
 			Hello
@@ -17,7 +17,7 @@
 		<br>
 		<h3>
 			Hello
-			<s:property value="name" />
+			<s:textfield value="name" />
 		</h3>
 		<br>
 		<h3>
@@ -25,7 +25,7 @@
 			<s:property value="email" />
 		</h3>
 		<br>
-	</s:iterator>
+
 	<a href="action/logout">Logout</a>
 </body>
 </html>
