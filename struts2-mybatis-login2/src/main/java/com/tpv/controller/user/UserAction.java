@@ -5,7 +5,7 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +29,7 @@ import org.apache.struts2.interceptor.SessionAware;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.RegexFieldValidator;
+
 
 public class UserAction extends ActionSupport implements SessionAware {
 
@@ -61,14 +62,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
 	}
-
+	 
+		
+	
 	public String getUserById() throws SQLException, Exception {
-
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
 		try {
-			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-			SqlSession session = sqlSessionFactory.openSession();
-
 			user = session.selectOne("User.getById", id);
 			// Print the student details
 			System.out.println(user.getId());
@@ -77,38 +78,42 @@ public class UserAction extends ActionSupport implements SessionAware {
 			System.out.println("delete = " + user.getIsDelete());
 			System.out.println(user.getGroupRole());
 			System.out.println(user.getIsActive());
-
-			session.commit();
-			session.close();
-			return "success";
-
+			return SUCCESS;
 		} catch (Exception e) {
-
 			e.printStackTrace();
-			addActionError("Error retrieving user: " + e.getMessage());
-			return "error";
+			addActionError("Error retrieving user: " + e.getMessage());		
+		}finally {
+			session.close();
 		}
+		return INPUT;
 	}
 
 	public String getUserByActive() throws SQLException, Exception {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		
 		try {
-			Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-			SqlSession session = sqlSessionFactory.openSession();
-
 			users = session.selectList("User.getUserByActive", isActive);
-
-			System.out.println("users" + users);
-
-			session.commit();
-			session.close();
-			return "success";
+			
+			for (User user : users) {
+				System.out.println("user id = " + user.getId());
+				System.out.println("name = " + user.getName());
+				System.out.println("email" + user.getEmail());
+				System.out.println("GroupRole = " + user.getGroupRole());
+				System.out.println("Active" + user.getIsActive());
+			
+			}	
+			
+			return SUCCESS;
 
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			addActionError("Error retrieving user: " + e.getMessage());
-			return "error";
+			return ERROR;
+		}finally {
+			session.close();
 		}
 	}
 
@@ -127,7 +132,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			users = session.selectList("User.getAll");
 			System.out.println("Records Read Successfully ");
 
-			return "success";
+			return SUCCESS;
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -157,6 +162,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 				System.out.println("GroupRole = " + user.getGroupRole());
 				System.out.println("Active" + user.getIsActive());
 			}		
+			
 			return SUCCESS;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -165,6 +171,37 @@ public class UserAction extends ActionSupport implements SessionAware {
 		}
 			return null;
 	}
+	
+	public String selectUserByGroup() throws SQLException, Exception {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		
+		try {
+			if (groupRole == null || groupRole.isEmpty()) {
+				System.out.println("vui long nhap du lieu de tim kiem!");
+				return null;
+			}
+			
+			users = session.selectList("User.getByGroup", groupRole);
+			for (User user : users) {
+				System.out.println("user id = " + user.getId());
+				System.out.println("name = " + user.getName());
+				System.out.println("email" + user.getEmail());
+				System.out.println("GroupRole = " + user.getGroupRole());
+				System.out.println("Active" + user.getIsActive());
+			}		
+			
+			return SUCCESS;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+			return null;
+	}
+	
+	
 
 	public String createUser() throws SQLException, Exception {
 

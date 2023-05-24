@@ -27,7 +27,6 @@
     <fullyQualifiedTypeName name="com.tpv.model.GroupRole"/>
     <fullyQualifiedTypeName name="java.sql.SQLException"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.executor.ExecutorException"/>
-    <fullyQualifiedTypeName name="java.util.Arrays"/>
     <fullyQualifiedTypeName name="org.apache.struts2.json.JSONResult"/>
     <fullyQualifiedTypeName name="com.tpv.model.PageInfo"/>
     <fullyQualifiedTypeName name="java.lang.Exception"/>
@@ -57,4 +56,5 @@
     <fullyQualifiedTypeName name="org.apache.struts2.ServletActionContext"/>
     <fullyQualifiedTypeName name="javax.servlet.http.HttpServletResponse"/>
     <fullyQualifiedTypeName name="org.apache.logging.log4j.core.jackson.Log4jJsonObjectMapper"/>
+    <fullyQualifiedTypeName name="java.util.Arrays"/>
 </qualifiedTypeNameHistroy>

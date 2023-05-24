@@ -111,41 +111,95 @@ input.error {
 </style>
 </head>
 <body>
-
-	<div class="container">
+	<div class="container p-3">
 		<div class="row">
-			<div class="col-3">
+			<div class="col-2"></div>
+			<div class="col-4">
+				<a href="#">Products</a> <a href="#">Customers</a> 
+				<div>
+				<a id="btnLoadUsers">Users</a></div>
+			</div>
+			<div class="col-4 d-flex justify-content-end">
+				<a href="#">Admin</a>
+			</div>
+		</div>
+		<div>
+			<h3>Users</h3>
+		</div>
+	</div>
+
+	<hr class="p-1" style="color: red" />
+
+	<div class="container pb-4">
+		<div class="row">
+			<div class="col-12 d-flex">
 				<!-- 	<h3>Search By Name</h3> -->
 
-				 <div id="searchForm">
-					<input type="search" name="keyword" id="keywordInput" placeholder="Search..."/>
-					<input type="submit" onclick="searchUser(document.getElementById('keywordInput').value)" value="Search"/>
-					<div id="resultContainer"></div>
-				</div> 
+				<div class="col-4" id="searchForm">
+					<div>
+						<h5>Name</h5>
+					</div>
+					<input type="search" name="keyword" id="keywordInput"
+						placeholder="Input fullname" />
+				</div>
 
-		<!-- 		<form action="searchUser">
-					<input type="text" name="keyword" /> <input type="submit"
-						value="Search" />
-				</form> -->
+				<div class="col-4">
+					<div>
+						<h5>Group</h5>
+					</div>
+					<select name="groupRole" id="selectGroupRole"
+						onchange="selectUserByGroup(this.value)">
+						<option selected>Select Group</option>
+						<option value="1">Admin</option>
+						<option value="2">Editor</option>
+						<option value="3">Reviewer</option>
+					</select>
+				</div>
 
-
-			</div>
-			<div class="col-6 d-flex justify-content-end">
-				<button id="show-modal" class="bg-primary" style="height: 35px">Add
-					User</button>
-			</div>
-			<div class="col-3">
-				<!-- 	<h3>Search By Name</h3> -->
-
-				<button id="logout">
-					<a href="logout" onclick='return confirmLogout()'>Logout</a>
-				</button>
-
+				<div class="col-4">
+					<div>
+						<h5>Active</h5>
+					</div>
+					<select name="isActive" id="selectIsActive"
+						onchange="getUserByActive(this.value)">
+						<option selected>Select Active</option>
+						<option value="1">Đang hoạt động</option>
+						<option value="0">Tạm khóa</option>
+					</select>
+				</div>
 
 
 			</div>
 		</div>
 	</div>
+
+	<div class="container p-2">
+		<div class="row">
+			<div class="col-12 d-flex">
+				<div class="col-8">
+					<button type="button" id="show-modal" class="btn btn-primary">Add
+						User</button>
+				</div>
+				<div class="col-4">
+			
+					 <input class="btn btn-primary" type="submit"
+						onclick="searchUser(document.getElementById('keywordInput').value)"
+						value="Search" />
+					<!-- <input type="text" id="keywordInput" oninput="searchUser(this.value)"> -->
+
+					<input class="btn btn-info" type="submit" onclick="resetSearch()"
+						value="Delete" /> 
+						
+						
+					<!-- <button id="logout">
+						<a href="logout" onclick='return confirmLogout()'>Logout</a>
+					</button> -->
+				</div>
+
+			</div>
+		</div>
+	</div>
+
 
 	<div class="container">
 		<table id="allUser" class="table table-striped">
@@ -207,7 +261,6 @@ input.error {
 			</tbody>
 
 		</table>
-
 	</div>
 
 
@@ -256,8 +309,8 @@ input.error {
 									</select>
 								</div>
 								<div class="form-group p-2 d-flex">
-									<label for="booleanActive">Active:</label> 
-									<input type="checkbox" id="booleanActive" name="booleanActive"
+									<label for="booleanActive">Active:</label> <input
+										type="checkbox" id="booleanActive" name="booleanActive"
 										value="true" />
 								</div>
 							</div>
@@ -282,8 +335,6 @@ input.error {
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
 		type="text/javascript"></script>
-
-
 </body>
 <script type="text/javascript">
 	
@@ -307,6 +358,12 @@ input.error {
 		    }
 	});	 
 	
+	 $("#btnLoadUsers").on('click',() => {
+		 resetSearch();
+	}); 
+	 
+	 
+	 
 	 
 	function showModalUpdateUser(id) {
 		$('#upId').val(id);
@@ -316,8 +373,19 @@ input.error {
 		});
 	}
 
+	function resetSearch() {
+	    // Xóa giá trị tìm kiếm đã nhập
+	    $("#keywordInput").val("");
+
+	    // Gọi Ajax để tải lại dữ liệu ban đầu (không có tìm kiếm)
+	    searchUser("");
+	    
+	    $("#allUser tbody").html('');
+	    
+	    loadAllUsers();
+	}
 	
-	function searchUser(keyword) {
+/* 	function searchUser(keyword) {
 			 $.ajax({
 			        url: "http://localhost:8080/struts2-mybatis-login/searchUser",
 			        type: "GET",
@@ -327,13 +395,16 @@ input.error {
 			        	},
 			        success: function(data) {
 			        	console.log("data = " + data);
-			        	if (data !== null) {	
-			        	var user = data.users;
-			         	for(var i = 0; i < users.length; i++){
-			        		var user = users[i]; 
-			        	
-			        		var isActive = user.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
-			 			    var groupRole = "";
+			        	if (data !== null) {
+			        		$('#search_fail').html("");
+			        		$("#allUser tbody").html("");
+			        		for(var i = 0; i < data.length; i++){
+			        	var user = data[i];	     		
+			        	var id = user.id;
+			        	var name = user.name;
+			        	var email = user.email;
+			        	var isActive = user.isActive ==  0 ? "Đang hoạt động" : "Tạm khóa";
+			 			var groupRole = "";
 
 			 			    if (user.groupRole == 1) {
 			 			        groupRole = "Admin";
@@ -344,9 +415,9 @@ input.error {
 			 			    }
 
 			 			    var row = "<tr>" +
-			 			        "<td>" + user.id + "</td>" +
-			 			        "<td>" + user.name + "</td>" +
-			 			        "<td>" + user.email + "</td>" +
+			 			        "<td>" + id + "</td>" +
+			 			        "<td>" + name + "</td>" +
+			 			        "<td>" + email + "</td>" +
 			 			        "<td>" + groupRole + "</td>" +
 			 			        "<td>" + isActive + "</td>" +
 			 			        "<td class='d-flex justify-content-between'>" +
@@ -365,19 +436,106 @@ input.error {
 			 			        "</div>" +
 			 			        "</td>" +
 			 			        "</tr>"; 
-			                $("#allUser tbody").append(row);
-			         	}
+			                $("#allUser tbody").prepend(row);
+			        	}
 			              } else {
 			                displayError();
 			              }
 			        },
 			        error: function(jqXHR, textStatus, errorThrown) {
 			            console.log("Lỗi: " + textStatus, errorThrown);
+			            $('#search_fail').prepend("<h3>"+'Không tìm thấy!'+"</h3>");
 			        }
 			    });
-		  }
+		  } */
 
+	function selectUserByGroup(groupRole) {
+				 $.ajax({
+				        url: "http://localhost:8080/struts2-mybatis-login/selectUserByGroup",
+				        type: "GET",
+				        dataType: "json",			        
+				        data: {
+				        	groupRole: groupRole
+				        	},
+				        success: function(data) {
+				        	console.log("data = " + data);
+				        	if (data !== null) {
+				        		 $("#allUser tbody").html('');
+				        	for(var i = 0; i < data.length; i++){
+					        	var user = data[i];	   
+					        	var row = renderUser(user);
+					                $("#allUser tbody").append(row);
+				        		 }
+				              } else {
+				                displayError();
+				              }
+				        },
+				        error: function(jqXHR, textStatus, errorThrown) {
+				            console.log("Lỗi: " + textStatus, errorThrown);
+				        }
+				});
+	} 
 		
+		  
+	 function getUserByActive(isActive) {
+				 $.ajax({
+				        url: "http://localhost:8080/struts2-mybatis-login/getUserByActive",
+				        type: "GET",
+				        dataType: "json",			        
+				        data: {
+				        	isActive:isActive
+				        	},
+				        success: function(data) {
+				        	console.log("data = " + data);
+				        	if (data !== null) {
+				        		 $("#allUser tbody").html('');
+				        	for(var i = 0; i < data.length; i++){
+					        	var user = data[i];	   
+					        	var row = renderUser(user);
+					                $("#allUser tbody").append(row);
+				        		 }
+				              } else {
+				                displayError();
+				              }
+				        },
+				        error: function(jqXHR, textStatus, errorThrown) {
+				            console.log("Lỗi: " + textStatus, errorThrown);
+				        }
+				});
+	} 	   
+		
+	
+	 function searchUser(keyword) {
+		 $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/searchUser",
+		        type: "GET",
+		        dataType: "json",			        
+		        data: {
+		        	keyword: keyword
+		        	},
+		        success: function(data) {
+		        	console.log("data = " + data);
+		        	if (data !== null) {
+		        		 $("#allUser tbody").html('');
+		        		 if(data.length !== 0){	
+		        	for(var i = 0; i < data.length; i++){
+			        	var user = data[i];	   
+			        	var row = renderUser(user);
+			                $("#allUser tbody").append(row);
+			        }
+		        		 }else{
+		        			 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Không có dữ liệu</td></tr>";
+		                     $("#allUser tbody").append(noDataMessage);
+		        		 }
+		              } else {
+		                displayError();
+		              }
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		    });
+	  } 
 		
 	
 	function doUpdateUser(id) {
@@ -458,7 +616,7 @@ input.error {
 	 }
 
 	 
-	 function getUserById(id) {
+/* 	 function getUserById(id) {
 		    $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/getUserById",
 		        type: "GET",
@@ -473,7 +631,7 @@ input.error {
 		            console.log("Lỗi: " + textStatus, errorThrown);
 		        }
 		    });
-		}
+		} */
 	 
 	 
 	 

@@ -29,8 +29,8 @@
 		SELECT * FROM mst_users ORDER BY id LIMIT #{offset}, #{pageSize};
 	</select>	
 	
-	<select id="getUserByActive" resultType="User">
-		SELECT * FROM mst_users WHERE is_delete = 0 and is_active = #{isActive};
+	<select id="getUserByActive" resultMap="result">
+		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE is_delete = 0 and is_active = #{isActive};
 	</select>
 	
 	<select id="login" resultType="User">
@@ -42,9 +42,14 @@
  		VALUES (#{name}, #{email}, #{password}, #{isActive}, #{isDelete}, #{groupRole});
 	</insert>
   	
-  	<select id="getById" parameterType="int" resultMap = "result">
-  		SELECT * FROM mst_users WHERE id = #{id};
+  	<select id="getById" resultMap = "result">
+  		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE id = #{id};
   	</select>
+  	
+  	<select id="getByGroup" resultMap = "result">
+  		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE group_role = #{groupRole} and is_delete = 0;
+  	</select>
+
   	
   	<update id="update" parameterType="User">
   		UPDATE mst_users SET user_name = #{name}, email = #{email}, password = #{password}, is_active = #{isActive}, group_role = #{groupRole}
