@@ -111,13 +111,15 @@ input.error {
 </style>
 </head>
 <body>
-	<div class="container p-3">
+	<div class="container p-2">
 		<div class="row">
 			<div class="col-2"></div>
-			<div class="col-4">
-				<a href="#">Products</a> <a href="#">Customers</a> 
-				<div>
-				<a id="btnLoadUsers">Users</a></div>
+			<div class="col-4 d-flex justify-content-around">
+				<div><a href="">Products</a></div> 
+				<div><a href="">Customers</a></div>
+				<div class="loadUser">
+					<a  href="" id="btnLoadUsers">Users</a>
+				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
 				<a href="#">Admin</a>
@@ -181,16 +183,16 @@ input.error {
 						User</button>
 				</div>
 				<div class="col-4">
-			
-					 <input class="btn btn-primary" type="submit"
+
+					<input class="btn btn-primary" type="submit"
 						onclick="searchUser(document.getElementById('keywordInput').value)"
 						value="Search" />
 					<!-- <input type="text" id="keywordInput" oninput="searchUser(this.value)"> -->
 
 					<input class="btn btn-info" type="submit" onclick="resetSearch()"
-						value="Delete" /> 
-						
-						
+						value="Delete" />
+
+
 					<!-- <button id="logout">
 						<a href="logout" onclick='return confirmLogout()'>Logout</a>
 					</button> -->
