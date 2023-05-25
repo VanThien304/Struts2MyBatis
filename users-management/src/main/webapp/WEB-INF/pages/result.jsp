@@ -10,67 +10,51 @@
 <body>
 
 
-	<s:if test="currentPage > 1">
-		<a href="<s:url value='%{first}'/>">First</a>
-		<a href="<s:url value='%{prev}'/>">Prev</a>
-	</s:if>
-	<s:if test="currentPage < totalPages">
-		<a href="<s:url value='%{next}'/>">Next</a>
-		<a href="<s:url value='%{last}'/>">Last</a>
-	</s:if>
-	<h1>User List</h1>
-	<a href="pagination.action">ádasd</a>
-	<s:url var="first" action="pagination">
-		<s:param name="currentPage">1</s:param>
-	</s:url>
-	<table>
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Username</th>
-				<th>Password</th>
-				<th>Email</th>
-			</tr>
-		</thead>
-		<tbody>
-			<s:iterator value="users">
-				<tr>
-					<td><s:property value="id" /></td>
-					<td><s:property value="username" /></td>
-					<td><s:property value="password" /></td>
-					<td><s:property value="email" /></td>
-				</tr>
-			</s:iterator>
-		</tbody>
-	</table>
-	<div>
-		<s:url var="first" action="pagination">
-			<s:param name="currentPage">1</s:param>
-		</s:url>
-		<s:url var="prev" action="pagination">
-			<s:param name="currentPage">
-				<s:property value="currentPage - 1" />
-			</s:param>
-		</s:url>
-		<s:url var="next" action="pagination">
-			<s:param name="currentPage">
-				<s:property value="currentPage + 1" />
-			</s:param>
-		</s:url>
-		<s:url var="last" action="pagination">
-			<s:param name="currentPage">
-				<s:property value="totalPages" />
-			</s:param>
-		</s:url>
-		<s:if test="currentPage > 1">
-			<a href="<s:url value="%{first}"/>">First</a>
-			<a href="<s:url value="%{prev}"/>">Prev</a>
-		</s:if>
-		<s:if test="currentPage < totalPages">
-			<a href="<s:url value="%{next}"/>">Next</a>
-			<a href="<s:url value="%{last}"/>">Last</a>
-		</s:if>
-	</div>
+
+<table>
+    <!-- Hiển thị danh sách người dùng -->
+    <s:iterator value="userList">
+        <tr>
+            <td><s:property value="id" /></td>
+            <td><s:property value="name" /></td>
+            <!-- Các cột khác -->
+        </tr>
+    </s:iterator>
+</table>
+
+<div>
+    <!-- Hiển thị phân trang -->
+    <s:url var="paginationUrl" action="pagination">
+        <s:param name="currentPage" value="%{#currentPage}" />
+    </s:url>
+    
+    <s:if test="totalPages > 1">
+        <s:set var="startPage" value="#currentPage - 2" />
+        <s:set var="endPage" value="#currentPage + 2" />
+        
+        <s:if test="startPage < 1">
+            <s:set var="endPage" value="#endPage + (1 - #startPage)" />
+            <s:set var="startPage" value="1" />
+        </s:if>
+        
+        <s:if test="endPage > totalPages">
+            <s:set var="startPage" value="#startPage - (#endPage - #totalPages)" />
+            <s:set var="endPage" value="#totalPages" />
+        </s:if>
+        
+        <ul>
+            <li><a href="<s:url action="pagination"><s:param name="currentPage" value="1" /></s:url>">Đầu</a></li>
+            <s:if test="startPage > 1"><li><a href="<s:url action="pagination"><s:param name="currentPage" value="#startPage - 1" /></s:url>">...</a></li></s:if>
+            <s:iterator begin="#startPage" end="#endPage" status="loopStatus">
+                <s:if test="#loopStatus.index + 1 == #currentPage"><li class="active"><s:property value="#currentPage" /></li></s:if>
+                <s:else><li><a href="<s:url action="pagination"><s:param name="currentPage" value="#loopStatus.index + 1" /></s:url>"><s:property value="#loopStatus.index + 1" /></a></li></s:else>
+            </s:iterator>
+            <s:if test="endPage < totalPages"><li><a href="<s:url action="pagination"><s:param name="currentPage" value="#endPage + 1" /></s:url>">...</a></li></s:if>
+            <li><a href="<s:url action="pagination"><s:param name="currentPage" value="#totalPages" /></s:url>">Cuối</a></li>
+        </ul>
+    </s:if>
+</div>
+
 
 </body>
 </html>

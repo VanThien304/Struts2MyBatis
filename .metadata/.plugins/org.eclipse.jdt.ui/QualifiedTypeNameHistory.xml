@@ -57,4 +57,5 @@
     <fullyQualifiedTypeName name="javax.servlet.http.HttpServletResponse"/>
     <fullyQualifiedTypeName name="org.apache.logging.log4j.core.jackson.Log4jJsonObjectMapper"/>
     <fullyQualifiedTypeName name="java.util.Arrays"/>
+    <fullyQualifiedTypeName name="org.w3c.dom.html.HTMLBodyElement"/>
 </qualifiedTypeNameHistroy>

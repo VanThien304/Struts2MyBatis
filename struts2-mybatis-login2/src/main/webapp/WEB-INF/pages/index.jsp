@@ -108,6 +108,66 @@ input.error {
 .thumbnail img:hover {
 	transform: scale(1.2);
 }
+
+.main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.listUserPagination {
+	width: 100%;
+	max-width: 768px;
+	background-color: #FFF;
+	border: 1px solid #ccc;
+}
+
+.listUserPagination .item {
+	padding: 15px;
+	border-bottom: 1px solid #ccc;
+}
+
+.listUserPagination .item {
+	padding: 15px;
+	border-bottom: 1px solid #ccc;
+}
+
+.listUserPagination .item:last-of-type {
+	padding: 15px;
+	border-bottom: none;
+}
+
+.pagenumbers {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+}
+
+.pagenumbers button {
+	width: 50px;
+	height: 50px;
+	appearance: none;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	background-color: #44AAEE;
+	margin: 5px;
+	transition: 0.4s;
+	color: #FFF;
+	font-size: 18px;
+	text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pagenumbers button:hover {
+	background-color: #44eeaa;
+}
+
+.pagenumbers button.active {
+	background-color: #44eeaa;
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+}
 </style>
 </head>
 <body>
@@ -115,10 +175,14 @@ input.error {
 		<div class="row">
 			<div class="col-2"></div>
 			<div class="col-4 d-flex justify-content-around">
-				<div><a href="">Products</a></div> 
-				<div><a href="">Customers</a></div>
+				<div>
+					<a href="">Products</a>
+				</div>
+				<div>
+					<a href="">Customers</a>
+				</div>
 				<div class="loadUser">
-					<a  href="" id="btnLoadUsers">Users</a>
+					<a href="" id="btnLoadUsers">Users</a>
 				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
@@ -137,7 +201,7 @@ input.error {
 			<div class="col-12 d-flex">
 				<!-- 	<h3>Search By Name</h3> -->
 
-				<div class="col-4" id="searchForm">
+				<div class="col-3" id="searchForm">
 					<div>
 						<h5>Name</h5>
 					</div>
@@ -145,7 +209,7 @@ input.error {
 						placeholder="Input fullname" />
 				</div>
 
-				<div class="col-4">
+				<div class="col-3">
 					<div>
 						<h5>Group</h5>
 					</div>
@@ -158,7 +222,7 @@ input.error {
 					</select>
 				</div>
 
-				<div class="col-4">
+				<div class="col-3">
 					<div>
 						<h5>Active</h5>
 					</div>
@@ -169,8 +233,6 @@ input.error {
 						<option value="0">Tạm khóa</option>
 					</select>
 				</div>
-
-
 			</div>
 		</div>
 	</div>
@@ -200,6 +262,11 @@ input.error {
 
 			</div>
 		</div>
+	</div>
+
+	<div class="main">
+		<div class="listUserPagination" id="list"></div>
+		<div class="pagenumbers" id="pagination"></div>
 	</div>
 
 
@@ -342,8 +409,101 @@ input.error {
 	
 	loadAllUsers();
 	 
-	
+/*  	 var list_items= [
+		"item 1",
+		"item 2",
+		"item 3",
+		"item 4",
+		"item 5",
+		"item 6",
+		"item 7",
+		"item 8",
+		"item 9",
+		"item 10",
+		"item 11",
+		"item 12",
+		"item 13",
+		"item 14",
+		"item 15",
+		"item 16",
+		"item 17",
+		"item 18",
+		"item 19",
+		"item 20",
+		"item 21",
+		"item 22",
+		"item 23",
+		"item 24",
+		"item 25",
+		"item 26",
+		"item 27",
+		"item 28",
+		"item 29",
+		"item 30",
+		"item 31",
+		"item 32",
+		"item 33",
+	];  */ 
+ 	 
+	const list_element = document.querySelector('#allUser tbody');
+	const pagination_element = document.getElementById('pagination');
 
+	let current_page = 1;
+	let rows = 10;
+
+	function DisplayList (items, wrapper, rows_per_page, page) {
+		wrapper.innerHTML = "";
+		page--;
+
+		let start = rows_per_page * page;
+		let end = start + rows_per_page;
+	 	const itemArray = Object.values(items); 
+		let paginatedItems = itemArray.slice(start, end);
+
+		for (let i = 0; i < paginatedItems.length; i++) {
+			let items = paginatedItems[i];
+
+			let item_element = document.createElement('div');
+			item_element.classList.add('item');
+			item_element.innerText = items;
+			
+			wrapper.appendChild(item_element);
+		}
+	}
+
+	function SetupPagination (items, wrapper, rows_per_page) {
+		wrapper.innerHTML = "";
+
+		let page_count = Math.ceil(items.length / rows_per_page);
+		for (let i = 1; i < page_count + 1; i++) {
+			let btn = PaginationButton(i, items);
+			wrapper.appendChild(btn);
+		}
+	}
+
+	function PaginationButton (page, items) {
+		let button = document.createElement('button');
+		button.innerText = page;
+
+		if (current_page == page) button.classList.add('active');
+
+		button.addEventListener('click', function () {
+			current_page = page;
+			DisplayList(items, list_element, rows, current_page);
+
+			let current_btn = document.querySelector('.pagenumbers button.active');
+			current_btn.classList.remove('active');
+
+			button.classList.add('active');
+		});
+
+		return button;
+	}
+
+/* 	 DisplayList(list_items, list_element, rows, current_page);
+	SetupPagination(list_items, pagination_element, rows);  */
+	
+	
 	 $("#show-modal").on('click',() => {
 		 $("#modal-create-user").modal("show");
 	}); 
@@ -365,8 +525,6 @@ input.error {
 	}); 
 	 
 	 
-	 
-	 
 	function showModalUpdateUser(id) {
 		$('#upId').val(id);
 		$("#modal-update-user").modal("show");	
@@ -386,6 +544,32 @@ input.error {
 	    
 	    loadAllUsers();
 	}
+	
+	
+	function showPaginationUsers(currentPage){
+		 $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/paginationAction",
+		        type: "GET",
+		        dataType: "json",			        
+		        data: {
+		        	currentPage: currentPage
+		        	},
+		        success: function(data) {
+		        	if(data != null){
+		        		$("#allUser tbody").html('');
+		        		for(let i = 0; i < data.length; i++){
+			        		user = data[i];
+			        		var row = renderUser(user);
+			        	}    	
+			            $("#allUser tbody").append(row);
+		        	}		        	
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		});
+	}
+	
 	
 /* 	function searchUser(keyword) {
 			 $.ajax({
@@ -618,7 +802,7 @@ input.error {
 	 }
 
 	 
-/* 	 function getUserById(id) {
+ 	 function getUserById(id) {
 		    $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/getUserById",
 		        type: "GET",
@@ -633,7 +817,7 @@ input.error {
 		            console.log("Lỗi: " + textStatus, errorThrown);
 		        }
 		    });
-		} */
+		} 
 	 
 	 
 	 
@@ -681,10 +865,13 @@ input.error {
 		        type: "GET",
 		        dataType: "json",
 		        success: function(data) {
-		            $.each(data.user, function(index, user) {
-		            	   var row = renderUser(user);
-			               $("#allUser tbody").append(row);
-		            });
+		             $.each(data.user, function(index, user) {  
+		                 var users = user;
+		                	/*  DisplayList(users, list_element, rows, current_page);
+			                 SetupPagination(users, pagination_element, rows);   */
+			            	 var row = renderUser(users);
+			            	$("#allUser tbody").append(row); 
+		            });             
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
 		            console.log("Lỗi: " + textStatus, errorThrown);

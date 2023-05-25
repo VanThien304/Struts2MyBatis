@@ -25,9 +25,13 @@
 		SELECT email FROM mst_users where email = #{email};
 	</select>	
 	
-	<select id="getUsersByPage" resultType="User">
-		SELECT * FROM mst_users ORDER BY id LIMIT #{offset}, #{pageSize};
+	<select id="getUsersByPage" resultMap = "result">
+		SELECT * FROM mst_users LIMIT #{pageSize} OFFSET #{offsetValue};
 	</select>	
+	
+	<select id="getCountUsers"  resultType="int">
+  		SELECT COUNT(*) FROM mst_users;
+  	</select>
 	
 	<select id="getUserByActive" resultMap="result">
 		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE is_delete = 0 and is_active = #{isActive};

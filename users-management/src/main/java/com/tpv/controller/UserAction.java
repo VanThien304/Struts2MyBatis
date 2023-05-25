@@ -74,7 +74,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 			int offset = (currentPage - 1) * pageSize;
 
-			users = session.selectList("User.getUsersByPage", getUsersByPage(session, offset, pageSize));
+			users = session.selectList("User.getUsersByPage", offset, new RowBounds(offset, pageSize));
 			System.out.println("success pagination");
 			return SUCCESS;
 		} finally {
@@ -86,7 +86,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("offset", offset);
 		parameters.put("pageSize", pageSize);
-		return session.selectList("User.getUsersByPage", parameters, new RowBounds(offset, pageSize));
+		return session.selectList("User.getUsersByPage", parameters);
 
 	}
 

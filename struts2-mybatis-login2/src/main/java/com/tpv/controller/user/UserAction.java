@@ -30,7 +30,6 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.RegexFieldValidator;
 
-
 public class UserAction extends ActionSupport implements SessionAware {
 
 	private static final long serialVersionUID = 1L;
@@ -62,9 +61,50 @@ public class UserAction extends ActionSupport implements SessionAware {
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
 	}
-	 
-		
-	
+
+	public String pagination() throws Exception {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			int pageSize = 10;
+			Integer totalRecords = session.selectOne("User.getCountUsers");
+			System.out.println("totalrecords= " + totalRecords);
+			totalPages = (int) Math.ceil((double) totalRecords.intValue() / pageSize);
+
+			if (currentPage < 1) {
+				System.out.println("currentPage = " + currentPage);
+				currentPage = 1;
+			} else if (currentPage > totalPages) {
+				currentPage = totalPages;
+				System.out.println("currentPage >  totalPages " + currentPage);
+			}
+
+			offset = (currentPage - 1) * pageSize;
+			System.out.println("offset.currentPage = " + currentPage);
+			System.out.println("offset = " + offset);
+
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("offsetValue", offset);
+			parameters.put("pageSize", pageSize);
+			users = getUsersByPage(session, parameters);
+			
+			for(User user: users) {
+			System.out.println("users = " + users);
+			System.out.println("user id = " + user.getId());
+			}
+			System.out.println("success pagination");
+			return SUCCESS;
+		} finally {
+			session.close();
+		}
+	}
+
+	private List<User> getUsersByPage(SqlSession session,Map<String, Object> parameters) throws IOException {
+		return session.selectList("User.getUsersByPage", parameters);
+
+	}
+
 	public String getUserById() throws SQLException, Exception {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
@@ -81,8 +121,8 @@ public class UserAction extends ActionSupport implements SessionAware {
 			return SUCCESS;
 		} catch (Exception e) {
 			e.printStackTrace();
-			addActionError("Error retrieving user: " + e.getMessage());		
-		}finally {
+			addActionError("Error retrieving user: " + e.getMessage());
+		} finally {
 			session.close();
 		}
 		return INPUT;
@@ -92,19 +132,19 @@ public class UserAction extends ActionSupport implements SessionAware {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
-		
+
 		try {
 			users = session.selectList("User.getUserByActive", isActive);
-			
+
 			for (User user : users) {
 				System.out.println("user id = " + user.getId());
 				System.out.println("name = " + user.getName());
 				System.out.println("email" + user.getEmail());
 				System.out.println("GroupRole = " + user.getGroupRole());
 				System.out.println("Active" + user.getIsActive());
-			
-			}	
-			
+
+			}
+
 			return SUCCESS;
 
 		} catch (Exception e) {
@@ -112,7 +152,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			e.printStackTrace();
 			addActionError("Error retrieving user: " + e.getMessage());
 			return ERROR;
-		}finally {
+		} finally {
 			session.close();
 		}
 	}
@@ -147,13 +187,13 @@ public class UserAction extends ActionSupport implements SessionAware {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
-		
+
 		try {
 			if (keyword == null || keyword.isEmpty()) {
 				System.out.println("vui long nhap du lieu de tim kiem!");
 				return null;
 			}
-			
+
 			users = session.selectList("User.search", keyword);
 			for (User user : users) {
 				System.out.println("user id = " + user.getId());
@@ -161,28 +201,28 @@ public class UserAction extends ActionSupport implements SessionAware {
 				System.out.println("email" + user.getEmail());
 				System.out.println("GroupRole = " + user.getGroupRole());
 				System.out.println("Active" + user.getIsActive());
-			}		
-			
+			}
+
 			return SUCCESS;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
-			return null;
+		return null;
 	}
-	
+
 	public String selectUserByGroup() throws SQLException, Exception {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
-		
+
 		try {
 			if (groupRole == null || groupRole.isEmpty()) {
 				System.out.println("vui long nhap du lieu de tim kiem!");
 				return null;
 			}
-			
+
 			users = session.selectList("User.getByGroup", groupRole);
 			for (User user : users) {
 				System.out.println("user id = " + user.getId());
@@ -190,18 +230,16 @@ public class UserAction extends ActionSupport implements SessionAware {
 				System.out.println("email" + user.getEmail());
 				System.out.println("GroupRole = " + user.getGroupRole());
 				System.out.println("Active" + user.getIsActive());
-			}		
-			
+			}
+
 			return SUCCESS;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
-			return null;
+		return null;
 	}
-	
-	
 
 	public String createUser() throws SQLException, Exception {
 
@@ -380,7 +418,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 		return INPUT;
 	}
 
-	
 	public String deleteUserById() throws SQLException, Exception {
 		if (id == null) {
 			return "error";

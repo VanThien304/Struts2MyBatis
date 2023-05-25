@@ -58,6 +58,7 @@
 		<action name="index">
 			<interceptor-ref name="secureStack" />
 			<result name="success">
+				<param name="actionName">paginationAction</param>
 				<param name="actionName">searchUser</param>
 				<param name="actionName">updateUserById</param>
 				<param name="actionName">createUser</param>
@@ -79,22 +80,22 @@
 		<action name="getAllUsersJSON"
 			class="com.tpv.controller.user.UserAction" method="getAllUsers">
 			<interceptor-ref name="secureStack" />
-			<result type="json"/>
-				
-			
+			<result type="json" />
+
+
 		</action>
 
 
 		<action name="listUser"
 			class="com.tpv.controller.user.UserAction" method="getAllUsers">
 			<interceptor-ref name="secureStack" />
-			
+
 			<result name="success">WEB-INF/pages/index.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 			<result name="input">WEB-INF/pages/index.jsp</result>
 			<result name="login">WEB-INF/pages/login.jsp</result>
 		</action>
-		
+
 		<action name="getUserById"
 			class="com.tpv.controller.user.UserAction" method="getUserById">
 			<interceptor-ref name="secureStack" />
@@ -152,9 +153,24 @@
 			</result>
 		</action>
 
-		 <action name="selectUserByGroup" class="com.tpv.controller.user.UserAction" 
-			method="selectUserByGroup"> <interceptor-ref name="secureStack" /> <result 
-			type="json"> <param name="root">users</param> </result> </action>
+		<action name="selectUserByGroup"
+			class="com.tpv.controller.user.UserAction" method="selectUserByGroup">
+			<interceptor-ref name="secureStack" />
+			<result type="json">
+				<param name="root">users</param>
+			</result>
+		</action>
+
+
+		<action name="paginationAction"
+			class="com.tpv.controller.user.UserAction" method="pagination">
+			<interceptor-ref name="secureStack" />
+				<result type="json">
+					<param name="root">users</param>
+				</result>
+		
+		</action>
+
 
 	</package>
 </struts>
