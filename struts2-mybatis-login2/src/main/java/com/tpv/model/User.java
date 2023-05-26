@@ -8,8 +8,6 @@ public class User {
 	private Integer isActive;
 	private Integer isDelete;
 	private String groupRole;
-
-	
 	
 	public User() {
 		super();

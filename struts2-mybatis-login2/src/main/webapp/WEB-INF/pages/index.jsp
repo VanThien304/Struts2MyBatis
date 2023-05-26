@@ -33,6 +33,8 @@
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+
+
 <style>
 /* Thiết lập kiểu cho checkbox */
 input[type="checkbox"] {
@@ -179,10 +181,10 @@ input.error {
 					<a href="">Products</a>
 				</div>
 				<div>
-					<a href="">Customers</a>
+					<a href="customer">Customers</a>
 				</div>
-				<div class="loadUser">
-					<a href="" id="btnLoadUsers">Users</a>
+				<div>
+					<a href="listUser">Users</a>
 				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
@@ -194,7 +196,7 @@ input.error {
 		</div>
 	</div>
 
-	<hr class="p-1" style="color: red" />
+	<hr class="p-1" style="color: lightgrey" />
 
 	<div class="container pb-4">
 		<div class="row">
@@ -240,10 +242,16 @@ input.error {
 	<div class="container p-2">
 		<div class="row">
 			<div class="col-12 d-flex">
-				<div class="col-8">
+				<div class="col-4">
 					<button type="button" id="show-modal" class="btn btn-primary">Add
 						User</button>
 				</div>
+				
+				<div class="col-4">
+					<input type="file" id="excelFile" accept=".xlsx"/>
+					<button onclick="importExcel()">Import Excel</button>
+				</div>
+				
 				<div class="col-4">
 
 					<input class="btn btn-primary" type="submit"
@@ -272,20 +280,20 @@ input.error {
 
 	<div class="container">
 		<table id="allUser" class="table table-striped">
-			<thead>
-				<tr>
+		<!--		<thead>
+			 <tr>
 					<th scope="col">#</th>
 					<th scope="col">FullName</th>
 					<th scope="col">Email</th>
 					<th scope="col">Group</th>
 					<th scope="col">Active</th>
 					<th scope="col" class="text-center">Action</th>
-				</tr>
-			</thead>
-			<tbody>
+				</tr> 
+			</thead>-->
+				<%--  	<tbody>
 
 
-				<%-- 	<s:iterator var="user" value="users">
+			<s:iterator var="user" value="users">
 					<tr>
 						<!-- <td>${user}</td> -->
 						<td id="userId" scope="row"><s:property value="#user.getId()" />
@@ -327,11 +335,10 @@ input.error {
 					</tr>
 				</s:iterator>  --%>
 
-			</tbody>
+			</tbody> 
 
 		</table>
 	</div>
-
 
 	<div id="modal-create-user" class="modal" tabindex="-1"
 		style="display: none;">
@@ -396,6 +403,7 @@ input.error {
 		</div>
 	</div>
 	<%@ include file="modalUpdateUser.jsp"%>
+	
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -404,72 +412,89 @@ input.error {
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
 		type="text/javascript"></script>
+		
+	<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+	
 </body>
+
 <script type="text/javascript">
 	
 	loadAllUsers();
 	 
-/*  	 var list_items= [
-		"item 1",
-		"item 2",
-		"item 3",
-		"item 4",
-		"item 5",
-		"item 6",
-		"item 7",
-		"item 8",
-		"item 9",
-		"item 10",
-		"item 11",
-		"item 12",
-		"item 13",
-		"item 14",
-		"item 15",
-		"item 16",
-		"item 17",
-		"item 18",
-		"item 19",
-		"item 20",
-		"item 21",
-		"item 22",
-		"item 23",
-		"item 24",
-		"item 25",
-		"item 26",
-		"item 27",
-		"item 28",
-		"item 29",
-		"item 30",
-		"item 31",
-		"item 32",
-		"item 33",
-	];  */ 
+ 	
  	 
-	const list_element = document.querySelector('#allUser tbody');
+	const list_element = document.querySelector('#allUser');
 	const pagination_element = document.getElementById('pagination');
 
 	let current_page = 1;
 	let rows = 10;
 
-	function DisplayList (items, wrapper, rows_per_page, page) {
-		wrapper.innerHTML = "";
-		page--;
+	function DisplayList(items, wrapper, rows_per_page, page) {
+	    wrapper.innerHTML = "";
+	    page--;
 
-		let start = rows_per_page * page;
-		let end = start + rows_per_page;
-	 	const itemArray = Object.values(items); 
-		let paginatedItems = itemArray.slice(start, end);
+	    let start = rows_per_page * page;
+	    let end = start + rows_per_page;
+	    const itemArray = Object.values(items);
+	    let paginatedItems = itemArray.slice(start, end);
 
-		for (let i = 0; i < paginatedItems.length; i++) {
-			let items = paginatedItems[i];
+	    let table_element = document.createElement('table');
+	    table_element.className = 'table';
 
-			let item_element = document.createElement('div');
-			item_element.classList.add('item');
-			item_element.innerText = items;
-			
-			wrapper.appendChild(item_element);
-		}
+	    let thead_element = document.createElement('thead');
+	    let thead_row = "<tr>" +
+	        "<th>ID</th>" +
+	        "<th>Name</th>" +
+	        "<th>Email</th>" +
+	        "<th>Group Role</th>" +
+	        "<th>Status</th>" +
+	        "<th>Action</th>" +
+	        "</tr>";
+	    thead_element.innerHTML = thead_row;
+	    table_element.appendChild(thead_element);
+
+	    let tbody_element = document.createElement('tbody');
+	    for (let i = 0; i < paginatedItems.length; i++) {
+	        let item = paginatedItems[i];
+	        var isActive = item.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
+	        var groupRole = "";
+
+	        if (item.groupRole == 1) {
+	            groupRole = "Admin";
+	        } else if (item.groupRole == 2) {
+	            groupRole = "Editor";
+	        } else {
+	            groupRole = "Reviewer";
+	        }
+	        var row = "<tr>" +
+	            "<td>" + item.id + "</td>" +
+	            "<td>" + item.name + "</td>" +
+	            "<td>" + item.email + "</td>" +
+	            "<td>" + groupRole + "</td>" +
+	            "<td>" + isActive + "</td>" +
+	            "<td class='d-flex justify-content-between'>" +
+	            "<div>" +
+	            "<i onclick='showModalUpdateUser(" + item.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
+	            "</div>" +
+	            "<div>" +
+	            "<a onclick='return confirmBox();' href='deleteUserById?id=" + item.id + "' class='delete'>" +
+	            "<i class='fa-solid fa-trash btn btn-danger'></i>" +
+	            "</a>" +
+	            "</div>" +
+	            "<div>" +
+	            "<a onclick='return confirmBoxActive();' href='setActiveUserById?id=" + item.id + "' class='activeUser'>" +
+	            "<i class='fa-solid fa-user-xmark btn btn-dark'></i>" +
+	            "</a>" +
+	            "</div>" +
+	            "</td>" +
+	            "</tr>";
+	        tbody_element.innerHTML += row;
+	    }
+
+	    table_element.appendChild(tbody_element);
+	    wrapper.appendChild(table_element);
 	}
+
 
 	function SetupPagination (items, wrapper, rows_per_page) {
 		wrapper.innerHTML = "";
@@ -500,8 +525,8 @@ input.error {
 		return button;
 	}
 
-/* 	 DisplayList(list_items, list_element, rows, current_page);
-	SetupPagination(list_items, pagination_element, rows);  */
+/*  	 DisplayList(list_items, list_element, rows, current_page);
+	SetupPagination(list_items, pagination_element, rows);   */
 	
 	
 	 $("#show-modal").on('click',() => {
@@ -545,8 +570,7 @@ input.error {
 	    loadAllUsers();
 	}
 	
-	
-	function showPaginationUsers(currentPage){
+	/* function showPaginationUsers(currentPage){
 		 $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/paginationAction",
 		        type: "GET",
@@ -555,20 +579,24 @@ input.error {
 		        	currentPage: currentPage
 		        	},
 		        success: function(data) {
+		        	
+
+		        	 DisplayList(data, list_element, rows, current_page);
+	                 SetupPagination(data, pagination_element, rows); 
 		        	if(data != null){
 		        		$("#allUser tbody").html('');
 		        		for(let i = 0; i < data.length; i++){
 			        		user = data[i];
-			        		var row = renderUser(user);
+			        		
 			        	}    	
-			            $("#allUser tbody").append(row);
+			            $("#allUser tbody").append(user);
 		        	}		        	
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
 		            console.log("Lỗi: " + textStatus, errorThrown);
 		        }
 		});
-	}
+	} */
 	
 	
 /* 	function searchUser(keyword) {
@@ -635,6 +663,35 @@ input.error {
 			    });
 		  } */
 
+		  
+		  function importExcel() {
+	            var fileInput = document.getElementById('excelFile');
+	            var file = fileInput.files[0];
+	            var reader = new FileReader();
+
+	            reader.onload = function(e) {
+	                var data = new Uint8Array(e.target.result);
+	                var workbook = XLSX.read(data, { type: 'array' });
+
+	                var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+	                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+	                var table = document.querySelectTor('#allUser tbody');
+	                table.innerHTML = '';
+
+	                for (var i = 0; i < jsonData.length; i++) {
+	                    var row = table.insertRow(i);
+	                    for (var j = 0; j < jsonData[i].length; j++) {
+	                        var cell = row.insertCell(j);
+	                        cell.innerHTML = jsonData[i][j];
+	                    }
+	                }
+	            };
+
+	            reader.readAsArrayBuffer(file);
+	        }	  
+		  
+		  
 	function selectUserByGroup(groupRole) {
 				 $.ajax({
 				        url: "http://localhost:8080/struts2-mybatis-login/selectUserByGroup",
@@ -644,9 +701,13 @@ input.error {
 				        	groupRole: groupRole
 				        	},
 				        success: function(data) {
-				        	console.log("data = " + data);
+				        	
+				        	
 				        	if (data !== null) {
 				        		 $("#allUser tbody").html('');
+				        		 DisplayList(data, list_element, rows, current_page);
+							        
+				                 SetupPagination(data, pagination_element, rows); 
 				        	for(var i = 0; i < data.length; i++){
 					        	var user = data[i];	   
 					        	var row = renderUser(user);
@@ -675,10 +736,13 @@ input.error {
 				        	console.log("data = " + data);
 				        	if (data !== null) {
 				        		 $("#allUser tbody").html('');
+				        		 DisplayList(data, list_element, rows, current_page);
+							        
+				                 SetupPagination(data, pagination_element, rows); 
 				        	for(var i = 0; i < data.length; i++){
 					        	var user = data[i];	   
-					        	var row = renderUser(user);
-					                $("#allUser tbody").append(row);
+					        	
+					                $("#allUser tbody").append(user);
 				        		 }
 				              } else {
 				                displayError();
@@ -701,6 +765,9 @@ input.error {
 		        	},
 		        success: function(data) {
 		        	console.log("data = " + data);
+		        	 DisplayList(data, list_element, rows, current_page);
+				        
+	                 SetupPagination(data, pagination_element, rows); 
 		        	if (data !== null) {
 		        		 $("#allUser tbody").html('');
 		        		 if(data.length !== 0){	
@@ -788,7 +855,9 @@ input.error {
 		            success: function(data) {
 		                console.log("User created successfully: ", data);
 		                // Thực hiện các hành động bổ sung sau khi tạo người dùng thành 
-		                $("#allUser tbody").empty();
+		                $("#allUser tbody").html('');
+		                var newUserRow = renderUser(data);
+		                $("#allUser tbody").append(newUserRow);
 		                loadAllUsers();
 		                $("#modal-create-user").modal("hide");		                
 		               
@@ -859,19 +928,22 @@ input.error {
 		    return  $("#allUser tbody").append(row);;
 	}
 	 
+	 
 	 function loadAllUsers() {
 		    $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/getAllUsersJSON",
 		        type: "GET",
 		        dataType: "json",
 		        success: function(data) {
-		             $.each(data.user, function(index, user) {  
-		                 var users = user;
-		                	/*  DisplayList(users, list_element, rows, current_page);
-			                 SetupPagination(users, pagination_element, rows);   */
-			            	 var row = renderUser(users);
-			            	$("#allUser tbody").append(row); 
-		            });             
+		        	 var users = data.user;
+		        	 DisplayList(users, list_element, rows, current_page);
+		        
+	                 SetupPagination(users, pagination_element, rows); 
+	                   $.each(users, function(index, user) { 
+	                	   
+			            $("#allUser tbody").append(user); 
+		            });      
+        
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
 		            console.log("Lỗi: " + textStatus, errorThrown);

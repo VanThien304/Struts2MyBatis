@@ -67,8 +67,8 @@ public class UserAction extends ActionSupport implements SessionAware {
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
 		try {
-			int pageSize = 10;
 			Integer totalRecords = session.selectOne("User.getCountUsers");
+			int pageSize = totalRecords;
 			System.out.println("totalrecords= " + totalRecords);
 			totalPages = (int) Math.ceil((double) totalRecords.intValue() / pageSize);
 
@@ -144,7 +144,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 				System.out.println("Active" + user.getIsActive());
 
 			}
-
 			return SUCCESS;
 
 		} catch (Exception e) {
