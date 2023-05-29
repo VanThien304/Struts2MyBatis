@@ -16,16 +16,32 @@
 
 
 	<select id="selectCustomer" resultType="Customer">
-		SELECT * FROM mst_customer;
+		SELECT * FROM
+		mst_customer;
 	</select>
-	
+
 	<select id="getAllCustomer" resultMap="result">
-		SELECT * FROM mst_customer;
+		SELECT * FROM
+		mst_customer;
+	</select>
+
+	<select id="getCustomerId" parameterType = "int" resultMap="result">
+		SELECT customer_id, customer_name,
+		email, tel_num, address, is_active FROM mst_customer WHERE customer_id =
+		#{customerId};
 	</select>
 
 	<insert id="insertCustomer" parameterType="Customer">
-		INSERT INTO mst_customer (customer_name, email, tel_num, address, is_active) 
- 		VALUES (#{customerName}, #{email}, #{telNum}, #{address}, #{isActive});
+		INSERT INTO
+		mst_customer (customer_name, email, tel_num, address, is_active)
+		VALUES (#{customerName}, #{email}, #{telNum}, #{address},
+		#{isActive});
 	</insert>
+
+	<update id="updateCustomerId">
+		UPDATE mst_customer SET customer_name = #{customerName}, email = #{email}, tel_num = #{telNum}, address = #{address},  WHERE customer_id =
+		#{customerId};
+	</update>
+
 
 </mapper> 

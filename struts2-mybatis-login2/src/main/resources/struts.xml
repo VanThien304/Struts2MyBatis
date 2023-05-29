@@ -9,6 +9,11 @@
 
 	<constant name="struts.devMode" value="true" />
 
+	<constant name="struts.multipart.saveDir"
+		value="webapp/assets/excel" />
+
+	<constant name="struts.multipart.parser"
+		value="jakarta-stream" />
 	<package name="/" extends="struts-default, json-default"
 		namespace="/">
 		<interceptors>
@@ -174,22 +179,29 @@
 		<action name="paginationAction"
 			class="com.tpv.controller.user.UserAction" method="pagination">
 			<interceptor-ref name="secureStack" />
-				<result type="json">
-					<param name="root">users</param>
-				</result>
+			<result type="json">
+				<param name="root">users</param>
+			</result>
 		</action>
 
 
 	</package>
-	
-	<package name="com.tpv.model" extends="struts-default, json-default"
-		namespace="/customer">
+
+	<package name="com.tpv.model"
+		extends="struts-default, json-default" namespace="/customer">
 		<interceptors>
 			<interceptor name="authenticationInterceptor"
 				class="com.tpv.interceptor.AuthenticationInterceptor"></interceptor>
 			<interceptor-stack name="secureStack">
 				<interceptor-ref name="authenticationInterceptor" />
 				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="fileUpload">
+					<param name="allowedTypes">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param>
+					<param name="maximumSize">5242880</param>
+					<param name="allowedExtensions">.xlsx</param>
+					<param name="contentDisposition">true</param>
+				</interceptor-ref>
+
 			</interceptor-stack>
 		</interceptors>
 
@@ -227,6 +239,16 @@
 			<result name="login">WEB-INF/pages/login.jsp</result>
 		</action>
 
+		<action name="getCustomerById"
+			class="com.tpv.controller.customer.CustomerAction"
+			method="getCustomerById">
+			<interceptor-ref name="secureStack" />
+			<result type="json">
+				<param name="root">customer</param>
+			</result>
+			<result name="login">/WEB-INF/pages/login.jsp</result>
+		</action>
+
 		<action name="customer">
 			<interceptor-ref name="secureStack" />
 			<result>WEB-INF/pages/customer.jsp</result>
@@ -242,7 +264,8 @@
 		</action>
 
 		<action name="createCustomer"
-			class="com.tpv.controller.customer.CustomerAction" method="createCustomer">
+			class="com.tpv.controller.customer.CustomerAction"
+			method="createCustomer">
 			<interceptor-ref name="secureStack" />
 			<result name="success" type="redirectAction">
 				<param name="actionName">customers</param>
@@ -250,5 +273,25 @@
 			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
 		</action>
 
+		<action name="updateCustomerById"
+			class="com.tpv.controller.customer.CustomerAction"
+			method="updateCustomerById">
+			<interceptor-ref name="secureStack" />
+			<result name="success" type="redirectAction">
+				<param name="actionName">customers</param>
+			</result>
+			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
+		</action>
+
+
+		<action name="importExcelAction"
+			class="com.tpv.controller.customer.CustomerAction"
+			method="importExcel">
+			<interceptor-ref name="secureStack" />
+			<result name="success" type="redirectAction">
+				<param name="actionName">customer</param>
+			</result>
+			<result name="input">WEB-INF/pages/customer.jsp</result>
+		</action>
 	</package>
 </struts>

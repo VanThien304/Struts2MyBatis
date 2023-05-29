@@ -1,5 +1,4 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <!DOCTYPE html>
@@ -242,8 +241,13 @@ input.error {
 				</div>
 
 				<div class="col-4">
-					<input type="file" id="excelFile" accept=".xlsx" />
-					<button onclick="importExcel()">Import Excel</button>
+					<!-- <input type="file" id="excelFile" accept=".xlsx" />
+					<button onclick="importExcel()">Import Excel</button> -->
+					
+					<s:form action="importExcelAction" method="post" namespace="/customer" enctype="multipart/form-data">
+						<s:file name="upload" label="File"/>
+						<s:submit value="Import"/>
+					</s:form>
 				</div>
 
 				<div class="col-4">
@@ -316,14 +320,14 @@ input.error {
 
 								<div class="form-group p-2">
 									<div>Phone:</div>
-									<input class="form-control" type="email" name="customer_phone"
+									<input class="form-control" type="number" name="customer_phone"
 										id="cre_phone" />
 								</div>
 
 								<div class="form-group p-2">
 									<div>Address:</div>
-									<input class="form-control" type="email" name="customer_address"
-										id="cre_address" />
+									<input class="form-control" type="text"
+										name="customer_address" id="cre_address" />
 								</div>
 
 								<div class="form-group p-2 d-flex">
@@ -482,33 +486,50 @@ input.error {
 	}
 
 
+	
+	function getCustomerById(customerId){ 
+		 $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/customer/getCustomerById",
+		        type: "GET",
+		        dataType: "json",			        
+		        data: {
+		        	customerId:customerId
+		        	},
+		        success: function(data) {
+		        	console.log("customerId = "+data);
+
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		});
+	}
+	
 	 function doCreateCustomer(){
-	        var name = $("#cre_name").val();
+	        var customerName = $("#cre_name").val();
 	        var email = $("#cre_email").val();
-	        var phone = $("#cre_phone").val();
+	        var telNum = $("#cre_phone").val();
 	        var address = $("#cre_address").val();
 	        var booleanActive = $("#booleanActive").is(":checked") ? true : false;
 
 	        // Tạo đối tượng dữ liệu để gửi đi
-	        var userData = {
-	            name: name,
+	        var customerData = {
+	        	customerName: customerName,
 	            email: email,
-	            phone: phone,
+	            telNum: telNum,
 	            address: address,
-	            booleanActive: booleanActive,
-	        };
-
+	            booleanActive: booleanActive,	            
+	        }
 	        // Gửi yêu cầu AJAX để tạo người dùng
 	        $.ajax({
 	            type: "POST",
-	            url: "http://localhost:8080/struts2-mybatis-login/createCustomer",
-	            data: userData,
+	            url: "http://localhost:8080/struts2-mybatis-login/customer/createCustomer",
+	            data: customerData,
 	            success: function(data) {
 	                console.log("User created successfully: ", data);
 	                // Thực hiện các hành động bổ sung sau khi tạo người dùng thành 
 	                $("#allCustomer tbody").html('');
-	                var newUserRow = renderUser(data);
-	                $("#allCustomer tbody").append(newUserRow);
+	              
 	                loadAllCustomer();
 	                $("#modal-create-customer").modal("hide");		                
 	               
@@ -912,11 +933,11 @@ input.error {
 			
 	$(".close").on('click', function() {
 		    // Reset lại form
-		    $("#frmCreate").validate().resetForm();
+		    $("#frmCreateCustomer").validate().resetForm();
 		    // Xóa thông báo lỗi
-		    $("#modal-create-user .modal-alert-danger").removeClass("show").addClass("hide").empty();
+		    $("#modal-create-customer .modal-alert-danger").removeClass("show").addClass("hide").empty();
 		    // Xóa lớp error trên các trường input
-		    $("#frmCreate input.error").removeClass("error");  
+		    $("#frmCreateCustomer input.error").removeClass("error");  
 	}); 
 		
  	$(".close").on('click', function() {
