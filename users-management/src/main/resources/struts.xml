@@ -6,20 +6,37 @@
 
 <struts>
 	<constant name="struts.devMode" value="false" />
-
+	<constant name="struts.multipart.saveDir"
+		value="webapp/assets/excel" />
 	<package name="default" extends="struts-default, json-default"
 		namespace="/">
 		<interceptors>
-			<interceptor name="authenticationInterceptor" class="com.tpv.interceptor.AuthenticationInterceptor"></interceptor>
+			<interceptor name="authenticationInterceptor"
+				class="com.tpv.interceptor.AuthenticationInterceptor"></interceptor>
 			<interceptor-stack name="secureStack">
-				<interceptor-ref name="authenticationInterceptor"/>
-				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="fileUpload">
+					<param name="allowedTypes">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param>
+					<param name="maximumSize">5242880</param>
+					<param name="allowedExtensions">.xlsx</param>
+					<param name="contentDisposition">true</param>
+				</interceptor-ref>
+				<interceptor-ref name="authenticationInterceptor" />
+				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
-		</interceptors>		
-			
+		</interceptors>
+
 		<action name="getAllUsersJSON"
 			class="com.tpv.controller.UserAction" method="getAllUsers">
 			<result type="json">users</result>
+		</action>
+
+		<action name="importExcelAction"
+			class="com.tpv.controller.UserAction" method="importExcel">
+			<interceptor-ref name="fileUpload"/>
+			<result name="success" type="redirectAction">
+				<param name="actionName">users</param>
+			</result>
+			<result name="input">WEB-INF/pages/customer.jsp</result>
 		</action>
 
 		<action name="/*" class="com.tpv.controller.UserAction"
@@ -37,18 +54,18 @@
 			<!-- <result name="error">WEB-INF/pages/index.jsp</result> -->
 		</action>
 
-	 	<action name="login">
+		<action name="login">
 			<result>WEB-INF/pages/login.jsp</result>
-		</action> 
+		</action>
 
- 		<action name="loginUser" class="com.tpv.controller.UserAction"
+		<action name="loginUser" class="com.tpv.controller.UserAction"
 			method="loginUser">
 			<result name="success">WEB-INF/pages/index.jsp</result>
 			<result name="error">WEB-INF/pages/login.jsp</result>
 			<result name="input">WEB-INF/pages/login.jsp</result>
 			<result name="login" type="redirect">WEB-INF/pages/login.jsp</result>
-		</action> 
-		
+		</action>
+
 		<action name="logout" class="com.tpv.controller.UserAction"
 			method="logoutUser">
 			<result name="success">WEB-INF/pages/login.jsp</result>

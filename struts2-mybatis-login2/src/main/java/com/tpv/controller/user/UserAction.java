@@ -17,18 +17,14 @@ import com.tpv.model.User;
 
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.RowBounds;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.logging.log4j.core.jackson.Log4jJsonObjectMapper;
-import org.apache.struts2.ServletActionContext;
+
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.RegexFieldValidator;
 
 public class UserAction extends ActionSupport implements SessionAware {
 

@@ -9,11 +9,11 @@
 
 	<constant name="struts.devMode" value="true" />
 
-	<constant name="struts.multipart.saveDir"
+ 	<constant name="struts.multipart.saveDir"
 		value="webapp/assets/excel" />
 
-	<constant name="struts.multipart.parser"
-		value="jakarta-stream" />
+<!-- 	<constant name="struts.multipart.parser"
+		value="jakarta-stream" /> -->
 	<package name="/" extends="struts-default, json-default"
 		namespace="/">
 		<interceptors>
@@ -288,10 +288,21 @@
 			class="com.tpv.controller.customer.CustomerAction"
 			method="importExcel">
 			<interceptor-ref name="secureStack" />
+			 <interceptor-ref name="fileUpload"/>
 			<result name="success" type="redirectAction">
 				<param name="actionName">customer</param>
 			</result>
 			<result name="input">WEB-INF/pages/customer.jsp</result>
 		</action>
+	<!-- 	<action name="exportExcelAction"
+	class="com.tpv.controller.customer.CustomerAction" method="exportExcel">
+	<interceptor-ref name="secureStack" />
+            <result name="success" type="stream">
+                <param name="contentType">application/vnd.ms-excel</param>
+                <param name="inputName">excelStream</param>
+                <param name="contentDisposition">attachment;filename="${fileName}"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+        </action> -->
 	</package>
 </struts>

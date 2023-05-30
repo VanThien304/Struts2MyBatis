@@ -55,12 +55,20 @@
 				<button id="logout">
 					<a href="logout.action" onclick='return confirmLogout()'>Logout</a>
 				</button>
-
-
+				
+				
+			
 
 			</div>
 		</div>
 	</div>
+
+				<s:form action="importExcelAction" method="post"
+					enctype="multipart/form-data">
+					<s:file name="excelFile" />
+					<s:submit value="Import" />
+				</s:form>
+
 
 	<div class="container">
 		<table id="allUser" class="table table-striped">

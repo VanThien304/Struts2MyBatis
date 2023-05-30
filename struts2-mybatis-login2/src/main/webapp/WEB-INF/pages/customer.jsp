@@ -243,11 +243,14 @@ input.error {
 				<div class="col-4">
 					<!-- <input type="file" id="excelFile" accept=".xlsx" />
 					<button onclick="importExcel()">Import Excel</button> -->
-					
-					<s:form action="importExcelAction" method="post" namespace="/customer" enctype="multipart/form-data">
+
+					 <s:form action="importExcelAction" method="post" namespace="/customer" enctype="multipart/form-data">
 						<s:file name="upload" label="File"/>
 						<s:submit value="Import"/>
-					</s:form>
+					</s:form> 
+					<%-- <s:form action="exportExcelAction" method="post" namespace="/customer">
+						<input type="submit" value="Export Excel" />
+					</s:form> --%>
 				</div>
 
 				<div class="col-4">
@@ -326,8 +329,8 @@ input.error {
 
 								<div class="form-group p-2">
 									<div>Address:</div>
-									<input class="form-control" type="text"
-										name="customer_address" id="cre_address" />
+									<input class="form-control" type="text" name="customer_address"
+										id="cre_address" />
 								</div>
 
 								<div class="form-group p-2 d-flex">

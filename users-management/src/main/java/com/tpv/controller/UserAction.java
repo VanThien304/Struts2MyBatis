@@ -1,6 +1,9 @@
 package com.tpv.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8,7 +11,11 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.tpv.model.User;
 
@@ -19,7 +26,13 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.log4j.PropertyConfigurator;
-
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -48,6 +61,14 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 	private User user;
 
+	
+	private File excelFile;
+	private String excelFileFileName;
+	
+	
+	
+	private HttpServletRequest servletRequest;
+	
 	private List<User> users = new ArrayList<User>();
 
 	private Map<String, Object> userSession;
@@ -55,7 +76,37 @@ public class UserAction extends ActionSupport implements SessionAware {
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
 	}
+	
+	public String importExcel() throws IOException, InvalidFormatException {
 
+		Workbook workbook = createWorkbook(new FileInputStream(excelFile));
+		
+		Sheet sheet = workbook.getSheetAt(0);
+		
+		Row firstRow = sheet.getRow(0);
+		
+		Iterator<Cell> iterator = firstRow.iterator();
+		
+		/*
+		 * List<String> cellNames = new ArrayList<String>(); while(iterator.hasNext()) {
+		 * cellNames.add(iterator.next().getStringCellValue()); }
+		 */
+		
+		
+		return SUCCESS;
+
+	}
+
+	public Workbook createWorkbook(InputStream is) throws IOException {	
+		if(excelFileFileName.toLowerCase().endsWith("xls")){
+			return new HSSFWorkbook(is);
+		 }
+		if(excelFileFileName.toLowerCase().endsWith("xlsx")){
+		return new XSSFWorkbook(is);
+		}
+		return null;
+	}
+	
 	public String pagination() throws Exception {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
@@ -531,6 +582,26 @@ public class UserAction extends ActionSupport implements SessionAware {
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	public File getExcelFile() {
+		return excelFile;
+	}
+
+	public void setExcelFile(File excelFile) {
+		this.excelFile = excelFile;
+	}
+
+	public String getExcelFileFileName() {
+		return excelFileFileName;
+	}
+
+	public void setExcelFileFileName(String excelFileFileName) {
+		this.excelFileFileName = excelFileFileName;
+	}
+
+	public HttpServletRequest getServletRequest() {
+		return servletRequest;
 	}
 
 }

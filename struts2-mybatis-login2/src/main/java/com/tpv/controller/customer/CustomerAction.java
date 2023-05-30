@@ -1,27 +1,29 @@
 package com.tpv.controller.customer;
 
-import java.io.BufferedReader;
+
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import org.apache.poi.ss.usermodel.Row;
-import javax.servlet.ServletRequest;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.struts2.interceptor.ServletRequestAware;
-
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.tpv.model.Customer;
@@ -39,6 +41,8 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 	private File file;
 	private String contentType;
 	private String filename;
+	
+	
 	private HttpServletRequest servletRequest;
 
 	private Customer customer;
@@ -47,48 +51,89 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 
 	private static final long serialVersionUID = 1L;
 
+	private InputStream excelStream;
+	private String fileName;
+
+	// Getter and setter for excelStream and fileName
+
+	
+	
+	/*
+	 * public String exportExcel() throws IOException { Workbook workbook = new
+	 * HSSFWorkbook(); try { // Create workbook and populate data using Apache POI
+	 * Sheet sheet = workbook.createSheet("Sheet 1");
+	 * 
+	 * // Create some sample data Row headerRow = sheet.createRow(0); Cell
+	 * headerCell = headerRow.createCell(0); headerCell.setCellValue("Name");
+	 * 
+	 * Row dataRow = sheet.createRow(1); Cell dataCell = dataRow.createCell(0);
+	 * dataCell.setCellValue("John Doe");
+	 * 
+	 * ByteArrayOutputStream bos = new ByteArrayOutputStream(); workbook.write(bos);
+	 * byte[] excelBytes = bos.toByteArray(); excelStream = new
+	 * ByteArrayInputStream(excelBytes); fileName = "example.xls";
+	 * 
+	 * return SUCCESS; } finally { // TODO: handle finally clause workbook.close();
+	 * } }
+	 */
+
 	public String importExcel() throws IOException, InvalidFormatException {
-		String filePath = servletRequest.getServletContext().getRealPath("/webapp/assets/excel/");
-		File fileToCreate = new File(filePath, filename);
-		FileUtils.copyFile(file, fileToCreate);
 
-		List<String> list= importExcel(file);
-		for(int i=0;i<list.size();i++){
-			System.out.println(list.get(i));
-		}
-		return "result";
+		Workbook workbook = createWorkbook(new FileInputStream(file));
 		
+		Sheet sheet = workbook.getSheetAt(0);
+		
+		Row firstRow = sheet.getRow(0);
+		
+		Iterator<Cell> iterator = firstRow.iterator();
+		
+		/*
+		 * List<String> cellNames = new ArrayList<String>(); while(iterator.hasNext()) {
+		 * cellNames.add(iterator.next().getStringCellValue()); }
+		 */
+		
+		for(int i = 0; i <= sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			Customer customer = new Customer();
+			customer.setCustomerName(row.getCell(0).getStringCellValue());
+			customer.setEmail(row.getCell(1).getStringCellValue());
+			customer.setTelNum(row.getCell(2).getStringCellValue());
+			customer.setAddress(row.getCell(3).getStringCellValue());
+		}
+		
+		return SUCCESS;
+
 	}
 
-
-
-	public List<String> importExcel(File file) throws IOException, InvalidFormatException {
-	    List<String> dataList = new ArrayList<>();
-
-	    Workbook workbook = WorkbookFactory.create(file);
-	    Sheet sheet = workbook.getSheetAt(0); // Lấy sheet đầu tiên
-
-	    for (Row row : sheet) {
-	        for (Cell cell : row) {
-	            String cellValue = "";
-	            if (cell.getCellType() == CellType.STRING) {
-	                cellValue = cell.getStringCellValue();
-	            } else if (cell.getCellType() == CellType.NUMERIC) {
-	                cellValue = String.valueOf(cell.getNumericCellValue());
-	            } else if (cell.getCellType() == CellType.BOOLEAN) {
-	                cellValue = String.valueOf(cell.getBooleanCellValue());
-	            }
-	            dataList.add(cellValue);
-	        }
-	    }
-
-	    workbook.close();
-
-	    return dataList;
+	public Workbook createWorkbook(InputStream is) throws IOException {	
+		if(filename.toLowerCase().endsWith("xls")){
+			return new HSSFWorkbook(is);
+		 }
+		if(filename.toLowerCase().endsWith("xlsx")){
+		return new XSSFWorkbook(is);
+		}
+		return null;
 	}
+	
+	/*
+	 * public List<Customer> importExcel(File file) throws IOException,
+	 * InvalidFormatException { List<Customer> dataList = new ArrayList<>();
+	 * 
+	 * Workbook workbook = WorkbookFactory.create(file); Sheet sheet =
+	 * workbook.getSheetAt(1); // Lấy sheet đầu tiên
+	 * 
+	 * for (Row row : sheet) { Customer customer = new Customer();
+	 * customer.setCustomerName(row.getCell(1).getStringCellValue());
+	 * customer.setEmail(row.getCell(2).getStringCellValue());
+	 * customer.setTelNum(row.getCell(3).getStringCellValue());
+	 * customer.setAddress(row.getCell(4).getStringCellValue());
+	 * dataList.add(customer); }
+	 * 
+	 * workbook.close();
+	 * 
+	 * return dataList; }
+	 */
 
-	
-	
 	public String getCustomerById() throws IOException {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader);
@@ -254,30 +299,26 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 		this.filename = filename;
 	}
 
-	public File getFile() {
-		return file;
+
+	public InputStream getExcelStream() {
+		return excelStream;
 	}
 
-	public void setFile(File file) {
-		this.file = file;
+	public void setExcelStream(InputStream excelStream) {
+		this.excelStream = excelStream;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getFileName() {
+		return fileName;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
-	public String getFilename() {
-		return filename;
-	}
-
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public HttpServletRequest getServletRequest() {
+		return servletRequest;
 	}
 	
 	
-
 }
