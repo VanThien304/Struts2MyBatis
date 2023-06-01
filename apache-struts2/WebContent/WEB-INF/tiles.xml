@@ -1,0 +1,18 @@
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <definition name="fooLayout" template="/WEB-INF/tiles/layout.jsp">
+        <put-attribute name="title" value="Tiles Sample"/>
+        <put-attribute name="header" value=".header"/>
+        <put-attribute name="body" value=".bodyp"/>
+    </definition>
+
+    <definition name="tilesWorks" extends="fooLayout">
+        <put-attribute name="header" value="/WEB-INF/tiles/header.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/tiles/body.jsp"/>
+    </definition>
+
+</tiles-definitions>

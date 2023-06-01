@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Student">
+	<select id="selectStudent" resultType="Student">
+		SELECT * FROM student;
+	</select>
+	<insert id="insertStudent" parameterType="Student">
+		insert into student
+		(name, branch, percentage, phone, email) values (#{name}, #{branch},
+		#{percentage}, #{phone}, #{email});
+	</insert>
+
+	<select id="getAll" resultMap="Student">
+		SELECT * FROM student;
+	</select>
+	
+		<select id="getLogin" resultMap="Student" >
+		SELECT name, email FROM student where name =? AND email=?;
+	</select>
+	
+
+	  <select id = "getById" parameterType = "int" resultMap = "Student">
+      SELECT * FROM STUDENT WHERE id = #{id};
+   </select>
+   
+     <resultMap id = "Student" type = "Student">
+      <result property = "id" column = "ID"/>
+      <result property = "name" column = "NAME"/>
+      <result property = "branch" column = "BRANCH"/>
+      <result property = "percentage" column = "PERCENTAGE"/>
+      <result property = "phone" column = "PHONE"/>
+      <result property = "email" column = "EMAIL"/>
+   </resultMap>
+
+   <update id = "update" parameterType = "Student">
+      UPDATE STUDENT SET NAME = #{name}, 
+         BRANCH = #{branch}, 
+         PERCENTAGE = #{percentage}, 
+         PHONE = #{phone}, 
+         EMAIL = #{email} 
+      WHERE ID = #{id};
+   </update>
+</mapper> 

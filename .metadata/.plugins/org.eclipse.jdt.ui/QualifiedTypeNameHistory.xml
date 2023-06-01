@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="org.apache.log4j.PropertyConfigurator"/>
     <fullyQualifiedTypeName name="com.tpv.model.GroupRole"/>
     <fullyQualifiedTypeName name="java.sql.SQLException"/>
     <fullyQualifiedTypeName name="org.apache.ibatis.executor.ExecutorException"/>
@@ -17,7 +16,6 @@
     <fullyQualifiedTypeName name="com.tpv.controller.LoginAction"/>
     <fullyQualifiedTypeName name="com.tpv.controller.UserAction"/>
     <fullyQualifiedTypeName name="org.apache.struts2.StrutsStatics"/>
-    <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionSupport"/>
     <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionContext"/>
     <fullyQualifiedTypeName name="com.tpv.controller.user.ParentPackage"/>
     <fullyQualifiedTypeName name="javax.xml.validation.Validator"/>
@@ -42,7 +40,6 @@
     <fullyQualifiedTypeName name="org.apache.ibatis.session.SqlSessionFactory"/>
     <fullyQualifiedTypeName name="org.apache.struts2.interceptor.ServletRequestAware"/>
     <fullyQualifiedTypeName name="javax.servlet.http.HttpServletRequest"/>
-    <fullyQualifiedTypeName name="org.apache.commons.io.FileUtils"/>
     <fullyQualifiedTypeName name="java.io.File"/>
     <fullyQualifiedTypeName name="java.io.BufferedReader"/>
     <fullyQualifiedTypeName name="java.io.FileReader"/>
@@ -60,4 +57,7 @@
     <fullyQualifiedTypeName name="java.io.FileInputStream"/>
     <fullyQualifiedTypeName name="java.util.Iterator"/>
     <fullyQualifiedTypeName name="org.apache.poi.hssf.usermodel.HSSFWorkbook"/>
+    <fullyQualifiedTypeName name="com.opensymphony.xwork2.ActionSupport"/>
+    <fullyQualifiedTypeName name="org.apache.commons.io.FileUtils"/>
+    <fullyQualifiedTypeName name="javax.servlet.ServletContext"/>
 </qualifiedTypeNameHistroy>

@@ -14,6 +14,8 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="D:\THIEN\DEV_WORKSPACE\New folder"/>
+			<item value="D:\workspace\struts2-mybatis-management"/>
 			<item value="C:\Users\rcvn\Downloads\javacsv2.0"/>
 			<item value="D:\THIEN\DEV_WORKSPACES"/>
 			<item value="D:\workspace"/>

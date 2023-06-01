@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Product">
+	<resultMap id="result" type="Product">
+		<result property="productId" column="product_id" />
+		<result property="productName" column="product_name" />
+		<result property="productImage" column="product_image" />
+		<result property="productPrice" column="product_price" />
+		<result property="isSales" column="is_sales" />
+		<result property="description" column="description" />
+	</resultMap>
+
+	<select id="selectProduct" resultType="Product">
+		SELECT * FROM mst_product;
+	</select>
+
+	<select id="getAllProduct" resultMap="result">
+		SELECT product_id,
+		product_name, product_price, is_sales, description FROM mst_product;
+	</select>
+
+	<select id="getProductByPrice" resultMap="result">
+		SELECT product_id,
+		product_name, product_price, is_sales, description FROM mst_product
+		WHERE product_price BETWEEN #{priceFrom} AND #{priceTo} order by product_price;
+	</select>
+
+	<insert id="createProduct" parameterType="Product">
+		INSERT INTO
+		mst_product
+		(product_id, product_name, product_price, is_sales, description)
+		VALUES (#{productId}, #{productName}, #{productPrice}, #{isSales},
+		#{description});
+	</insert>
+
+</mapper> 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="User">
+	<resultMap id="result" type="User">
+		<result property="id" column="id" />
+		<result property="name" column="user_name" />
+		<result property="email" column="email" />
+		<result property="password" column="password" />
+		<result property="isActive" column="is_active" />
+		<result property="groupRole" column="group_role" />
+	</resultMap>
+	
+	<select id="selectUser" resultType="User">
+		SELECT * FROM mst_users;
+	</select>
+	<select id="getAll" resultMap="result">
+		SELECT * FROM mst_users WHERE is_delete = 0;
+	</select>	
+	
+	<select id="getEmailUser" parameterType="string" resultMap="result">
+		SELECT email FROM mst_users where email = #{email};
+	</select>	
+	
+	<select id="getUsersByPage" resultMap = "result">
+		SELECT * FROM mst_users LIMIT #{pageSize} OFFSET #{offsetValue};
+	</select>	
+	
+	<select id="getCountUsers"  resultType="int">
+  		SELECT COUNT(*) FROM mst_users;
+  	</select>
+	
+	<select id="getUserByActive" resultMap="result">
+		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE is_delete = 0 and is_active = #{isActive};
+	</select>
+	
+	<select id="login" resultType="User">
+		SELECT * FROM mst_users WHERE email = #{email} AND password = #{password};
+	</select>
+	
+	<insert id="insert" parameterType="User">
+	 	INSERT INTO mst_users (user_name, email, password, is_active, is_delete, group_role) 
+ 		VALUES (#{name}, #{email}, #{password}, #{isActive}, #{isDelete}, #{groupRole});
+	</insert>
+  	
+  	<select id="getById" resultMap = "result">
+  		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE id = #{id};
+  	</select>
+  	
+  	<select id="getByGroup" resultMap = "result">
+  		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE group_role = #{groupRole} and is_delete = 0;
+  	</select>
+
+  	
+  	<update id="update" parameterType="User">
+  		UPDATE mst_users SET user_name = #{name}, email = #{email}, password = #{password}, is_active = #{isActive}, group_role = #{groupRole}
+  		WHERE id = #{id};
+  	</update>
+  	
+   	<update id="setActiveUser" parameterType="User">
+  		 UPDATE mst_users SET is_active = #{isActive} WHERE id = #{id};
+  	</update> 
+  	
+  	 <delete id = "deleteById" parameterType = "int">
+      UPDATE mst_users SET is_delete = 1 WHERE id = #{id};
+   </delete>
+   
+   <select id="search" resultMap="result">
+   		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE user_name LIKE CONCAT('%', #{name} ,'%') AND is_delete = 0 ;
+   </select>
+	
+</mapper> 
