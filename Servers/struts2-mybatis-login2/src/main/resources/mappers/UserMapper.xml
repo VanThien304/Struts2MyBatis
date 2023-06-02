@@ -66,7 +66,7 @@
   	
   	 <delete id = "deleteById" parameterType = "int">
       UPDATE mst_users SET is_delete = 1 WHERE id = #{id};
-   </delete>
+   	</delete>
    
    <select id="search" resultMap="result">
    		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE user_name LIKE CONCAT('%', #{name} ,'%') AND is_delete = 0 ;

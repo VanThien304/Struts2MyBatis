@@ -188,7 +188,7 @@ input.error {
 				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
-				<a href="#">Admin</a>
+				<a href="logout">Admin</a>
 			</div>
 		</div>
 		<div>
@@ -216,7 +216,7 @@ input.error {
 						<h5>isSales</h5>
 					</div>
 					<select name="isSales" id="selectSale"
-						onchange="selectUserBySales(this.value)">
+						onchange="selectProductBySales(this.value)">
 						<option selected>Select isSales</option>
 						<option value="1">Đang bán</option>
 						<option value="2">Tạm dừng</option>
@@ -229,17 +229,14 @@ input.error {
 						<h5>Price from</h5>
 						<h5>Price to</h5>
 					</div>
-					<div>
-						
-					</div>
+					<div></div>
 					<div class="d-flex">
-						
-							<input type="text" id="priceFrom" name="priceFrom"
-								pattern="[0-9]*" inputmode="numeric"> 
-								<input type="text"
-								id="priceTo" name="priceTo" pattern="[0-9]*" inputmode="numeric">
-							<input value="Submit" type="button" id="submitBtn" />
-						
+
+						<input type="text" id="priceFrom" name="priceFrom"
+							pattern="[0-9]*" inputmode="numeric"> <input type="text"
+							id="priceTo" name="priceTo" pattern="[0-9]*" inputmode="numeric">
+						<input value="Submit" type="button" id="submitBtn" />
+
 					</div>
 
 				</div>
@@ -296,7 +293,7 @@ input.error {
 
 	<div id="modal-create-product" class="modal" tabindex="-1"
 		style="display: none;">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Modal Create Product</h5>
@@ -307,24 +304,22 @@ input.error {
 					<div class="modal-alert-danger hide"></div>
 					<form id="frmCreateProduct">
 						<div class="form-row">
-							<div class="col-sm-12">
-								<div class="form-group p-2">
-									<label for="productId">Id:</label> <input class="form-control"
-										type="text" id="cre_productId" name="productId" />
-								</div>
+							<div class="col-sm-6">
 								<div class="form-group p-2">
 									<label for="name">Title:</label> <input class="form-control"
 										type="text" name="productName" id="cre_productName" />
 								</div>
-								<div class="form-group p-2">
-									<div>Description:</div>
-									<input class="form-control" type="text" name="description"
-										id="cre_description" />
-								</div>
+
 								<div class="form-group p-2">
 									<div>Price:</div>
 									<input class="form-control" type="number" name="priceProduct"
 										id="cre_priceProduct" />
+								</div>
+
+								<div class="form-group p-2">
+									<div>Description:</div>
+									<textarea class="form-control" name="description"
+										id="cre_description" placeholder="Description product"></textarea>
 								</div>
 
 								<div class="form-group p-2 d-flex">
@@ -338,8 +333,13 @@ input.error {
 										<option value="3" ${isSales == 3 ? 'selected' : ''}>Hết
 											hàng</option>
 									</select>
+
 								</div>
 
+							</div>
+							<div class="col-sm-6">
+								<div>IMG</div>
+								<img src="">
 							</div>
 						</div>
 					</form>
@@ -438,7 +438,7 @@ input.error {
 					+ ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>"
 					+ "</div>"
 					+ "<div>"
-					+ "<a onclick='return confirmBox();' href='deleteUserById?id="
+					+ "<a onclick='return confirmBox();' href='product/deleteProductById?productId="
 					+ item.productId + "' class='delete'>"
 					+ "<i class='fa-solid fa-trash btn btn-danger'></i>"
 					+ "</a>" + "</div>" + "</td>" + "</tr>";
@@ -541,18 +541,22 @@ input.error {
 	 
 	
 	 $("#show-modal-creproduct").on('click',() => {
-		 $("#modal-create-product").modal("show");
-			
+		 $("#modal-create-product").modal("show");		
 	}); 
 	 
 	 $("#btnCreateProduct").on('click', () => {
-		 doCreateProduct();
+		 $("#frmCreateProduct").submit();
 	});
-	 
+			
+			
+	$("#frmCreateProduct").submit(function(event) {
+			    event.preventDefault();
+			    if ($("#frmCreateProduct").valid()) {		        
+			        doCreateProduct();
+			    }
+		});	 
 
 	 function doCreateProduct(){
-		 
-	        var productId = $("#cre_productId").val();
 	        var productName = $("#cre_productName").val();
 	        var description = $("#cre_description").val();
 	        var productPrice = $("#cre_priceProduct").val();
@@ -560,7 +564,6 @@ input.error {
 
 	        // Tạo đối tượng dữ liệu để gửi đi
 	        var productData = {
-	        		productId: productId,
 	        		productName: productName,
 	        		description: description,
 	        		productPrice: productPrice,
@@ -580,7 +583,7 @@ input.error {
 	                
 	                $("#modal-create-product").modal("hide");		                
 	               
-	               /*  $("#frmCreateCustomer")[0].reset(); */
+	                 $("#frmCreateProduct")[0].reset(); 
 	            },
 	            error: function(xhr, status, error) {
 	                console.log("Error creating user:", error);
@@ -589,6 +592,38 @@ input.error {
 	      });
 }
 
+	 function selectProductBySales(isSales){
+		 $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/product/getProductBySale",
+		        type: "GET",
+		        dataType: "json",			        
+		        data: {
+		        	isSales: isSales
+		        	},
+		        success: function(data) {    			        	
+		        	if (data !== null) {
+		        		 $("#allProduct tbody").html('');
+		        		
+		        	for(var i = 0; i < data.length; i++){
+			        	var product = data[i];	   
+			        	
+			        	var row = renderProduct(product);
+			                $("#allProduct tbody").append(row);
+		        		 }
+		              } else {
+		                displayError();
+		              }
+		        	 DisplayList(data, list_element, rows, current_page);
+				        
+	                 SetupPagination(data, pagination_element, rows); 
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		});
+	 }
+	 
+	 
 	function renderProduct(product) {
 		var isSales = "";
 		var productPrice = product.productPrice;
@@ -626,8 +661,8 @@ input.error {
 				+ product.productId
 				+ ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>"
 				+ "</div>" + "<div>"
-				+ "<a onclick='return confirmBox();' href='deleteUserById?id="
-				+ product.productId + "' class='delete'>"
+				+ "<a onclick='return confirmBox();' href='product/deleteProductById?productId="
+				+ product.productId + "' class='delete_product'>"
 				+ "<i class='fa-solid fa-trash btn btn-danger'></i>" + "</a>"
 				+ "</div>" + "</td>" + "</tr>";
 
@@ -658,28 +693,6 @@ input.error {
 				});
 	}
 
-	$(".delete").click(function() {
-		$.ajax({
-			type : "POST",
-			url : "http://localhost:8080/struts2-mybatis-login/deleteUserById",
-			dataType : "JSON",
-			data : {
-				id : id
-			},
-			success : function(res) {
-				alert(res);
-				if (res.success) {
-					alert("Record deleted successfully.");
-					$(that).closest('tr').remove();
-				} else {
-					alert(res.msg)
-				}
-			}
-
-		})
-
-	});
-
 	function confirmBoxActive() {
 		var answer;
 		answer = window.confirm("Are you sure to change active this user id?");
@@ -709,73 +722,62 @@ input.error {
 			return false;
 		}
 	}
+	
 
-	$("#frmCreate")
+	 $("#frmCreateProduct")
 			.validate(
 					{
 						rules : {
-							name : {
+							productName : {
 								required : true,
-								minlength : 6,
+								minlength : 5,
 								maxlength : 35
 							},
-							email : {
+							description : {
 								required : true,
-								minlength : 9,
+								minlength : 4,
 								maxlength : 35,
 							},
-							password : {
+							priceProduct : {
 								required : true,
-								minlength : 6,
-								maxlength : 35,
-								pwcheck : true
+								 number: true,
+							     min: 0							
 							},
-							confirmPassword : {
-								required : true,
-								minlength : 6,
-								maxlength : 35,
-								equalTo : "#crePassword"
-							}
+						
 						},
 						messages : {
-							name : {
-								required : "Vui lòng nhập tên đầy đủ",
-								minlength : "Độ dài tối thiểu là 6 ký tự",
+							productName : {
+								required : "Tên sản phẩm không được để trống!",
+								minlength : "Độ dài tối thiểu là 5 ký tự",
 								maxlength : "Độ dài tối đa là 35 ký tự"
 							},
-							email : {
-								required : "Vui lòng nhập địa chỉ email!",
-								minlength : "Độ dài tối thiểu là 9 ký tự",
-								maxlength : "Độ dài tối đa là 35 ký tự",
-								email : "Vui lòng nhập đúng định dạng email"
+							description : {
+								 required: "Vui lòng nhập mô tả!",
+							      minlength: "Độ dài mô tả tối thiểu là 4 ký tự",
+							      maxlength: "Độ dài mô tả tối đa là 35 ký tự",
 							},
-							password : {
-								required : "Vui lòng nhập mật khẩu!",
-								minlength : "Độ dài tối thiểu là 6 ký tự",
-								maxlength : "Độ dài tối đa là 35 ký tự",
-								pwcheck : "Mật khẩu phải có tối thiểu 1 chữ hoa, 1 chữ thường và một số!",
+							priceProduct : {
+								required : "Giá bán không được nhỏ hơn 0",
+								number: "Giá bán phải là một số",
+							    min: "Giá bán không được nhỏ hơn 0",
+								
 							},
-							confirmPassword : {
-								required : "Vui lòng xác nhận mật khẩu!",
-								minlength : "Độ dài tối thiểu là 6 ký tự",
-								maxlength : "Độ dài tối đa là 35 ký tự",
-								equalTo : "Mật khẩu xác nhận không khớp",
-							}
+						
 						},
-						errorLabelContainer : "#modal-create-user .modal-alert-danger",
+						errorLabelContainer : "#modal-create-product .modal-alert-danger",
 						errorPlacement : function(error, element) {
 							error
-									.appendTo("#modal-create-user .modal-alert-danger");
+									.appendTo("#modal-create-product .modal-alert-danger");
 						},
 						showErrors : function(errorMap, errorList) {
 							if (this.numberOfInvalids() > 0) {
-								$("#modal-create-user .modal-alert-danger")
+								$("#modal-create-product .modal-alert-danger")
 										.removeClass("hide").addClass("show");
 							} else {
-								$("#modal-create-user .modal-alert-danger")
+								$("#modal-create-product .modal-alert-danger")
 										.removeClass("show").addClass("hide")
 										.empty();
-								$("#frmCreate input.error")
+								$("#frmCreateProduct input.error")
 										.removeClass("error");
 							}
 							this.defaultShowErrors();
@@ -783,105 +785,21 @@ input.error {
 
 					})
 
-	$.validator.addMethod("pwcheck", function(value) {
-		return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/.test(value)
-	});
-
-	$("#frmUpdate")
-			.validate(
-					{
-						rules : {
-							name : {
-								required : true,
-								minlength : 6,
-								maxlength : 35
-							},
-							email : {
-								required : true,
-								minlength : 9,
-								maxlength : 35,
-							},
-							password : {
-								required : true,
-								minlength : 6,
-								pwcheck : true,
-								maxlength : 35,
-							},
-							confirmPassword : {
-								required : true,
-								minlength : 6,
-								maxlength : 35,
-								equalTo : "#upPassword"
-							}
-						},
-						messages : {
-							name : {
-								required : "Vui lòng nhập tên đầy đủ",
-								minlength : "Độ dài tối thiểu là 6 ký tự",
-								maxlength : "Độ dài tối đa là 35 ký tự"
-							},
-							email : {
-								required : "Vui lòng nhập địa chỉ email!",
-								minlength : "Độ dài tối thiểu là 9 ký tự",
-								maxlength : "Độ dài tối đa là 35 ký tự",
-								email : "Vui lòng nhập đúng định dạng email"
-							},
-							password : {
-								required : "Vui lòng nhập mật khẩu!",
-								minlength : "Độ dài tối thiểu là 6 ký tự",
-								maxlength : "Độ dài tối đa là 35 ký tự",
-								pwcheck : "Mật khẩu phải có tối thiểu 1 chữ hoa, 1 chữ thường và một số!",
-							},
-							confirmPassword : {
-								required : "Vui lòng xác nhận mật khẩu!",
-								minlength : "Độ dài tối thiểu là 6 ký tự",
-								maxlength : "Độ dài tối đa là 35 ký tự",
-								equalTo : "Mật khẩu xác nhận không khớp",
-							}
-						},
-						errorLabelContainer : "#modal-update-user .modal-alert-danger",
-						errorPlacement : function(error, element) {
-							error
-									.appendTo("#modal-update-user .modal-alert-danger");
-						},
-						showErrors : function(errorMap, errorList) {
-							if (this.numberOfInvalids() > 0) {
-								$("#modal-update-user .modal-alert-danger")
-										.removeClass("hide").addClass("show");
-							} else {
-								$("#modal-update-user .modal-alert-danger")
-										.removeClass("show").addClass("hide")
-										.empty();
-								$("#frmUpdate input.error")
-										.removeClass("error");
-							}
-							this.defaultShowErrors();
-						},
-
-					})
-
+	
 	$(".close").on(
 			'click',
 			function() {
 				// Reset lại form
-				$("#frmCreate").validate().resetForm();
+				$("#frmCreateProduct").validate().resetForm();
 				// Xóa thông báo lỗi
-				$("#modal-create-user .modal-alert-danger").removeClass("show")
+				$("#modal-create-product .modal-alert-danger").removeClass("show")
 						.addClass("hide").empty();
 				// Xóa lớp error trên các trường input
-				$("#frmCreate input.error").removeClass("error");
+				$("#frmCreateProduct input.error").removeClass("error");
+				
+				$("#frmCreateProduct")[0].reset(); 
 			});
+ 
 
-	$(".close").on(
-			'click',
-			function() {
-				// Reset lại form
-				$("#frmUpdate").validate().resetForm();
-				// Xóa thông báo lỗi
-				$("#modal-update-user .modal-alert-danger").removeClass("show")
-						.addClass("hide").empty();
-				// Xóa lớp error trên các trường input
-				$("#frmUpdate input.error").removeClass("error");
-			});
 </script>
 </html>

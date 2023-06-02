@@ -78,7 +78,6 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 
 		String relativePath = "/assets/excel";
 		String absolutePath = servletRequest.getServletContext().getRealPath("/");
-		
 
 		File fileToCreate = new File(absolutePath, filename);
 		FileUtils.copyFile(file, fileToCreate);
@@ -150,8 +149,8 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 	public String updateCustomerById() throws IOException {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader);
-		SqlSession session = sessionFactory.openSession();
-		customer = session.selectOne("Customer.getCustomerId", customerId);
+		SqlSession sqlSession = sessionFactory.openSession();
+		customer = sqlSession.selectOne("Customer.getCustomerId", customerId);
 		System.out.println("customr id = " + customer.getCustomerId());
 
 		customer.setCustomerName(customerName);
@@ -159,7 +158,15 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 		customer.setTelNum(telNum);
 		customer.setAddress(address);
 
-		session.selectOne("Customer.updateCustomerId", customer);
+		sqlSession.selectOne("Customer.updateCustomerId", customer);
+		sqlSession.commit();
+		sqlSession.close();
+
+		Customer ctm = sqlSession.selectOne("Customer.getCustomerId", customerId);
+		System.out.println("customer id = " + ctm);
+		sqlSession.commit();
+		sqlSession.close();
+
 		return SUCCESS;
 	}
 
@@ -210,7 +217,7 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 		} finally {
 			session.close();
 		}
-		return SUCCESS;
+		return INPUT;
 	}
 
 	public Integer getCustomerId() {

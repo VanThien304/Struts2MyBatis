@@ -28,7 +28,7 @@
 		<action name="login">
 			<result>WEB-INF/pages/login.jsp</result>
 			<result name="success" type="redirectAction">
-				<param name="actionName">index</param>
+				<param name="actionName">login</param>
 				<param name="namespace">/</param>
 			</result>
 			<result name="input">WEB-INF/pages/login.jsp</result>
@@ -54,6 +54,10 @@
 		<action name="product">
 			<interceptor-ref name="secureStack" />
 			<result>/WEB-INF/pages/product.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">product</param>
+				<param name="namespace">/</param>
+			</result>
 			<result name="login">/WEB-INF/pages/login.jsp</result>
 		</action>
 
@@ -64,6 +68,26 @@
 				<param name="root">products</param>
 			</result>
 			<result name="login">/WEB-INF/pages/login.jsp</result>
+		</action>
+
+		<action name="getProductBySale" method="getProductBySale"
+			class="com.tpv.controller.product.ProductAction">
+			<interceptor-ref name="secureStack" />
+			<result type="json">
+				<param name="root">products</param>
+			</result>
+			<result name="login">/WEB-INF/pages/login.jsp</result>
+		</action>
+
+		<action name="deleteProductById"
+			class="com.tpv.controller.product.ProductAction"
+			method="setIsDeleteProductById">
+			<interceptor-ref name="secureStack" />
+			<result name="success" type="redirectAction">
+				<param name="actionName">product</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="login">WEB-INF/pages/login.jsp</result>
 		</action>
 
 		<action name="createProduct"
@@ -100,7 +124,6 @@
 		</interceptors>
 
 		<action name="login">
-			<result>WEB-INF/pages/login.jsp</result>
 			<result name="success" type="redirectAction">
 				<param name="actionName">index</param>
 				<param name="namespace">/</param>
@@ -175,15 +198,11 @@
 			class="com.tpv.controller.user.UserAction" method="getAllUsers">
 			<interceptor-ref name="secureStack" />
 			<result type="json" />
-
-
 		</action>
-
 
 		<action name="listUser"
 			class="com.tpv.controller.user.UserAction" method="getAllUsers">
 			<interceptor-ref name="secureStack" />
-
 			<result name="success">WEB-INF/pages/index.jsp</result>
 			<result name="error">WEB-INF/pages/index.jsp</result>
 			<result name="input">WEB-INF/pages/index.jsp</result>
@@ -255,7 +274,6 @@
 			</result>
 		</action>
 
-
 		<action name="paginationAction"
 			class="com.tpv.controller.user.UserAction" method="pagination">
 			<interceptor-ref name="secureStack" />
@@ -263,7 +281,6 @@
 				<param name="root">users</param>
 			</result>
 		</action>
-
 
 	</package>
 
@@ -325,16 +342,26 @@
 		<action name="customer">
 			<interceptor-ref name="secureStack" />
 			<result>WEB-INF/pages/customer.jsp</result>
+			<result name="success" type="redirect">
+				<param name="root">customers</param>
+			</result>
 			<result name="login">/WEB-INF/pages/login.jsp</result>
 		</action>
 
-		<action name="getAllCustomer" method="getAllCustomer"
+		<!-- <action name="getAllCustomer" method="getAllCustomer"
 			class="com.tpv.controller.customer.CustomerAction">
 			<interceptor-ref name="secureStack" />
 			<result type="json">
 				<param name="root">customers</param>
 			</result>
+		</action> -->
+		<action name="getAllCustomer" 
+			class="com.tpv.controller.customer.CustomerAction" 
+			method="getAllCustomer">
+			<interceptor-ref name="secureStack" />
+			<result type="json"/>
 		</action>
+
 
 		<action name="createCustomer"
 			class="com.tpv.controller.customer.CustomerAction"
@@ -356,7 +383,6 @@
 			</result>
 			<result name="input">WEB-INF/pages/modalCreateUser.jsp</result>
 		</action>
-
 
 		<action name="importExcelAction"
 			class="com.tpv.controller.customer.CustomerAction"

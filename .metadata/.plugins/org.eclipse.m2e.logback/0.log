@@ -1081,3 +1081,5 @@ org.eclipse.core.runtime.CoreException: Could not resolve artifact org.apache.lo
 2023-06-01 09:19:32,447 [Worker-72: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 3 resources
 2023-06-01 09:19:32,452 [Worker-72: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
 2023-06-01 09:19:32,452 [Worker-72: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory D:\workspace\apache-struts2\src\test\resources
+2023-06-01 09:28:20,849 [Worker-0: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2023-06-02 08:35:32,232 [Worker-17: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.

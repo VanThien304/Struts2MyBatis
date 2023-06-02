@@ -9,6 +9,7 @@ public class Product {
 	private BigDecimal productPrice;
 	private Integer isSales;
 	private String description;
+	private Integer isDelete;
 
 	public Product(String productName, String productImage, BigDecimal productPrice, Integer isSales,
 			String description) {
@@ -82,4 +83,13 @@ public class Product {
 		this.description = description;
 	}
 
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
+
+	
 }

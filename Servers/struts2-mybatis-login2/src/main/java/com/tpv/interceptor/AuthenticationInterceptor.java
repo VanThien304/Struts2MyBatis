@@ -30,24 +30,21 @@ public class AuthenticationInterceptor implements Interceptor {
 		Map<String, Object> session = actionInvocation.getInvocationContext().getSession();
 		User user = (User) session.get("user");
 
-		/*
-		 * if (user == null) { return ActionSupport.LOGIN; } else { return
-		 * actionInvocation.invoke(); }
-		 */
-
 		if (user == null) {
 			return ActionSupport.LOGIN;
-		} else if ("1".equals(user.getGroupRole())) {
+		} else {
 			return actionInvocation.invoke();
-		} else if (user.getGroupRole().equals(2)) {
-			if (actionInvocation.getAction().getClass().equals(ProductAction.class)) {
-				return actionInvocation.invoke();
-			} else {
-				return "accessDenied";
-
-			}
 		}
-		return "accessDenied";
+
+		/*
+		 * if (user == null) { return ActionSupport.LOGIN; } else if
+		 * ("1".equals(user.getGroupRole())) { return actionInvocation.invoke(); } else
+		 * if (user.getGroupRole().equals(2)) { if
+		 * (actionInvocation.getAction().getClass().equals(ProductAction.class)) {
+		 * return actionInvocation.invoke(); } else { return "accessDenied";
+		 * 
+		 * } } return "accessDenied";
+		 */
 
 	}
 
