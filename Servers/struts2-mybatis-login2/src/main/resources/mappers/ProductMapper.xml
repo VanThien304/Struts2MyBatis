@@ -18,6 +18,11 @@
 		SELECT * FROM mst_product;
 	</select>
 
+	<select id="getProductId" resultMap="result">
+		SELECT product_id,
+		product_name, product_price, is_sales, description FROM mst_product WHERE product_id = #{productId};
+	</select>
+
 	<select id="getAllProduct" resultMap="result">
 		SELECT product_id,
 		product_name, product_price, is_sales, description FROM mst_product WHERE is_delete = 0;

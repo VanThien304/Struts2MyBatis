@@ -237,7 +237,7 @@ input.error {
 			<div class="col-12 d-flex">
 				<div class="col-4">
 					<button type="button" id="show-modal" class="btn btn-primary">Add
-						User</button>
+						Customer</button>
 				</div>
 
 				<div class="col-4">
@@ -257,11 +257,11 @@ input.error {
 				<div class="col-4">
 
 					<input class="btn btn-primary" type="submit"
-						onclick="searchUser(document.getElementById('keywordInput').value)"
+						onclick="searchCustomer(document.getElementById('keywordInput').value)"
 						value="Search" />
 					<!-- <input type="text" id="keywordInput" oninput="searchUser(this.value)"> -->
 
-					<input class="btn btn-info" type="submit" onclick="resetSearch()"
+					<input class="btn btn-info" type="submit" onclick="resetSearchCustomer()"
 						value="Delete" />
 
 
@@ -370,9 +370,7 @@ input.error {
 
 <script type="text/javascript">
 	
-	loadAllCustomer();
-	 
- 	
+	  	
  	 
 	const list_element = document.querySelector('#allCustomer');
 	const pagination_element = document.getElementById('pagination');
@@ -628,9 +626,9 @@ input.error {
 	} 	   
 		
 	
-	 function searchUser(keyword) {
+	 function searchCustomer(keyword) {
 		 $.ajax({
-		        url: "http://localhost:8080/struts2-mybatis-login/searchUser",
+		        url: "http://localhost:8080/struts2-mybatis-login/customer/searchCustomer",
 		        type: "GET",
 		        dataType: "json",			        
 		        data: {
@@ -642,16 +640,16 @@ input.error {
 				        
 	                 SetupPagination(data, pagination_element, rows); 
 		        	if (data !== null) {
-		        		 $("#allUser tbody").html('');
+		        		 $("#allCustomer tbody").html('');
 		        		 if(data.length !== 0){	
 		        	for(var i = 0; i < data.length; i++){
-			        	var user = data[i];	   
-			        	var row = renderUser(user);
-			                $("#allUser tbody").append(row);
+			        	var customer = data[i];	   
+			        	var row = renderCustomer(customer);
+			                $("#allCustomer tbody").append(row);
 			        }
 		        		 }else{
 		        			 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Không có dữ liệu</td></tr>";
-		                     $("#allUser tbody").append(noDataMessage);
+		                     $("#allCustomer tbody").append(noDataMessage);
 		        		 }
 		              } else {
 		                displayError();
@@ -662,28 +660,7 @@ input.error {
 		        }
 		    });
 	  } 
-		
-	
 
-	 
- 	 function getUserById(id) {
-		    $.ajax({
-		        url: "http://localhost:8080/struts2-mybatis-login/getUserById",
-		        type: "GET",
-		        dataType: "json",
-		        data: {id:id},
-		        success: function(data) {
-		        	 var user = data.user;
-		        	 console.log("user= "+ user)
-		          
-		        },
-		        error: function(jqXHR, textStatus, errorThrown) {
-		            console.log("Lỗi: " + textStatus, errorThrown);
-		        }
-		    });
-		} 
-	 
-	 
 	 
 	 function renderCustomer(customer) {
 		 var isActive = customer.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
@@ -695,13 +672,15 @@ input.error {
 		        "<td>" + customer.telNum + "</td>" +
 		        "<td class='d-flex justify-content-between'>" +
 		        "<div>" +
-		        "<i onclick='showModalUpdateUser(" + customer.customerId + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
+		        "<i onclick='showModalUpdateCustomer(" + customer.customerId + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
 		        "</div>" +
 		        "</td>" +
 		        "</tr>";
 
 		    return  $("#allCustomer tbody").append(row);;
 	}
+	 
+	 loadAllCustomer();
 	 
 	 
 	 function loadAllCustomer() {

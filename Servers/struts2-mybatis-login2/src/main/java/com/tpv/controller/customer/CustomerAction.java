@@ -28,7 +28,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import com.opensymphony.xwork2.ActionSupport;
 import com.tpv.model.Customer;
 
-public class CustomerAction extends ActionSupport implements ServletRequestAware {
+public class CustomerAction extends ActionSupport {
 
 	private Integer customerId;
 	private String customerName;
@@ -37,7 +37,7 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 	private String address;
 	private Boolean booleanActive;
 	private Integer isActive;
-
+	private String keyword;
 	private File file;
 	private String contentType;
 	private String filename;
@@ -173,7 +173,7 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 	public String createCustomer() throws IOException {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader);
-		SqlSession session = sessionFactory.openSession();
+		SqlSession sqlSession = sessionFactory.openSession();
 		try {
 			customer = new Customer();
 
@@ -187,29 +187,51 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 				customer.setIsActive(0);
 			}
 
-			session.insert("Customer.insertCustomer", customer);
+			sqlSession.insert("Customer.insertCustomer", customer);
 			System.out.println("record inserted successfully");
-			session.commit();
+			sqlSession.commit();
+			return SUCCESS;
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
-
+			sqlSession.close();
 		}
 
 		return SUCCESS;
 	}
+	
+	
 
+	public String searchCustomer() throws IOException {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			customers = session.selectList("Customer.search", keyword);
+			for (Customer customer : customers) {
+				System.out.println("customr id = " + customer.getCustomerId());
+			}
+			System.out.println("Records Read Successfully ");
+		
+			return SUCCESS;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return INPUT;
+	}
+	
 	public String getAllCustomer() throws IOException {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
 		try {
 			customers = session.selectList("Customer.getAllCustomer");
-			for (Customer customer : customers) {
-				System.out.println("customr id = " + customer.getCustomerId());
-			}
-			System.out.println("Records Read Successfully ");
 
+			System.out.println("Records Read Successfully ");
+			session.commit();
 			return SUCCESS;
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -292,12 +314,6 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 		this.booleanActive = booleanActive;
 	}
 
-	@Override
-	public void setServletRequest(HttpServletRequest servletRequest) {
-		this.servletRequest = servletRequest;
-
-	}
-
 	public void setUpload(File file) {
 		this.file = file;
 	}
@@ -328,6 +344,14 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 
 	public HttpServletRequest getServletRequest() {
 		return servletRequest;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 }

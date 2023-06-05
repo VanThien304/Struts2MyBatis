@@ -17,4 +17,8 @@
 		<item key="moveWizard.updateQualifiedNames" value="false"/>
 		<item key="patterns" value="*"/>
 	</section>
+	<section name="RefactoringWizard.Externalize strings in &apos;OrderAction.java&apos;">
+		<item key="width" value="600"/>
+		<item key="height" value="470"/>
+	</section>
 </section>

@@ -87,7 +87,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			
 			for(User user: users) {
 			System.out.println("users = " + users);
-			System.out.println("user id = " + user.getId());
+			
 			}
 			System.out.println("success pagination");
 			return SUCCESS;
@@ -108,12 +108,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 		try {
 			user = session.selectOne("User.getById", id);
 			// Print the student details
-			System.out.println(user.getId());
-			System.out.println(user.getName());
-			System.out.println(user.getEmail());
-			System.out.println("delete = " + user.getIsDelete());
-			System.out.println(user.getGroupRole());
-			System.out.println(user.getIsActive());
+
 			return SUCCESS;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -132,14 +127,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 		try {
 			users = session.selectList("User.getUserByActive", isActive);
 
-			for (User user : users) {
-				System.out.println("user id = " + user.getId());
-				System.out.println("name = " + user.getName());
-				System.out.println("email" + user.getEmail());
-				System.out.println("GroupRole = " + user.getGroupRole());
-				System.out.println("Active" + user.getIsActive());
-
-			}
 			return SUCCESS;
 
 		} catch (Exception e) {
@@ -190,13 +177,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 			}
 
 			users = session.selectList("User.search", keyword);
-			for (User user : users) {
-				System.out.println("user id = " + user.getId());
-				System.out.println("name = " + user.getName());
-				System.out.println("email" + user.getEmail());
-				System.out.println("GroupRole = " + user.getGroupRole());
-				System.out.println("Active" + user.getIsActive());
-			}
 
 			return SUCCESS;
 		} catch (Exception e) {
@@ -219,13 +199,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 			}
 
 			users = session.selectList("User.getByGroup", groupRole);
-			for (User user : users) {
-				System.out.println("user id = " + user.getId());
-				System.out.println("name = " + user.getName());
-				System.out.println("email" + user.getEmail());
-				System.out.println("GroupRole = " + user.getGroupRole());
-				System.out.println("Active" + user.getIsActive());
-			}
 
 			return SUCCESS;
 		} catch (Exception e) {
@@ -381,7 +354,7 @@ public class UserAction extends ActionSupport implements SessionAware {
 			}
 			// select a particular user using id
 			user = (User) session.selectOne("User.getById", id);
-			System.out.println("User ID = " + id);
+			
 			System.out.println("Current details of the student are");
 			System.out.println(user.toString());
 
@@ -424,8 +397,6 @@ public class UserAction extends ActionSupport implements SessionAware {
 		// Delete operation
 		int res = session.delete("User.deleteById", id);
 
-		System.out.println(id);
-		System.out.println(res);
 		session.commit();
 		session.close();
 		System.out.println("Record deleted successfully");

@@ -24,6 +24,10 @@
 		SELECT * FROM
 		mst_customer;
 	</select>
+	
+	 <select id="search" resultMap="result">
+   		SELECT customer_id, customer_name, email, tel_num, address FROM mst_customer WHERE customer_name LIKE CONCAT('%', #{customerName} ,'%');
+   </select>
 
 	<select id="getCustomerId" parameterType = "int" resultMap="result">
 		SELECT customer_id, customer_name,
@@ -38,7 +42,7 @@
 		#{isActive});
 	</insert>
 
-	<update id="updateCustomerId">
+	<update id="updateCustomerId" parameterType="Customer">
 		UPDATE mst_customer SET customer_name = #{customerName}, email = #{email}, tel_num = #{telNum}, address = #{address},  WHERE customer_id =
 		#{customerId};
 	</update>
