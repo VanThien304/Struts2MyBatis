@@ -49,6 +49,7 @@
 				<param name="actionName">login</param>
 				<param name="namespace">/</param>
 			</result>
+			
 		</action>
 
 		<action name="product">
@@ -142,9 +143,10 @@
 
 		<action name="logout"
 			class="com.tpv.controller.login.LogoutAction">
+			<interceptor-ref name="secureStack" />
 			<result name="success" type="redirectAction">
-			
-				<param name="namespace">/login</param>
+				<param name="actionName">login</param>
+				<param name="namespace">/</param>
 			</result>
 		</action>
 
