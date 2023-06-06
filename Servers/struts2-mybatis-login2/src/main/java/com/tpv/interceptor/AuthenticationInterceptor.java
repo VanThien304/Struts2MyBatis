@@ -39,7 +39,7 @@ public class AuthenticationInterceptor implements Interceptor {
 		/*
 		 * if (user == null) { return ActionSupport.LOGIN; } else if
 		 * ("1".equals(user.getGroupRole())) { return actionInvocation.invoke(); } else
-		 * if (user.getGroupRole().equals(2)) { if
+		 * if ("2".equals(user.getGroupRole())) { if
 		 * (actionInvocation.getAction().getClass().equals(ProductAction.class)) {
 		 * return actionInvocation.invoke(); } else { return "accessDenied";
 		 * 

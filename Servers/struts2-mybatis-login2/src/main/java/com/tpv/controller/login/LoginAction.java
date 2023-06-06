@@ -71,8 +71,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 
 		try {
 			User user = new User();
-			
-			user.setGroupRole(groupRole);
+		
 			user.setEmail(email);
 			user.setPassword(password);
 			
@@ -80,6 +79,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 			
 			if (result != null) {
 				System.out.println("Login Success!");
+				
 				session.put("user", result);
 				return SUCCESS;
 			} else {

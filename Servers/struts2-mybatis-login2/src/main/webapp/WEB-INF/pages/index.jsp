@@ -21,6 +21,13 @@
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+<!-- Liên kết CSS của SweetAlert2 -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 <script type="text/javascript"
 	src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script type="text/javascript"
@@ -31,7 +38,7 @@
 	src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
 
 
@@ -188,7 +195,7 @@ input.error {
 				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
-				<a href="#">Admin</a>
+				<a onclick="logout()" >Admin</a>
 			</div>
 		</div>
 		<div>
@@ -246,12 +253,12 @@ input.error {
 					<button type="button" id="show-modal" class="btn btn-primary">Add
 						User</button>
 				</div>
-				
+
 				<div class="col-4">
-					<input type="file" id="excelFile" accept=".xlsx"/>
+					<input type="file" id="excelFile" accept=".xlsx" />
 					<button onclick="importExcel()">Import Excel</button>
 				</div>
-				
+
 				<div class="col-4">
 
 					<input class="btn btn-primary" type="submit"
@@ -280,7 +287,7 @@ input.error {
 
 	<div class="container">
 		<table id="allUser" class="table table-striped">
-		<!--		<thead>
+			<!--		<thead>
 			 <tr>
 					<th scope="col">#</th>
 					<th scope="col">FullName</th>
@@ -290,7 +297,7 @@ input.error {
 					<th scope="col" class="text-center">Action</th>
 				</tr> 
 			</thead>-->
-				<%--  	<tbody>
+			<%--  	<tbody>
 
 
 			<s:iterator var="user" value="users">
@@ -335,7 +342,7 @@ input.error {
 					</tr>
 				</s:iterator>  --%>
 
-			</tbody> 
+			</tbody>
 
 		</table>
 	</div>
@@ -403,7 +410,7 @@ input.error {
 		</div>
 	</div>
 	<%@ include file="modalUpdateUser.jsp"%>
-	
+
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -412,9 +419,16 @@ input.error {
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
 		type="text/javascript"></script>
-		
+
+	<!-- Liên kết JavaScript của SweetAlert2 -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 	<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-	
+
 </body>
 
 <script type="text/javascript">
@@ -427,7 +441,7 @@ input.error {
 	const pagination_element = document.getElementById('pagination');
 
 	let current_page = 1;
-	let rows = 10;
+	let rows_per_page = 10;
 
 	function DisplayList(items, wrapper, rows_per_page, page) {
 	    wrapper.innerHTML = "";
@@ -477,12 +491,12 @@ input.error {
 	            "<i onclick='showModalUpdateUser(" + item.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
 	            "</div>" +
 	            "<div>" +
-	            "<a onclick='return confirmBox();' href='deleteUserById?id=" + item.id + "' class='delete'>" +
+	            "<a class='delete' data-id=" + item.id + " onclick='deleteUser(this)'>" +
 	            "<i class='fa-solid fa-trash btn btn-danger'></i>" +
 	            "</a>" +
 	            "</div>" +
 	            "<div>" +
-	            "<a onclick='return confirmBoxActive();' href='setActiveUserById?id=" + item.id + "' class='activeUser'>" +
+	            "<a class='activeUser' data-id=" + item.id + " onclick='isActiveUser(this)'>" +
 	            "<i class='fa-solid fa-user-xmark btn btn-dark'></i>" +
 	            "</a>" +
 	            "</div>" +
@@ -514,7 +528,7 @@ input.error {
 
 		button.addEventListener('click', function () {
 			current_page = page;
-			DisplayList(items, list_element, rows, current_page);
+			DisplayList(items, list_element, rows_per_page, current_page);
 
 			let current_btn = document.querySelector('.pagenumbers button.active');
 			current_btn.classList.remove('active');
@@ -570,98 +584,26 @@ input.error {
 	    loadAllUsers();
 	}
 	
-	/* function showPaginationUsers(currentPage){
-		 $.ajax({
-		        url: "http://localhost:8080/struts2-mybatis-login/paginationAction",
-		        type: "GET",
-		        dataType: "json",			        
-		        data: {
-		        	currentPage: currentPage
-		        	},
-		        success: function(data) {
-		        	
-
-		        	 DisplayList(data, list_element, rows, current_page);
-	                 SetupPagination(data, pagination_element, rows); 
-		        	if(data != null){
-		        		$("#allUser tbody").html('');
-		        		for(let i = 0; i < data.length; i++){
-			        		user = data[i];
-			        		
-			        	}    	
-			            $("#allUser tbody").append(user);
-		        	}		        	
-		        },
-		        error: function(jqXHR, textStatus, errorThrown) {
-		            console.log("Lỗi: " + textStatus, errorThrown);
-		        }
-		});
-	} */
-	
-	
-/* 	function searchUser(keyword) {
-			 $.ajax({
-			        url: "http://localhost:8080/struts2-mybatis-login/searchUser",
-			        type: "GET",
-			        dataType: "json",			        
-			        data: {
-			        	keyword: keyword
-			        	},
-			        success: function(data) {
-			        	console.log("data = " + data);
-			        	if (data !== null) {
-			        		$('#search_fail').html("");
-			        		$("#allUser tbody").html("");
-			        		for(var i = 0; i < data.length; i++){
-			        	var user = data[i];	     		
-			        	var id = user.id;
-			        	var name = user.name;
-			        	var email = user.email;
-			        	var isActive = user.isActive ==  0 ? "Đang hoạt động" : "Tạm khóa";
-			 			var groupRole = "";
-
-			 			    if (user.groupRole == 1) {
-			 			        groupRole = "Admin";
-			 			    } else if (user.groupRole == 2) {
-			 			        groupRole = "Editor";
-			 			    } else {
-			 			        groupRole = "Reviewer";
-			 			    }
-
-			 			    var row = "<tr>" +
-			 			        "<td>" + id + "</td>" +
-			 			        "<td>" + name + "</td>" +
-			 			        "<td>" + email + "</td>" +
-			 			        "<td>" + groupRole + "</td>" +
-			 			        "<td>" + isActive + "</td>" +
-			 			        "<td class='d-flex justify-content-between'>" +
-			 			        "<div>" +
-			 			        "<i onclick='showModalUpdateUser(" + user.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
-			 			        "</div>" +
-			 			        "<div>" +
-			 			        "<a onclick='return confirmBox();' href='deleteUserById?id=" + user.id + "' class='delete'>" +
-			 			        "<i class='fa-solid fa-trash btn btn-danger'></i>" +
-			 			        "</a>" +
-			 			        "</div>" +
-			 			        "<div>" +
-			 			        "<a onclick='return confirmBoxActive();' href='setActiveUserById?id=" + user.id + "' class='activeUser'>" +
-			 			        "<i class='fa-solid fa-user-xmark btn btn-dark'></i>" +
-			 			        "</a>" +
-			 			        "</div>" +
-			 			        "</td>" +
-			 			        "</tr>"; 
-			                $("#allUser tbody").prepend(row);
-			        	}
-			              } else {
-			                displayError();
-			              }
-			        },
-			        error: function(jqXHR, textStatus, errorThrown) {
-			            console.log("Lỗi: " + textStatus, errorThrown);
-			            $('#search_fail').prepend("<h3>"+'Không tìm thấy!'+"</h3>");
-			        }
-			    });
-		  } */
+	function logout() {
+		  Swal.fire({
+		    title: "Are you sure?",
+		    text: "Once isActive, you will not be able to recover this user!",
+		    icon: "warning",
+		    showCancelButton: true,
+		    confirmButtonColor: "#dc3545",
+		    confirmButtonText: "Yes, set active it!",
+		    cancelButtonText: "No, cancel",
+		  }).then((result) => {
+		    if (result.isConfirmed) {
+		      // Xử lý khi người dùng xác nhận
+		       window.location.href = "logout";
+		      Swal.fire("Logout!", "Logout successfully!.", "success");
+		    } else {
+		      // Xử lý khi người dùng hủy
+		      Swal.fire("Cancelled", "Your user is safe!", "error");
+		    }
+		  });
+		}
 
 		  
 		  function importExcel() {
@@ -713,6 +655,7 @@ input.error {
 					        	var row = renderUser(user);
 					                $("#allUser tbody").append(row);
 				        		 }
+				        	toastr.success("Select group user successfully", "", {timeOut:1000});
 				              } else {
 				                displayError();
 				              }
@@ -724,7 +667,7 @@ input.error {
 	} 
 		
 		  
-	 function getUserByActive(isActive) {
+	  function getUserByActive(isActive) {
 				 $.ajax({
 				        url: "http://localhost:8080/struts2-mybatis-login/getUserByActive",
 				        type: "GET",
@@ -743,7 +686,9 @@ input.error {
 					        	var user = data[i];	   
 					        	
 					                $("#allUser tbody").append(user);
+					                
 				        		 }
+					                toastr.success("User isActive successfully", "", {timeOut:1000});
 				              } else {
 				                displayError();
 				              }
@@ -752,7 +697,7 @@ input.error {
 				            console.log("Lỗi: " + textStatus, errorThrown);
 				        }
 				});
-	} 	   
+	} 	    
 		
 	
 	 function searchUser(keyword) {
@@ -818,7 +763,10 @@ input.error {
 		            console.log("User updated successfully:", data);
 		          
 	                loadAllUsers();
+	                
 	                $("#modal-update-user").modal("hide");	
+	                
+	                toastr.success("User updated successfully", "", {timeOut:3000});
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
 		            // Handle the error response
@@ -862,6 +810,8 @@ input.error {
 		                $("#modal-create-user").modal("hide");		                
 		               
 		                $("#frmCreate")[0].reset();
+		                
+		                toastr.success("User created successfully", "", {timeOut:3000});
 		            },
 		            error: function(xhr, status, error) {
 		                console.log("Error creating user:", error);
@@ -913,12 +863,13 @@ input.error {
 		        "<i onclick='showModalUpdateUser(" + user.id + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
 		        "</div>" +
 		        "<div>" +
-		        "<a onclick='return confirmBox();' href='deleteUserById?id=" + user.id + "' class='delete'>" +
+		       
+		        "<a class='delete' data-id=" + user.id + " onclick='deleteUser(this)'>" +
 		        "<i class='fa-solid fa-trash btn btn-danger'></i>" +
 		        "</a>" +
 		        "</div>" +
 		        "<div>" +
-		        "<a onclick='return confirmBoxActive();' href='setActiveUserById?id=" + user.id + "' class='activeUser'>" +
+		        "<a class='activeUser' data-id=" + user.id + " onclick='isActiveUser(this)'>" +
 		        "<i class='fa-solid fa-user-xmark btn btn-dark'></i>" +
 		        "</a>" +
 		        "</div>" +
@@ -936,14 +887,16 @@ input.error {
 		        dataType: "json",
 		        success: function(data) {
 		        	 var users = data.user;
-		        	 DisplayList(users, list_element, rows, current_page);
+ 		        	 DisplayList(users, list_element, rows_per_page, current_page);
 		        
-	                 SetupPagination(users, pagination_element, rows); 
+	                 SetupPagination(users, pagination_element, rows_per_page);
+
 	                   $.each(users, function(index, user) { 
 	                	   
 			            $("#allUser tbody").append(user); 
+			            
 		            });      
-        
+			            toastr.success("Load all users successfully", "", {timeOut:2000});        
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
 		            console.log("Lỗi: " + textStatus, errorThrown);
@@ -952,27 +905,85 @@ input.error {
 		}
 
 		
-	$(".delete").click(function() {
-		$.ajax({
-			type : "POST",
-			url : "http://localhost:8080/struts2-mybatis-login/deleteUserById",
-			dataType : "JSON",
-			data : {
-				id : id
-			},
-			success : function(res) {
-				alert(res);
-				if (res.success) {
-					alert("Record deleted successfully.");
-					$(that).closest('tr').remove();
-				} else {
-					alert(res.msg)
-				}
-			}
+	 
+	 
+	 function isActiveUser(isActive) {		 
+		  var id = isActive.getAttribute("data-id");
+		  var that = isActive; // Lưu trữ tham chiếu đến phần tử đang được nhấp chuột		  
+		  Swal.fire({
+		    title: "Are you sure?",
+		    text: "Once isActive, you will not be able to recover this user!",
+		    icon: "warning",
+		    showCancelButton: true,
+		    confirmButtonColor: "#dc3545",
+		    confirmButtonText: "Yes, set active it!",
+		    cancelButtonText: "No, cancel",
+		    
+		  }).then((result) => {
+		    if (result.isConfirmed) {
+		      // Xử lý khi người dùng xác nhận xóa
+		      $.ajax({
+		        type: "POST",
+		        url: "http://localhost:8080/struts2-mybatis-login/setActiveUserById",
+		        dataType: "json",
+		        data: {
+		          id: id
+		        },
+		        success: function() {		        	 
+		                 Swal.fire("isActive!", "User successfully isActive.", "success");	
+		                 loadAllUsers();
+		             },
+		             error: function() {
+		               Swal.fire("Error", "An error occurred while isActive.", "error");	
+		        }
+		      });
+		    } else {
+		      // Xử lý khi người dùng hủy xóa
+		      Swal.fire("Cancelled", "Your user is safe!", "error");
+		    }
+		  });
+		}
+	 
+	 
+	 function deleteUser(element) {
+		 
+		  var id = element.getAttribute("data-id");
+		  var that = element; // Lưu trữ tham chiếu đến phần tử đang được nhấp chuột
+		  
+		  Swal.fire({
+		    title: "Are you sure?",
+		    text: "Once deleted, you will not be able to recover this user!",
+		    icon: "warning",
+		    showCancelButton: true,
+		    confirmButtonColor: "#dc3545",
+		    confirmButtonText: "Yes, delete it!",
+		    cancelButtonText: "No, cancel"
+		  }).then((result) => {
+		    if (result.isConfirmed) {
+		      // Xử lý khi người dùng xác nhận xóa
+		      $.ajax({
+		        type: "POST",
+		        url: "http://localhost:8080/struts2-mybatis-login/deleteUserById",
+		        dataType: "json",
+		        data: {
+		          id: id
+		        },
+		        success: function() {		        	 
+		                 Swal.fire("Deleted!", "User successfully deleted.", "success");
+		                 $(that).closest('tr').remove();		        
+		             },
+		             error: function() {
+		               Swal.fire("Error", "An error occurred while deleting.", "error");	
+		        }
+		      });
+		    } else {
+		      // Xử lý khi người dùng hủy xóa
+		      Swal.fire("Cancelled", "Your user is safe!", "error");
+		    }
+		  });
+		}
 
-		})
 
-	});
 
 	function confirmBoxActive() {
 		var answer;
@@ -983,19 +994,9 @@ input.error {
 			return false;
 		}
 	}
-	
 
-	function confirmLogout() {
-		var answer;
-		answer = window.confirm("Are you sure to logout page ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
     
-	function confirmBox() {
+/* 	function confirmBox() {
 		var answer;
 		answer = window.confirm("Are you sure to delete this user id ?");
 		if (answer == true) {
@@ -1003,7 +1004,7 @@ input.error {
 		} else {
 			return false;
 		}
-	}
+	} */
 	
 
 	$("#frmCreate").validate(

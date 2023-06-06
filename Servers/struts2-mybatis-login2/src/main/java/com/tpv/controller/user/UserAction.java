@@ -308,10 +308,10 @@ public class UserAction extends ActionSupport implements SessionAware {
 			System.out.println("Details of the student after update operation");
 			System.out.println(u.toString());
 			session.commit();
-			return "success";
+			return SUCCESS;
 		} catch (Exception e) {
 			// TODO: handle exception
-			return "error";
+			return ERROR;
 		} finally {
 			session.close();
 		}
@@ -395,12 +395,12 @@ public class UserAction extends ActionSupport implements SessionAware {
 		SqlSession session = sqlSessionFactory.openSession();
 
 		// Delete operation
-		int res = session.delete("User.deleteById", id);
+		session.delete("User.deleteById", id);
 
 		session.commit();
 		session.close();
 		System.out.println("Record deleted successfully");
-		return "success";
+		return SUCCESS;
 	}
 
 	public List<User> getUser() {

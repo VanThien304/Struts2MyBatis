@@ -21,6 +21,13 @@
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+<!-- Liên kết CSS của SweetAlert2 -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 <script type="text/javascript"
 	src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script type="text/javascript"
@@ -188,7 +195,7 @@ input.error {
 				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
-				<a href="logout">Admin</a>
+				<a  onclick="logout()">Admin</a>
 			</div>
 		</div>
 		<div>
@@ -222,6 +229,23 @@ input.error {
 						<option value="2">Tạm dừng</option>
 						<option value="3">Hết hàng</option>
 					</select>
+				</div>
+
+				<div class="col-3">
+					<div>
+						<h5>Select Price</h5>
+					</div>
+					<select id="priceRange" name="priceRange">
+						<option selected>Select Price</option>
+						<option value="10-50">10 - 50</option>
+						<option value="50-100">50 - 100</option>
+						<option value="100-150">100 - 150</option>
+						<option value="150-1000">Trên 150</option>
+						<!-- Các tùy chọn khác -->
+					</select>
+
+
+
 				</div>
 
 				<div class="col-3">
@@ -360,6 +384,13 @@ input.error {
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous"></script>
 
+	<!-- Liên kết JavaScript của SweetAlert2 -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
 		type="text/javascript"></script>
@@ -488,26 +519,51 @@ input.error {
 	        return /^\d+$/.test(value);
 	    }
 	 
-	
+	function logout() {
+			  Swal.fire({
+			    title: "Are you sure?",
+			    text: "Once isActive, you will not be able to recover this user!",
+			    icon: "warning",
+			    showCancelButton: true,
+			    confirmButtonColor: "#dc3545",
+			    confirmButtonText: "Yes, set active it!",
+			    cancelButtonText: "No, cancel",
+			  }).then((result) => {
+			    if (result.isConfirmed) {
+			      // Xử lý khi người dùng xác nhận
+			       window.location.href = "logout";
+			      Swal.fire("Logout!", "Logout successfully!.", "success");
+			    } else {
+			      // Xử lý khi người dùng hủy
+			      Swal.fire("Cancelled", "Your user is safe!", "error");
+			    }
+			  });
+			}
 	 
-	 $('#submitBtn').click(function() {
-         var priceFrom = $('#priceFrom').val();
-         var priceTo = $('#priceTo').val();
+	 $('#priceRange').change(function() {
+         var priceRange = $('#priceRange').val();
 
-         
-         priceFrom = parseInt(priceFrom);
-         priceTo = parseInt(priceTo);
-         if(priceFrom > priceTo){	
-        	return alert("Số tiền nhập vào " + priceFrom + " phải nhỏ hơn hoặc bằng" + priceTo);	 
+         if (priceRange === '') {
+           alert("Vui lòng chọn khoảng giá.");
+           return;
          }
-         
-         if (!isValidNumber(priceFrom) || !isValidNumber(priceTo)) {
-             alert("Vui lòng chỉ nhập số trong các trường");
-             document.getElementById("priceFrom").value = "";
-             document.getElementById("priceTo").value = "";
-             return;
+
+         var priceFrom, priceTo;
+
+         if (priceRange === "10-50") {
+           priceFrom = 10;
+           priceTo = 50;
+         } else if (priceRange === "50-100") {
+           priceFrom = 50;
+           priceTo = 100;
+         } else if (priceRange === "100-150") {
+           priceFrom = 100;
+           priceTo = 150;
+         } else if (priceRange === "150-1000") {
+           priceFrom = 150;
+           priceTo = 1000;
          }
-         
+
          var requestData = {
              priceFrom: priceFrom,
              priceTo: priceTo
@@ -532,6 +588,7 @@ input.error {
 
 						$("#allProduct tbody").append(product);
 					});
+					toastr.success("Select price product successfully", "", {timeOut:1500});
              },
              error: function(jqXHR, textStatus, errorThrown) {
                  console.log('Error: ' + errorThrown);
@@ -584,6 +641,8 @@ input.error {
 	                $("#modal-create-product").modal("hide");		                
 	               
 	                 $("#frmCreateProduct")[0].reset(); 
+	                 
+	                 toastr.success("Create product successfully", "", {timeOut:1500});
 	            },
 	            error: function(xhr, status, error) {
 	                console.log("Error creating user:", error);
@@ -591,7 +650,60 @@ input.error {
 	            }
 	      });
 }
+	 
+	 
+	 $('#submitBtn').click(function() {
+         var priceFrom = $('#priceFrom').val();
+         var priceTo = $('#priceTo').val();
 
+         
+         priceFrom = parseInt(priceFrom);
+         priceTo = parseInt(priceTo);
+         if(priceFrom > priceTo){	
+        	return alert("Số tiền nhập vào " + priceFrom + " phải nhỏ hơn hoặc bằng" + priceTo);	 
+         }
+         
+         if (!isValidNumber(priceFrom) || !isValidNumber(priceTo)) {
+             alert("Vui lòng chỉ nhập số trong các trường");
+             document.getElementById("priceFrom").value = "";
+             document.getElementById("priceTo").value = "";
+             return;
+         }
+         
+         var requestData = {
+             priceFrom: priceFrom,
+             priceTo: priceTo
+         };
+         $.ajax({
+        	 url: "http://localhost:8080/struts2-mybatis-login/product/getProductByPrice",
+		     type: "GET",
+             data: requestData,
+             dataType: 'json',
+             success: function(data) {
+                 // Xử lý dữ liệu trả về từ server
+                 var products = data;
+					DisplayList(products, list_element, rows, current_page);
+
+					SetupPagination(products, pagination_element, rows);
+					
+					if(products.length === 0){
+						 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Giá tiền sản phẩm ngoài phạm vi tìm kiếm!</td></tr>";
+		                     $("#allProduct tbody").append(noDataMessage);
+					}
+					$.each(products, function(index, product) {
+
+						$("#allProduct tbody").append(product);
+					});
+					toastr.success("Select price product successfully", "", {timeOut:1500});
+             },
+             error: function(jqXHR, textStatus, errorThrown) {
+                 console.log('Error: ' + errorThrown);
+             }
+         });
+     });
+
+
+	
 	 function selectProductBySales(isSales){
 		 $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/product/getProductBySale",
@@ -610,6 +722,7 @@ input.error {
 			        	var row = renderProduct(product);
 			                $("#allProduct tbody").append(row);
 		        		 }
+		        	toastr.success("Select isSale product successfully", "", {timeOut:1500});
 		              } else {
 		                displayError();
 		              }
@@ -685,7 +798,7 @@ input.error {
 
 							$("#allProduct tbody").append(product);
 						});
-
+						toastr.success("Load all products successfully!", "", {timeOut:2000});
 					},
 					error : function(jqXHR, textStatus, errorThrown) {
 						console.log("Lỗi: " + textStatus, errorThrown);
@@ -693,36 +806,6 @@ input.error {
 				});
 	}
 
-	function confirmBoxActive() {
-		var answer;
-		answer = window.confirm("Are you sure to change active this user id?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	function confirmLogout() {
-		var answer;
-		answer = window.confirm("Are you sure to logout page ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	function confirmBox() {
-		var answer;
-		answer = window.confirm("Are you sure to delete this user id ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 
 	 $("#frmCreateProduct")
 			.validate(

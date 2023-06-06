@@ -143,15 +143,15 @@
 		<action name="logout"
 			class="com.tpv.controller.login.LogoutAction">
 			<result name="success" type="redirectAction">
-				<param name="actionName">login</param>
-				<param name="namespace">/</param>
+			
+				<param name="namespace">/login</param>
 			</result>
 		</action>
 
 		<action name="deleteUserById"
 			class="com.tpv.controller.user.UserAction" method="deleteUserById">
 			<interceptor-ref name="secureStack" />
-			<result name="success" type="redirectAction">
+			<result name="success" type="json">
 				<param name="actionName">listUser</param>
 			</result>
 			<result name="input">WEB-INF/pages/index.jsp</result>
@@ -275,7 +275,7 @@
 		<action name="setActiveUserById"
 			class="com.tpv.controller.user.UserAction" method="setActiveUserById">
 			<interceptor-ref name="secureStack" />
-			<result name="success" type="redirectAction">
+			<result name="success" type="json">
 				<param name="actionName">listUser</param>
 			</result>
 		</action>

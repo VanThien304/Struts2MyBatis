@@ -37,7 +37,7 @@
 		SELECT id, user_name, email, is_active, group_role FROM mst_users WHERE is_delete = 0 and is_active = #{isActive};
 	</select>
 	
-	<select id="login" resultType="User">
+	<select id="login" resultType="User" parameterType="User">
 		SELECT * FROM mst_users WHERE email = #{email} AND password = #{password};
 	</select>
 	

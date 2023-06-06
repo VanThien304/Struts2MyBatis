@@ -20,6 +20,13 @@
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+<!-- Liên kết CSS của SweetAlert2 -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 <script type="text/javascript"
 	src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script type="text/javascript"
@@ -187,7 +194,7 @@ input.error {
 				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
-				<a href="#">Admin</a>
+				<a onclick="logout()">Admin</a>
 			</div>
 		</div>
 		<div>
@@ -261,8 +268,8 @@ input.error {
 						value="Search" />
 					<!-- <input type="text" id="keywordInput" oninput="searchUser(this.value)"> -->
 
-					<input class="btn btn-info" type="submit" onclick="resetSearchCustomer()"
-						value="Delete" />
+					<input class="btn btn-info" type="submit"
+						onclick="resetSearchCustomer()" value="Delete" />
 
 
 					<!-- <button id="logout">
@@ -293,9 +300,9 @@ input.error {
 				</tr>
 			</thead>
 			<tbody>
-			
+
 			</tbody>
-		
+
 		</table>
 	</div>
 
@@ -354,11 +361,18 @@ input.error {
 		</div>
 	</div>
 
-<%@ include file="modalCreateCustomer.jsp"%>
+	<%@ include file="modalCreateCustomer.jsp"%>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous"></script>
+
+	<!-- Liên kết JavaScript của SweetAlert2 -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
@@ -480,6 +494,27 @@ input.error {
 	}); 
 	 		
 	
+		function logout() {
+			  Swal.fire({
+			    title: "Are you sure?",
+			    text: "Once isActive, you will not be able to recover this user!",
+			    icon: "warning",
+			    showCancelButton: true,
+			    confirmButtonColor: "#dc3545",
+			    confirmButtonText: "Yes, set active it!",
+			    cancelButtonText: "No, cancel",
+			  }).then((result) => {
+			    if (result.isConfirmed) {
+			      // Xử lý khi người dùng xác nhận
+			       window.location.href = "logout";
+			      Swal.fire("Logout!", "Logout successfully!.", "success");
+			    } else {
+			      // Xử lý khi người dùng hủy
+			      Swal.fire("Cancelled", "Your user is safe!", "error");
+			    }
+			  });
+			}
+	 
 	function getCustomerById(customerId){ 
 		 $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/customer/getCustomerById",
@@ -527,6 +562,8 @@ input.error {
 	                $("#modal-create-customer").modal("hide");		                
 	               
 	                $("#frmCreateCustomer")[0].reset();
+	                
+	                toastr.success("Create customer successfully", "", {timeOut:1500});
 	            },
 	            error: function(xhr, status, error) {
 	                console.log("Error creating user:", error);
@@ -534,96 +571,7 @@ input.error {
 	            }
 	      });
 }
-		  
-		  function importExcel() {
-	            var fileInput = document.getElementById('excelFile');
-	            var file = fileInput.files[0];
-	            var reader = new FileReader();
-
-	            reader.onload = function(e) {
-	                var data = new Uint8Array(e.target.result);
-	                var workbook = XLSX.read(data, { type: 'array' });
-
-	                var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-	                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-	                var table = document.querySelectTor('#allUser tbody');
-	                table.innerHTML = '';
-
-	                for (var i = 0; i < jsonData.length; i++) {
-	                    var row = table.insertRow(i);
-	                    for (var j = 0; j < jsonData[i].length; j++) {
-	                        var cell = row.insertCell(j);
-	                        cell.innerHTML = jsonData[i][j];
-	                    }
-	                }
-	            };
-
-	            reader.readAsArrayBuffer(file);
-	        }	  
-		  
-		  
-	function selectUserByGroup(groupRole) {
-				 $.ajax({
-				        url: "http://localhost:8080/struts2-mybatis-login/selectUserByGroup",
-				        type: "GET",
-				        dataType: "json",			        
-				        data: {
-				        	groupRole: groupRole
-				        	},
-				        success: function(data) {
-				        	
-				        	
-				        	if (data !== null) {
-				        		 $("#allUser tbody").html('');
-				        		 DisplayList(data, list_element, rows, current_page);
-							        
-				                 SetupPagination(data, pagination_element, rows); 
-				        	for(var i = 0; i < data.length; i++){
-					        	var user = data[i];	   
-					        	var row = renderUser(user);
-					                $("#allUser tbody").append(row);
-				        		 }
-				              } else {
-				                displayError();
-				              }
-				        },
-				        error: function(jqXHR, textStatus, errorThrown) {
-				            console.log("Lỗi: " + textStatus, errorThrown);
-				        }
-				});
-	} 
-		
-		  
-	 function getUserByActive(isActive) {
-				 $.ajax({
-				        url: "http://localhost:8080/struts2-mybatis-login/getUserByActive",
-				        type: "GET",
-				        dataType: "json",			        
-				        data: {
-				        	isActive:isActive
-				        	},
-				        success: function(data) {
-				        	console.log("data = " + data);
-				        	if (data !== null) {
-				        		 $("#allUser tbody").html('');
-				        		 DisplayList(data, list_element, rows, current_page);
-							        
-				                 SetupPagination(data, pagination_element, rows); 
-				        	for(var i = 0; i < data.length; i++){
-					        	var user = data[i];	   
-					        	
-					                $("#allUser tbody").append(user);
-				        		 }
-				              } else {
-				                displayError();
-				              }
-				        },
-				        error: function(jqXHR, textStatus, errorThrown) {
-				            console.log("Lỗi: " + textStatus, errorThrown);
-				        }
-				});
-	} 	   
+		   
 		
 	
 	 function searchCustomer(keyword) {
@@ -698,7 +646,7 @@ input.error {
 	                	   
 			            $("#allCustomer tbody").append(customer); 
 		            });      
-        
+	                   toastr.success("Load all customers successfully!", "", {timeOut:1500});
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
 		            console.log("Lỗi: " + textStatus, errorThrown);
@@ -707,58 +655,6 @@ input.error {
 		}
 
 		
-	$(".delete").click(function() {
-		$.ajax({
-			type : "POST",
-			url : "http://localhost:8080/struts2-mybatis-login/deleteUserById",
-			dataType : "JSON",
-			data : {
-				id : id
-			},
-			success : function(res) {
-				alert(res);
-				if (res.success) {
-					alert("Record deleted successfully.");
-					$(that).closest('tr').remove();
-				} else {
-					alert(res.msg)
-				}
-			}
-
-		})
-
-	});
-
-	function confirmBoxActive() {
-		var answer;
-		answer = window.confirm("Are you sure to change active this user id?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-
-	function confirmLogout() {
-		var answer;
-		answer = window.confirm("Are you sure to logout page ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-    
-	function confirmBox() {
-		var answer;
-		answer = window.confirm("Are you sure to delete this user id ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 	
 
 	$("#frmCreateCustomer").validate(
