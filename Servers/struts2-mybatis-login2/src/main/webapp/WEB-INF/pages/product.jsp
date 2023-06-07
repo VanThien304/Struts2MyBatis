@@ -195,7 +195,7 @@ input.error {
 				</div>
 			</div>
 			<div class="col-4 d-flex justify-content-end">
-				<a  onclick="logout()">Admin</a>
+				<a onclick="logout()">Admin</a>
 			</div>
 		</div>
 		<div>
@@ -214,8 +214,9 @@ input.error {
 					<div>
 						<h5>Title</h5>
 					</div>
-					<input type="search" name="keyword" id="keywordInput"
-						placeholder="Input fullname" />
+					<input type="text" id="keywordInput"
+						oninput="searchProductByName(this.value)"
+						placeholder="Input title">
 				</div>
 
 				<div class="col-3">
@@ -257,8 +258,8 @@ input.error {
 					<div class="d-flex">
 
 						<input type="text" id="priceFrom" name="priceFrom"
-							pattern="[0-9]*" inputmode="numeric"> <input type="text"
-							id="priceTo" name="priceTo" pattern="[0-9]*" inputmode="numeric">
+							pattern="[0-9]*" inputmode="numeric" style="width: 135px"> <input type="text"
+							id="priceTo" name="priceTo" pattern="[0-9]*" inputmode="numeric" style="width: 135px">
 						<input value="Submit" type="button" id="submitBtn" />
 
 					</div>
@@ -517,7 +518,42 @@ input.error {
 	 
 	 function isValidNumber(value) {
 	        return /^\d+$/.test(value);
-	    }
+	 }
+	 
+	function searchProductByName(keyword){
+		 $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/product/searchProductByName",
+		        type: "GET",
+		        dataType: "json",			        
+		        data: {
+		        	keyword: keyword
+		        	},
+		        success: function(data) {
+		        	console.log("data = " + data);
+		        	 DisplayList(data, list_element, rows, current_page);
+				        
+	                 SetupPagination(data, pagination_element, rows); 
+		        	if (data !== null) {
+		        		 $("#allProduct tbody").html('');
+		        		 if(data.length !== 0){	
+		        	for(var i = 0; i < data.length; i++){
+			        	var product = data[i];	   
+			        	var row = renderProduct(product);
+			                $("#allProduct tbody").append(row);
+			        }
+		        		 }else{
+		        			 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Không có dữ liệu</td></tr>";
+		                     $("#allProduct tbody").append(noDataMessage);
+		        		 }
+		              } else {
+		            	  toastr.error("Input name product error!", "", {timeOut:1500});
+		              }
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		    });
+	}
 	 
 	function logout() {
 			  Swal.fire({
@@ -531,8 +567,8 @@ input.error {
 			  }).then((result) => {
 			    if (result.isConfirmed) {
 			      // Xử lý khi người dùng xác nhận
-			       window.location.href = "logout";
 			      Swal.fire("Logout!", "Logout successfully!.", "success");
+			       window.location.href = "logout";
 			    } else {
 			      // Xử lý khi người dùng hủy
 			      Swal.fire("Cancelled", "Your user is safe!", "error");
@@ -543,8 +579,8 @@ input.error {
 	 $('#priceRange').change(function() {
          var priceRange = $('#priceRange').val();
 
-         if (priceRange === '') {
-           alert("Vui lòng chọn khoảng giá.");
+         if (priceRange === "") {
+        	 toastr.warning("Select the price of the product you want to search for!", "", {timeOut:1500});
            return;
          }
 
@@ -580,15 +616,17 @@ input.error {
 
 					SetupPagination(products, pagination_element, rows);
 					
-					if(products.length === 0){
-						 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Giá tiền sản phẩm ngoài phạm vi tìm kiếm!</td></tr>";
+			 		if(products.length == 0){
+						 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Select the price of the product you want to search for!</td></tr>";
 		                     $("#allProduct tbody").append(noDataMessage);
-					}
+					}else{
+						toastr.success("Select price product successfully", "", {timeOut:1500});
+					} 
 					$.each(products, function(index, product) {
 
 						$("#allProduct tbody").append(product);
 					});
-					toastr.success("Select price product successfully", "", {timeOut:1500});
+					
              },
              error: function(jqXHR, textStatus, errorThrown) {
                  console.log('Error: ' + errorThrown);

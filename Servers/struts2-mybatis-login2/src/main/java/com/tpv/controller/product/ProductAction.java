@@ -29,7 +29,7 @@ public class ProductAction extends ActionSupport {
 	private Integer isSales;
 	private String description;
 	private Integer isDelete;
-
+	private String keyword;
 	private Product product;
 
 	private List<Product> products = new ArrayList<Product>();
@@ -40,6 +40,18 @@ public class ProductAction extends ActionSupport {
 		SqlSession sqlSession = sqlSessionFactory.openSession();
 
 		products = sqlSession.selectList("Product.getAllProduct");
+		System.out.println("Records Read Successfully ");
+		sqlSession.commit();
+		sqlSession.close();
+		return SUCCESS;
+	}
+	
+	public String searchProductByName() throws IOException {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+
+		products = sqlSession.selectList("Product.searchProduct", keyword);
 		System.out.println("Records Read Successfully ");
 		sqlSession.commit();
 		sqlSession.close();
@@ -205,6 +217,14 @@ public class ProductAction extends ActionSupport {
 
 	public void setIsDelete(Integer isDelete) {
 		this.isDelete = isDelete;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 }

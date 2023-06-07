@@ -202,7 +202,7 @@ public class CustomerAction extends ActionSupport {
 	
 	
 
-	public String searchCustomer() throws IOException {
+	public String searchCustomerName() throws IOException {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 		SqlSession session = sqlSessionFactory.openSession();
@@ -223,6 +223,48 @@ public class CustomerAction extends ActionSupport {
 		return INPUT;
 	}
 	
+	
+	public String searchCustomerEmail() throws IOException {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			customers = session.selectList("Customer.searchEmail", keyword);
+			for (Customer customer : customers) {
+				System.out.println("customr id = " + customer.getCustomerId());
+			}
+			System.out.println("Records Read Successfully ");
+		
+			return SUCCESS;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return INPUT;
+	}
+	
+	public String searchCustomerAddress() throws IOException {
+		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			customers = session.selectList("Customer.searchAddress", keyword);
+			for (Customer customer : customers) {
+				System.out.println("customr id = " + customer.getCustomerId());
+			}
+			System.out.println("Records Read Successfully ");
+		
+			return SUCCESS;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return INPUT;
+	}
 	public String getAllCustomer() throws IOException {
 		Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);

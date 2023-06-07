@@ -20,35 +20,46 @@
 
 	<select id="getProductId" resultMap="result">
 		SELECT product_id,
-		product_name, product_price, is_sales, description FROM mst_product WHERE product_id = #{productId};
+		product_name, product_price, is_sales, description FROM mst_product
+		WHERE product_id = #{productId};
 	</select>
 
 	<select id="getAllProduct" resultMap="result">
 		SELECT product_id,
-		product_name, product_price, is_sales, description FROM mst_product WHERE is_delete = 0;
+		product_name, product_price, is_sales, description FROM mst_product
+		WHERE is_delete = 0;
 	</select>
-	
+
+	<select id="searchProduct" resultMap="result">
+		SELECT product_id,
+		product_name, product_price, is_sales, description FROM mst_product
+		WHERE product_name LIKE CONCAT('%', #{productName} ,'%')  AND is_delete = 0;
+	</select>
+
 	<select id="getProductBySale" resultMap="result">
 		SELECT product_id,
-		product_name, product_price, is_sales, description FROM mst_product WHERE is_sales = #{isSales} AND is_delete = 0;
+		product_name, product_price, is_sales, description FROM mst_product
+		WHERE is_sales = #{isSales} AND is_delete = 0;
 	</select>
 
 	<select id="getProductByPrice" resultMap="result">
 		SELECT product_id,
 		product_name, product_price, is_sales, description FROM mst_product
-		WHERE product_price BETWEEN #{priceFrom} AND #{priceTo} order by product_price;
+		WHERE product_price BETWEEN #{priceFrom} AND #{priceTo} order by
+		product_price;
 	</select>
 
 	<insert id="createProduct" parameterType="Product">
 		INSERT INTO
 		mst_product
 		(product_name, product_price, is_sales, is_delete, description)
-		VALUES (#{productName}, #{productPrice}, #{isSales}, #{isDelete},
+		VALUES
+		(#{productName}, #{productPrice}, #{isSales}, #{isDelete},
 		#{description});
 	</insert>
 
 	<delete id="isDeleteById" parameterType="String">
-		 UPDATE mst_product SET is_delete = 1 WHERE product_id = #{productId};
+		UPDATE mst_product SET is_delete = 1 WHERE product_id = #{productId};
 	</delete>
-	  
+
 </mapper> 

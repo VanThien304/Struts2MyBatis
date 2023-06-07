@@ -219,9 +219,12 @@ input.error {
 
 				<div class="col-3">
 					<div>
-						<h5>Address</h5>
+						<h5>Email</h5>
 					</div>
-					<input type="search" name="" id="" placeholder="Input Address" />
+					<!-- <input type="search" name="keyword" id="emailCustomer" placeholder="Input Email" /> -->
+					<input type="text" id="keywordInput"
+						oninput="searchCustomerEmail(this.value)"
+						placeholder="Input Email">
 				</div>
 
 				<div class="col-3">
@@ -234,6 +237,15 @@ input.error {
 						<option value="1">Đang hoạt động</option>
 						<option value="0">Tạm khóa</option>
 					</select>
+				</div>
+
+				<div class="col-3">
+					<div>
+						<h5>Address</h5>
+					</div>
+					<input type="text" id="keywordInput"
+						oninput="searchCustomerAddress(this.value)"
+						placeholder="Input Address">
 				</div>
 			</div>
 		</div>
@@ -248,33 +260,21 @@ input.error {
 				</div>
 
 				<div class="col-4">
-					<!-- <input type="file" id="excelFile" accept=".xlsx" />
-					<button onclick="importExcel()">Import Excel</button> -->
-
 					<s:form action="importExcelAction" method="post"
 						namespace="/customer" enctype="multipart/form-data">
 						<s:file name="upload" label="File" />
 						<s:submit value="Import" />
 					</s:form>
-					<%-- <s:form action="exportExcelAction" method="post" namespace="/customer">
-						<input type="submit" value="Export Excel" />
-					</s:form> --%>
 				</div>
 
 				<div class="col-4">
-
 					<input class="btn btn-primary" type="submit"
-						onclick="searchCustomer(document.getElementById('keywordInput').value)"
+						onclick="searchCustomerName(document.getElementById('keywordInput').value)"
 						value="Search" />
 					<!-- <input type="text" id="keywordInput" oninput="searchUser(this.value)"> -->
 
 					<input class="btn btn-info" type="submit"
 						onclick="resetSearchCustomer()" value="Delete" />
-
-
-					<!-- <button id="logout">
-						<a href="logout" onclick='return confirmLogout()'>Logout</a>
-					</button> -->
 				</div>
 
 			</div>
@@ -422,13 +422,16 @@ input.error {
 	        var isActive = item.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
 	        var row = "<tr>" +
 	            "<td>" + item.customerId + "</td>" +
-	            "<td>" + item.customerName + "</td>" +
-	            "<td>" + item.email + "</td>" +
-	            "<td>" + item.address + "</td>" +
-	            "<td>" + item.telNum + "</td>" +
+	            "<td>" + "<span class='customerName' data-field='customerName'>" + item.customerName + "</span>" +"</td>" +	           		        
+		        "<td>" + "<span class='email' data-field='email'>" + item.email + "</span>" + "</td>" +
+		        "<td>" + "<span class='address' data-field='address'>" + item.address + "</span>" + "</td>" +
+		        "<td>" + "<span class='telNum' data-field='telNum'>" + item.telNum + "</span>" + "</td>" +
 	            "<td class='d-flex justify-content-between'>" +
 	            "<div>" +
-	            "<i onclick='showModalUpdateCustomer(" + item.customerId + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
+	            "<button id='btnEditCus' onclick='startEditingCustomer(this, "+ item.customerId +")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></button>" +
+	            "</div>" +
+	            "<div>" +
+	            "<button id='btnUpdateCus' class='btn btn-success btn-sm save-btn' onclick='saveEditedCustomer(event,  " + item.customerId + ")'>Save</button>" +
 	            "</div>" +
 	            "</td>" +
 	            "</tr>";
@@ -490,9 +493,94 @@ input.error {
 	});	 
 	
 	 $("#btnLoadUsers").on('click',() => {
-		 resetSearch();
+		 resetSearchCustomer();
 	}); 
 	 		
+	 
+	function resetSearchCustomer() {
+		    // Xóa giá trị tìm kiếm đã nhập
+		$("#keywordInput").val("");
+
+		    // Gọi Ajax để tải lại dữ liệu ban đầu (không có tìm kiếm) 
+		$("#allCustomer tbody").html('');
+		    
+		loadAllCustomer();
+		   
+	}
+
+	
+	function startEditingCustomer(button, customerId) {
+
+		  var row = $(button).closest('tr'); // Lấy hàng dữ liệu gần nhất chứa nút chỉnh sửa
+
+		  // Lấy các giá trị hiện tại từ các ô dữ liệu trong hàng
+		  var customerName = row.find('[data-field="customerName"]').text();
+		  var email = row.find('[data-field="email"]').text();
+		  var address = row.find('[data-field="address"]').text();
+		  var telNum = row.find('[data-field="telNum"]').text();
+
+		  // Tạo các ô input để chỉnh sửa dữ liệu
+		  var customerNameInput = $('<input type="text" class="form-control" value="' + customerName + '">');
+		  var emailInput = $('<input type="email" class="form-control" value="' + email + '">');
+		  var addressInput = $('<input type="text" class="form-control" value="' + address + '">');
+		  var telNumInput = $('<input type="tel" class="form-control" value="' + telNum + '">');
+
+		  // Thay thế các ô dữ liệu bằng các ô input
+		  row.find('[data-field="customerName"]').html(customerNameInput);
+		  row.find('[data-field="email"]').html(emailInput);
+		  row.find('[data-field="address"]').html(addressInput);
+		  row.find('[data-field="telNum"]').html(telNumInput);
+		}
+
+		function saveEditedCustomer(button, customerId) {
+		  var row = $(button).closest('tr'); // Lấy hàng dữ liệu gần nhất chứa nút lưu
+
+		  // Lấy giá trị từ các ô input
+		  var customerName = row.find('[data-field="customerName"] input').val();
+		  var email = row.find('[data-field="email"] input').val();
+		  var address = row.find('[data-field="address"] input').val();
+		  var telNum = row.find('[data-field="telNum"] input').val();
+
+		  // Thực hiện validation dữ liệu
+		  if (customerName.trim() === '') {
+		    // Xử lý khi tên khách hàng không hợp lệ
+		    // ...
+		    return; // Dừng việc lưu nếu dữ liệu không hợp lệ
+		  }
+
+		  // Gửi yêu cầu AJAX để cập nhật khách hàng
+		  $.ajax({
+		    type: 'POST',
+		    url: 'http://localhost:8080/struts2-mybatis-login/customer/updateCustomerById',
+		    data: {
+		      customerId: customerId,
+		      customerName: customerName,
+		      email: email,
+		      address: address,
+		      telNum: telNum
+		    },
+		    success: function(data) {
+		      console.log('User updated successfully:', data);
+
+		      // Thay thế ô input bằng giá trị đã chỉnh sửa trong hàng dữ liệu
+		      row.find('[data-field="customerName"]').html(customerName);
+		      row.find('[data-field="email"]').html(email);
+		      row.find('[data-field="address"]').html(address);
+		      row.find('[data-field="telNum"]').html(telNum);
+
+		      // Thay thế nút lưu bằng các nút chỉnh sửa và xóa
+		      var editButton = $('<button onclick="startEditingCustomer(this, ' + customerId + ')" class="fa-solid fa-pen btn btn-primary" style="cursor: pointer"></button>');
+		      row.find('.edit-buttons').html(editButton);
+
+		      toastr.success('Update customer successfully!', '', { timeOut: 1500 });
+		    },
+		    error: function(xhr, status, error) {
+		      console.log('Error updating user:', error);
+		      // Xử lý lỗi nếu có
+		    }
+		  });
+		}
+
 	
 		function logout() {
 			  Swal.fire({
@@ -572,11 +660,82 @@ input.error {
 	      });
 }
 		   
-		
-	
-	 function searchCustomer(keyword) {
+	 function searchCustomerEmail(keyword){	 
 		 $.ajax({
-		        url: "http://localhost:8080/struts2-mybatis-login/customer/searchCustomer",
+		        url: "http://localhost:8080/struts2-mybatis-login/customer/searchCustomerEmail",
+		        type: "GET",
+		        dataType: "json",			        
+		        data: {
+		        	keyword: keyword
+		        	},
+		        success: function(data) {
+		        	console.log("data = " + data);
+		        	 DisplayList(data, list_element, rows, current_page);
+				        
+	                 SetupPagination(data, pagination_element, rows); 
+		        	if (data !== null) {
+		        		 $("#allCustomer tbody").html('');
+		        		 if(data.length !== 0){	
+		        	for(var i = 0; i < data.length; i++){
+			        	var customer = data[i];	   
+			        	var row = renderCustomer(customer);
+			                $("#allCustomer tbody").append(row);
+			        }
+		        		 }else{
+		        			 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Không có dữ liệu</td></tr>";
+		                     $("#allCustomer tbody").append(noDataMessage);
+		        		 }
+		              } else {
+		                displayError();
+		              }
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		    });
+	  } 
+	
+	 function searchCustomerAddress(keyword){
+		 $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/customer/searchCustomerAddress",
+		        type: "GET",
+		        dataType: "json",			        
+		        data: {
+		        	keyword: keyword
+		        	},
+		        success: function(data) {
+		        	console.log("data = " + data);
+		        	 DisplayList(data, list_element, rows, current_page);
+				        
+	                 SetupPagination(data, pagination_element, rows); 
+		        	if (data !== null) {
+		        		 $("#allCustomer tbody").html('');
+		        		 if(data.length !== 0){	
+		        	for(var i = 0; i < data.length; i++){
+			        	var customer = data[i];	   
+			        	var row = renderCustomer(customer);
+			                $("#allCustomer tbody").append(row);
+			        }
+		        		 }else{
+		        			 var noDataMessage = "<tr><td style='color: red;' colspan='6' class='text-center'>Không có dữ liệu</td></tr>";
+		                     $("#allCustomer tbody").append(noDataMessage);
+		        		 }
+		              } else {
+		                displayError();
+		              }
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            console.log("Lỗi: " + textStatus, errorThrown);
+		        }
+		    });
+	 }
+	 
+	 function searchCustomerName(keyword) {
+		 if(keyword.length == 0){
+			 toastr.warning("Please enter a name to search!", "", {timeOut:1500});
+		 }
+		 $.ajax({
+		        url: "http://localhost:8080/struts2-mybatis-login/customer/searchCustomerName",
 		        type: "GET",
 		        dataType: "json",			        
 		        data: {
@@ -614,14 +773,17 @@ input.error {
 		 var isActive = customer.isActive == 1 ? "Đang hoạt động" : "Tạm khóa";
 		    var row = "<tr>" +
 		        "<td>" + customer.customerId + "</td>" +
-		        "<td>" + customer.customerName + "</td>" +
-		        "<td>" + customer.email + "</td>" +
-		        "<td>" + customer.address + "</td>" +
-		        "<td>" + customer.telNum + "</td>" +
-		        "<td class='d-flex justify-content-between'>" +
+		        "<td>" + "<span class='customerName' data-field='customerName'>" + customer.customerName + "</span>" +"</td>" +		        
+		        "<td>" + "<span class='email' data-field='email'>" + customer.email + "</span>" + "</td>" +
+		        "<td>" + "<span class='address' data-field='address'>" + customer.address + "</span>" + "</td>" +
+		        "<td>" + "<span class='tel-num' data-field='telNum'>" + customer.telNum + "</span>" + "</td>" +
+		        "<td id='d-flex justify-content-between'>" +
 		        "<div>" +
-		        "<i onclick='showModalUpdateCustomer(" + customer.customerId + ")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></i>" +
+		        "<button id='btnEditCus' onclick='startEditingCustomer(this, "+ customer.customerId +")' class='fa-solid fa-pen btn btn-primary' style='cursor: pointer'></button>" +
 		        "</div>" +
+		        "<div>" +
+	            "<button id='btnUpdateCus' class='btn btn-success btn-sm save-btn' onclick='saveEditedCustomer(event,  " + customer.customerId + ")'>Save</button>" +
+	            "</div>" +
 		        "</td>" +
 		        "</tr>";
 

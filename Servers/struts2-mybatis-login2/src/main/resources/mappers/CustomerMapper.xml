@@ -28,6 +28,14 @@
 	 <select id="search" resultMap="result">
    		SELECT customer_id, customer_name, email, tel_num, address FROM mst_customer WHERE customer_name LIKE CONCAT('%', #{customerName} ,'%');
    </select>
+   
+   	 <select id="searchEmail" resultMap="result">
+   		SELECT customer_id, customer_name, email, tel_num, address FROM mst_customer WHERE email LIKE CONCAT('%', #{email} ,'%');
+   </select>
+   
+   	 <select id="searchAddress" resultMap="result">
+   		SELECT customer_id, customer_name, email, tel_num, address FROM mst_customer WHERE address LIKE CONCAT('%', #{address} ,'%');
+   </select>
 
 	<select id="getCustomerId" parameterType = "int" resultMap="result">
 		SELECT customer_id, customer_name,

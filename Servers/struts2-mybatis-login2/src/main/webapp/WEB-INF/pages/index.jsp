@@ -441,7 +441,7 @@ input.error {
 	const pagination_element = document.getElementById('pagination');
 
 	let current_page = 1;
-	let rows_per_page = 10;
+	let rows = 10;
 
 	function DisplayList(items, wrapper, rows_per_page, page) {
 	    wrapper.innerHTML = "";
@@ -528,7 +528,7 @@ input.error {
 
 		button.addEventListener('click', function () {
 			current_page = page;
-			DisplayList(items, list_element, rows_per_page, current_page);
+			DisplayList(items, list_element, rows, current_page);
 
 			let current_btn = document.querySelector('.pagenumbers button.active');
 			current_btn.classList.remove('active');
@@ -576,12 +576,11 @@ input.error {
 	    // Xóa giá trị tìm kiếm đã nhập
 	    $("#keywordInput").val("");
 
-	    // Gọi Ajax để tải lại dữ liệu ban đầu (không có tìm kiếm)
-	    searchUser("");
-	    
+	    // Gọi Ajax để tải lại dữ liệu ban đầu (không có tìm kiếm) 
 	    $("#allUser tbody").html('');
 	    
 	    loadAllUsers();
+	   
 	}
 	
 	function logout() {
@@ -688,9 +687,9 @@ input.error {
 					                $("#allUser tbody").append(user);
 					                
 				        		 }
-					                toastr.success("User isActive successfully", "", {timeOut:1000});
+					                toastr.success("User isActive successfully", "", {timeOut:1500});
 				              } else {
-				                displayError();
+				            	  toastr.error("User isActive error", "", {timeOut:1500});
 				              }
 				        },
 				        error: function(jqXHR, textStatus, errorThrown) {
@@ -701,6 +700,9 @@ input.error {
 		
 	
 	 function searchUser(keyword) {
+		 if(keyword.length == 0){
+			 toastr.warning("Please enter a name to search!", "", {timeOut:1500});
+		 }
 		 $.ajax({
 		        url: "http://localhost:8080/struts2-mybatis-login/searchUser",
 		        type: "GET",
@@ -887,9 +889,9 @@ input.error {
 		        dataType: "json",
 		        success: function(data) {
 		        	 var users = data.user;
- 		        	 DisplayList(users, list_element, rows_per_page, current_page);
+ 		        	 DisplayList(users, list_element, rows, current_page);
 		        
-	                 SetupPagination(users, pagination_element, rows_per_page);
+	                 SetupPagination(users, pagination_element, rows);
 
 	                   $.each(users, function(index, user) { 
 	                	   
@@ -982,30 +984,6 @@ input.error {
 		    }
 		  });
 		}
-
-
-
-	function confirmBoxActive() {
-		var answer;
-		answer = window.confirm("Are you sure to change active this user id?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-    
-/* 	function confirmBox() {
-		var answer;
-		answer = window.confirm("Are you sure to delete this user id ?");
-		if (answer == true) {
-			return true;
-		} else {
-			return false;
-		}
-	} */
-	
 
 	$("#frmCreate").validate(
 			{
